@@ -1,0 +1,27 @@
+{
+	"service" : 
+	{  
+		"api" : "fastcgi",  
+		"socket" : "stdin"
+	},
+	"http": 
+	{
+		"script_name": "/xiaosu"
+	},
+	"security": 
+	{
+		"csrf": 
+		{
+			"enable": true
+		}
+	},
+	"database": 
+	{
+		"driver": "mysql",
+		"host": "58.87.88.54",
+		"db": "yengsu_db",
+		"user": "yengsu",
+		"password": "guo19960730"
+	}
+}
+

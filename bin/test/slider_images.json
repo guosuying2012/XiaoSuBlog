@@ -1,0 +1,36 @@
+{
+    "data": [
+        {
+            "src": "assets/img/slider/1.jpg",
+            "description": "1Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/2.jpg",
+            "description": "2Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/3.jpg",
+            "description": "3Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/4.jpg",
+            "description": "4Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/5.jpg",
+            "description": "5Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/6.jpg",
+            "description": "6Donec sed velit consectetur"
+        },
+        {
+            "src": "assets/img/slider/7.jpg",
+            "description": "7Donec sed velit consectetur"
+        },
+        {
+            "src": "http://5b0988e595225.cdn.sohucs.com/images/20180421/193a3464c8ba4713ac2d3f2fb93829c7.jpeg",
+            "description": "8Donec sed velit consectetur"
+        }
+    ]
+}
