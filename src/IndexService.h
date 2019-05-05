@@ -15,6 +15,7 @@ private:
 	void article_list();
 	void navigation_bar();
 	void slider_images();
+	void test_database(std::string strId);
 };
 
 #endif	//INDEX_SERVICE_H
