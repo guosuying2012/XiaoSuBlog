@@ -6,7 +6,6 @@
 BaseService::BaseService(cppcms::service &s)
     :application(s)
 {
-    m_strConnStr.clear();
     m_pDBInstence = nullptr;
 
     init();
@@ -14,18 +13,23 @@ BaseService::BaseService(cppcms::service &s)
 
 BaseService::~BaseService()
 {
+	close();
 }
 
 cppdb::session& BaseService::database()
 {
+    std::string strConnectString;
+    strConnectString.clear();
+
+    buildDbConnString(strConnectString);
     if(!m_pDBInstence->is_open())
 	{
-		m_pDBInstence->open(m_strConnStr);
+		m_pDBInstence->open(strConnectString);
 	}
 	return *m_pDBInstence;
 }
 
-void BaseService::clear()
+void BaseService::close()
 {
     m_pDBInstence->close();
 }
@@ -33,17 +37,12 @@ void BaseService::clear()
 void BaseService::init()
 {
 	m_pDBInstence = std::make_shared<cppdb::session>();
-	buildDbConnString();
 }
 
-void BaseService::buildDbConnString()
+void BaseService::buildDbConnString(std::string& strResConn)
 {
 	std::ostringstream oss;
-
-	if (!m_strConnStr.empty())
-	{
-		return;
-	}
+	strResConn.clear();
 	oss.clear();
 
 	std::string driver = settings().get<std::string>("database.driver");
@@ -51,7 +50,7 @@ void BaseService::buildDbConnString()
 	std::string db = settings().get<std::string>("database.db");
 	std::string user = settings().get<std::string>("database.user");
 	std::string password= settings().get<std::string>("database.password");
-	oss << driver << ":database=" << db << ";user=" << user << ";password=" << password << ";@pool_size=10";
+	oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";@pool_size=10";
 
-	m_strConnStr = oss.str();
+	strResConn = oss.str();
 }

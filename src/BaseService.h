@@ -15,13 +15,14 @@ public:
 	BaseService(cppcms::service& s);
 	virtual ~BaseService();
 	virtual cppdb::session& database();
-	virtual void clear();
+	virtual void close();
+
 protected:
 	void init();
-	void buildDbConnString();
+	void buildDbConnString(std::string& strResConn);
+	
 private:
 	std::shared_ptr<cppdb::session> m_pDBInstence;
-	std::string m_strConnStr;
 };
 
 #endif	//BASESERVICE.H 

@@ -1,5 +1,5 @@
 //文章列表
-article_list({})
+article_list()
 .then(response=>
 {
     for (var i = 0; i <= response.data.length - 1; ++i) 
@@ -33,7 +33,7 @@ article_list({})
 });
 
 //滚动图片
-slider_images({})
+slider_images()
 .then(response=>
 {
     for (var i = response.data.length - 1; i >= 0; i--) 
@@ -59,7 +59,7 @@ slider_images({})
 });
 
 //导航栏
-navigation_bar({})
+navigation_bar()
 .then(response=>
 {
     //思路参考：https://blog.csdn.net/Mr_JavaScript/article/details/82817177
@@ -80,6 +80,15 @@ window.onload = function()
 {
     localStorage.clear();
 };
+
+//数据库测试接口
+test_database(0)
+.then(response=>{
+    console.log(response);
+})
+.catch(error=>{
+    console.log(error);
+});
 
 //思路参考：https://blog.csdn.net/cc_fys/article/details/81284638
 function navigation(tree, parentElement) 

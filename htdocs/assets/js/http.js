@@ -1,5 +1,5 @@
 //服务器地址
-axios.defaults.baseURL = 'http://58.87.88.54/xiaosu/';
+axios.defaults.baseURL = 'http://localhost/xiaosu/';
 //响应超时
 axios.defaults.timeout = 10000;
 //post请求头
@@ -49,9 +49,7 @@ axios.interceptors.response.use(
 function get(url, params)
 {
     return new Promise((resolve, reject) =>{        
-        axios.get(url, {            
-            params: params
-        }).then(res => {
+        axios.get(url + (params==undefined?"":params)).then(res => {
             resolve(res.data);
         }).catch(err =>{
             reject(err.data)        
@@ -104,7 +102,8 @@ function pageJump(type, uuid)
     }
 }
 
-/*1.localStorage - 没有时间限制的数据存储 
+/*
+1.localStorage - 没有时间限制的数据存储 
 　var arr=[1,2,3];
 　localStorage.setItem("temp",arr); //存入 参数： 1.调用的值 2.所要存入的数据 
 　console.log(localStorage.getItem("temp"));//输出
@@ -122,4 +121,5 @@ function pageJump(type, uuid)
 　obj = JSON.stringify(obj); //转化为JSON字符串
 　localStorage.setItem("temp2", obj);
 　//JSON字符串转JSON对象
-　obj=JSON.parse(localStorage.getItem("temp2"));*/
+　obj=JSON.parse(localStorage.getItem("temp2"));
+*/
