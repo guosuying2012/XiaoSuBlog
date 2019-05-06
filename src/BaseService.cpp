@@ -50,7 +50,7 @@ void BaseService::buildDbConnString(std::string& strResConn)
     std::string db = settings().get<std::string>("database.db");
     std::string user = settings().get<std::string>("database.user");
     std::string password= settings().get<std::string>("database.password");
-    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";@pool_size=10";
+    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";set_charset_name=utf8;@pool_size=10";
 
     strResConn = oss.str();
 }
