@@ -12,17 +12,17 @@ namespace cppdb
 class BaseService : public cppcms::application
 {
 public:
-	BaseService(cppcms::service& s);
-	virtual ~BaseService();
-	virtual cppdb::session& database();
-	virtual void close();
+    BaseService(cppcms::service& s);
+    virtual ~BaseService();
+    virtual cppdb::session& database();
+    virtual void close();
 
 protected:
-	void init();
-	void buildDbConnString(std::string& strResConn);
-	
+    void init();
+    void buildDbConnString(std::string& strResConn);
+    
 private:
-	std::shared_ptr<cppdb::session> m_pDBInstence;
+    std::shared_ptr<cppdb::session> m_pDBInstence;
 };
 
-#endif	//BASESERVICE.H 
+#endif  //BASESERVICE.H 
