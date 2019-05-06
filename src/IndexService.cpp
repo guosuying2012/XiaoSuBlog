@@ -111,7 +111,6 @@ void IndexService::test_database(std::string strId)
 {
     try
     {
-<<<<<<< HEAD
         cppcms::json::value json_object;
         cppdb::result res;
         res = database() << "select user_id, user_ip, user_name, user_password, user_email, user_rights, user_nikename from yengsu_users";      
@@ -136,29 +135,6 @@ void IndexService::test_database(std::string strId)
             json_object["nikename"] = user_nikename;
 
             response().out() << json_object;
-=======
-        cppdb::result res;
-
-        if (strId != "0")
-        {
-            res = database() << "select user_id, user_name from yengsu_users where user_id = ?" << strId << cppdb::row;
-            if (!res.empty())
-            {
-                int nId = res.get<int>("user_id");
-                std::string strName=res.get<std::string>(1);
-                response().out() << "The user_id is : " << nId <<" , user_name is : " << strName;
-            }
-            return;
-        }
-        res = database() << "select user_id, user_name from yengsu_users";
-        
-        while (res.next())
-        {
-            int user_id = 0;
-            std::string user_name;
-            res >> user_id >> user_name;
-            response().out() << "The user_id is : " << user_id <<" , user_name is : " << user_name;
->>>>>>> master
         }
     }
     catch(std::exception const &e)
