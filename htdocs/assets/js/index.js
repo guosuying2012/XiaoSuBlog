@@ -85,6 +85,7 @@ window.onload = function()
 test_database(0)
 .then(response=>{
     console.log(response);
+    alert(response.nikename);
 })
 .catch(error=>{
     console.log(error);

@@ -19,7 +19,7 @@
 	{
 		"driver": "mysql",
 		"host": "58.87.88.54",
-		"db": "yengsu_db",
+		"db": "xiaosu_blog",
 		"user": "yengsu",
 		"password": "guo19960730"
 	}

@@ -111,27 +111,30 @@ void IndexService::test_database(std::string strId)
 {
 	try
 	{
+        cppcms::json::value json_object;
 		cppdb::result res;
-
-		if (strId != "0")
-		{
-			res = database() << "select user_id, user_name from yengsu_users where user_id = ?" << strId << cppdb::row;
-			if (!res.empty())
-			{
-	            int nId = res.get<int>("user_id");
-	            std::string strName=res.get<std::string>(1);
-	            response().out() << "The user_id is : " << nId <<" , user_name is : " << strName;
-	        }
-	        return;
-		}
-		res = database() << "select user_id, user_name from yengsu_users";
-		
+		res = database() << "select user_id, user_ip, user_name, user_password, user_email, user_rights, user_nikename from yengsu_users";		
 		while (res.next())
 		{
 			int user_id = 0;
-			std::string user_name;
-			res >> user_id >> user_name;
-			response().out() << "The user_id is : " << user_id <<" , user_name is : " << user_name;
+            std::string user_ip;
+            std::string user_name;
+            std::string user_password;
+            std::string user_email;
+            int user_rights;
+            std::string user_nikename;
+
+            res >> user_id >> user_ip >> user_name >> user_password >> user_email >> user_rights >> user_nikename;
+            
+            json_object["id"] = user_id;
+            json_object["ip"] = user_ip;
+            json_object["name"] = user_name;
+            json_object["password"] = user_password;
+            json_object["email"] = user_email;
+            json_object["rights"] = user_rights;
+            json_object["nikename"] = user_nikename;
+
+            response().out() << json_object;
 		}
 	}
     catch(std::exception const &e)
