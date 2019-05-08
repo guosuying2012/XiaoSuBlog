@@ -1,3 +1,6 @@
+#ifndef SUPPORT_H
+#define SUPPORT_H
+
 #include <cppcms/serialization.h>
 #include <cppcms/json.h>
 #include <string>
@@ -14,7 +17,7 @@ struct user : public cppcms::serializable
     std::string strProfilePhoto;    //头像
     std::string strLevel;           //等级
     int nRights;                    //权限
-    std::string strRegistrationTime;    //注册时间
+    std::string strRegistrationTime;//注册时间
     std::string strNikeName;        //昵称
 
     void clear()
@@ -91,9 +94,11 @@ struct article : public cppcms::serializable
     std::string strContent;     //内容
     unsigned int nViews;        //浏览量
     unsigned int nCommentCount; //评论量
-    std::string strTime;            //发布时间
+    std::string strTime;        //发布时间
     unsigned int nLikeCount;    //点赞量
-    std::string strLastModified;    //最后后修改时间
+    std::string strLastModified;//最后后修改时间
+    std::string strDescribe;    //描述120字
+    int nShowType;              //显示类型
 
     void clear()
     {
@@ -106,11 +111,13 @@ struct article : public cppcms::serializable
         strTime.clear();
         nLikeCount = 0;
         strLastModified.clear();
+        strDescribe.clear();
+        nShowType = 0;
     }
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&strTitle&strContent&nViews&nCommentCount&strTime&nLikeCount&strLastModified;
+        a&nId&m_user&strTitle&strContent&nViews&nCommentCount&strTime&nLikeCount&strLastModified&strDescribe&nShowType;
     }
 };
 using articles = std::vector<article>;
@@ -140,6 +147,8 @@ namespace cppcms
                 out.strTime = v.get<std::string>("time");
                 out.nLikeCount = v.get<unsigned int>("like_count");
                 out.strLastModified = v.get<std::string>("last_modified");
+                out.strDescribe = v.get<std::string>("describe");
+                out.nShowType = v.get<int>("show_type");
 
                 return out;
             }
@@ -155,6 +164,8 @@ namespace cppcms
                 v.set("time", in.strTime);
                 v.set("like_count", in.nLikeCount);
                 v.set("last_modified", in.strLastModified);
+                v.set("describe", in.strDescribe);
+                v.set("show_type", in.nShowType);
             }
         };
     } // json
@@ -361,3 +372,4 @@ struct SetArticleSort : public cppcms::serializable
 };
 
 
+#endif //SUPPORT_H

@@ -75,12 +75,18 @@ function post(url, params)
 }
 
 //链接类型枚举
+/*
+    TEXT: 博客连接
+    AUTHOR: 作者连接，因为要列出作者所有的作品所以跳转到列表页
+    TRAVEL: 列表连接
+    COMMENTS: 评论区连接
+*/
 var LinkTypeEnum = { TEXT: 1, AUTHOR: 2, TRAVEL: 3, COMMENTS: 4 };
 
-function pageJump(type, uuid)
+function pageJump(type, id)
 {
     localStorage.setItem("type", type);
-    localStorage.setItem("uuid", uuid);
+    localStorage.setItem("id", id);
 
     switch (type)
     {

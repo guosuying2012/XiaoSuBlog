@@ -8,7 +8,7 @@
             "travel": "C++",
             "comments": "109283",
             "image": "assets/img/home/1.jpg",
-            "uuid": "1",
+            "id": "1",
             "showtype": 0
         },
         {
@@ -19,7 +19,7 @@
             "travel": "C++",
             "comments": "29537",
             "image": "",
-            "uuid": "2",
+            "id": "2",
             "showtype": 1
         },
         {
@@ -30,7 +30,7 @@
             "travel": "Qt",
             "comments": "1",
             "image": "assets/img/home/6.jpg",
-            "uuid": "3",
+            "id": "3",
             "showtype": 0
         },
         {
@@ -41,7 +41,7 @@
             "travel": "Android",
             "comments": "49",
             "image": "assets/img/home/2.jpg",
-            "uuid": "4",
+            "id": "4",
             "showtype": 1
         }
     ]

@@ -1,3 +1,8 @@
+window.onload = function() 
+{
+    localStorage.clear();
+};
+
 //文章列表
 article_list()
 .then(response=>
@@ -9,13 +14,13 @@ article_list()
         article = "<article class='post'> <header>";
         if (obj.image != "")
         {
-            article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.uuid+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
+            article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }
-        article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.uuid+"\")'>"+obj.title+"</a></h3> \
+        article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>"+obj.title+"</a></h3> \
                     <span><span>"+obj.time+"</span> \
-                    / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.uuid+"\")'><span>"+ obj.author +"</span></a> \
-                    / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.uuid+"\")'>"+obj.travel+"</a></span> \
-                    / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.uuid+"\")'><span>"+obj.comments+"</span> Comments</a></span> \
+                    / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.id+"\")'><span>"+ obj.author +"</span></a> \
+                    / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.travel+"</a></span> \
+                    / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comments+"</span> Comments</a></span> \
                     </header> \
                     <div class='editor-styles'>"+obj.content+"</div> \
                     <footer> \
@@ -76,16 +81,10 @@ navigation_bar()
     console.log(error);
 });
 
-window.onload = function() 
-{
-    localStorage.clear();
-};
-
 //数据库测试接口
 test_database(0)
 .then(response=>{
     console.log(response);
-    alert(response.nikename);
 })
 .catch(error=>{
     console.log(error);
@@ -100,7 +99,7 @@ function navigation(tree, parentElement)
         var element = document.createElement('li');
         if (obj.children != undefined)
         {
-            element.innerHTML = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.uuid+"\")'>"+obj.name+"</a>";
+            element.innerHTML = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.name+"</a>";
             var nextpar = document.createElement('ul');
             nextpar.classList.add("sub-menu");
             element.appendChild(nextpar);
@@ -108,32 +107,16 @@ function navigation(tree, parentElement)
         }
         else
         {
-            element.innerHTML = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.uuid+"\")'>"+obj.name+"</a>";
+            element.innerHTML = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.name+"</a>";
         }
         $(parentElement).append(element);
     }
 }
 
-//随机串(解决资源缓存)
-function randomWord(randomFlag, min, max)
+$.getScript("assets/js/plugins.js",function()
 {
-    var str = "";
-    var range = min;
-    var arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    if(randomFlag)
-    {
-        range = Math.round(Math.random() * (max-min)) + min;
-    }
-    for(var i=0; i<range; i++)
-    {
-        pos = Math.round(Math.random() * (arr.length-1));
-        str += arr[pos];
-    }
-    return str;
-}
-
-var plugins="<script type='text/javascript' src='assets/js/plugins.js?"+randomWord(false, 18)+"'></script>";
-document.write(plugins);
+    $.getScript("assets/js/scripts.js");
+});
 
 
 
