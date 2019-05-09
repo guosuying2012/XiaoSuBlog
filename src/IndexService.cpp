@@ -1,5 +1,6 @@
 #include "IndexService.h"
 #include "support.h"
+
 #include <cppcms/service.h>
 #include <cppcms/http_response.h>
 #include <cppcms/url_dispatcher.h>  
@@ -119,7 +120,7 @@ void IndexService::test_database(std::string strId)
     m_user.strProfilePhoto = "http://a.b.com/i.jpg";
     m_user.strLevel = "9999";
     m_user.nRights = 0;
-    m_user.strRegistrationTime = "2019-05-07 22:13:22.99";
+    m_user.nRegistrationTime = 1557402627938;
     m_user.strNikeName = "小苏";
 
     article m_article;
@@ -129,25 +130,25 @@ void IndexService::test_database(std::string strId)
     m_article.strContent = "asdasdasdasd";
     m_article.nViews = 999;
     m_article.nCommentCount = 123;
-    m_article.strTime = "2019-05-07 22:48:23.12";
+    m_article.nTime = 1557402627938;
     m_article.nLikeCount = 550;
-    m_article.strLastModified = "2019-05-07 22:48:23.12";
+    m_article.nLastModified = 1557402627938;
 
     comment m_comment;
     m_comment.nId = 1;
     m_comment.m_user = m_user;
     m_comment.m_article = m_article;
     m_comment.nLikeCount = 135;
-    m_comment.strTime = "时间";
+    m_comment.nTime = 1557402627938;
     m_comment.strContent = "zxcasda";
     m_comment.nParentId = 20;
 
     json_object = m_comment;
-    //response().out() << json_object;
+    response().out() << json_object;
 
-    comment test = json_object.get_value<comment>();
+    //comment test = json_object.get_value<comment>();
 
-    response().out() << test.nId << " , " << test.m_user.nId << " , " << test.m_article.nId;
+    //response().out() << test.nId << " , " << test.m_user.nId << " , " << test.m_article.nId;
 
     /*try
     {

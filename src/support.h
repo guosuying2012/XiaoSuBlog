@@ -108,9 +108,9 @@ struct article : public cppcms::serializable
         strContent.clear();
         nViews = 0;
         nCommentCount = 0;
-        nTime.clear();
+        nTime = 0;
         nLikeCount = 0;
-        nLastModified.clear();
+        nLastModified = 0;
         strDescribe.clear();
         nShowType = 0;
     }
@@ -372,26 +372,26 @@ struct SetArticleSort : public cppcms::serializable
 };
 
 //导航栏图片结构体
-struct SliderImage : public cppcms:serializable
+struct SliderImage : public cppcms::serializable
 {
     unsigned int nId;           //图片ID
     std::string strPath;        //图片地址
     std::string strDescription; //图片描述
-    bool bIsShow;               //是否显示图片
+    int nIsShow;                //是否显示图片
 
     void clear()
     {
         nId = 0;
         strPath.clear();
         strDescription.clear();
-        bIsShow = false;
+        nIsShow = 0;
     }
 
     void serialize(cppcms::archive& a)
     {
-        a&nId&strPath&strDescription&bIsShow;
+        a&nId&strPath&strDescription&nIsShow;
     }
-}
+};
 using SliderImages = std::vector<SliderImage>;
 
 //导航栏图片JSON
@@ -413,7 +413,7 @@ namespace cppcms
                 out.nId = v.get<unsigned int>("id");
                 out.strPath = v.get<unsigned int>("path");
                 out.strDescription = v.get<std::string>("description");
-                out.bIsShow = v.get<bool>("is_show");
+                out.nIsShow = v.get<int>("is_show");
 
                 return out;
             }
@@ -423,7 +423,7 @@ namespace cppcms
                 v.set("id", in.nId);
                 v.set("path", in.strPath);
                 v.set("description", in.strDescription);
-                v.set("is_show", in.bIsShow);
+                v.set("is_show", in.nIsShow);
             }
         };
     } // json
