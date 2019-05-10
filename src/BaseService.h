@@ -7,6 +7,10 @@
 namespace cppdb
 {
     class session;
+    namespace pool
+    {
+        class pointer;
+    }
 }
 
 class BaseService : public cppcms::application
@@ -22,6 +26,7 @@ protected:
     void buildDbConnString(std::string& strResConn);
     
 private:
+    cppdb::pool::pointer m_pDBPool;
     std::shared_ptr<cppdb::session> m_pDBInstence;
 };
 

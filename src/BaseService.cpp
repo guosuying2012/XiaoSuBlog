@@ -6,6 +6,7 @@
 BaseService::BaseService(cppcms::service &s)
     :application(s)
 {
+    m_pDBPool = nullptr;
     m_pDBInstence = nullptr;
 
     init();
@@ -18,13 +19,9 @@ BaseService::~BaseService()
 
 cppdb::session& BaseService::database()
 {
-    std::string strConnectString;
-    strConnectString.clear();
-
-    buildDbConnString(strConnectString);
     if(!m_pDBInstence->is_open())
     {
-        m_pDBInstence->open(strConnectString);
+        m_pDBInstence = std::make_shared<cppdb::session>(m_pDBPool->open());
     }
     return *m_pDBInstence;
 }
@@ -36,7 +33,11 @@ void BaseService::close()
 
 void BaseService::init()
 {
-    m_pDBInstence = std::make_shared<cppdb::session>();
+    std::string strConnectString;
+    strConnectString.clear();
+
+    buildDbConnString(strConnectString);
+    m_pDBPool = cppdb::pool::create(strConnectString);
 }
 
 void BaseService::buildDbConnString(std::string& strResConn)
@@ -50,7 +51,7 @@ void BaseService::buildDbConnString(std::string& strResConn)
     std::string db = settings().get<std::string>("database.db");
     std::string user = settings().get<std::string>("database.user");
     std::string password= settings().get<std::string>("database.password");
-    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";set_charset_name=utf8;@pool_size=10";
+    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";";
 
     strResConn = oss.str();
 }
