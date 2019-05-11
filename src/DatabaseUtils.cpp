@@ -26,7 +26,7 @@ void DatabaseUtils::queryAllSliderImages(cppdb::session& sql, SliderImages& vecR
         while(resRecords.next())
         {
             resRecords >> recoder.nId >> recoder.strPath >> recoder.strDescription;
-            vecRes.push_back(resRecords);
+            vecRes.push_back(recoder);
         }
     }
     catch(std::exception const& e)

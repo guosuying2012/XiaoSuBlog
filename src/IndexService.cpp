@@ -1,5 +1,6 @@
 #include "IndexService.h"
 #include "support.h"
+#include "DatabaseUtils.h"
 
 #include <cppcms/service.h>
 #include <cppcms/http_response.h>
@@ -89,24 +90,34 @@ void IndexService::navigation_bar()
 
 void IndexService::slider_images()
 {
-    ifstream json_data;
-    stringstream ss;
-    string strLine;
+    SliderImages vecImages;
+    size_t nImagesLength;
+    cppcms::json::value jsonRes;
+    vecImages.clear();
+    nImagesLength = 0;
 
-    json_data.open("./test/slider_images.json", ios::in);
-    if (!json_data.is_open())
+    try
     {
-        response().out() << "Open File Failed.";
-        return;
+        DatabaseUtils::queryAllSliderImages(database(), vecImages);
+    }
+    catch(std::exception const& e)
+    {
+        response().out() << e.what();
     }
 
-    while (getline(json_data, strLine))
+    nImagesLength = vecImages.size();
+    if (nImagesLength <= 0)
     {
-        ss << strLine;
+        response().out() << "no images";
     }
-    json_data.close();
 
-    response().out() << ss.str();
+    for (int i = 0; i < nImagesLength; ++i)
+    {
+        cppcms::json::value obj = vecImages.at(i);
+        jsonRes["data"][i] = obj;
+    }
+
+    response().out() << jsonRes;
 }
 
 void IndexService::test_database(std::string strId)

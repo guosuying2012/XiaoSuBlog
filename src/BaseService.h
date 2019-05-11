@@ -2,15 +2,13 @@
 #define BASE_SERVICE_H 
 
 #include <cppcms/application.h>
+#include <cppdb/backend.h>
+#include <cppdb/pool.h>
 #include <string>
 
 namespace cppdb
 {
     class session;
-    namespace pool
-    {
-        class pointer;
-    }
 }
 
 class BaseService : public cppcms::application
