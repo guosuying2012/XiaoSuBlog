@@ -4,9 +4,13 @@ window.onload = function()
 };
 
 //文章列表
-article_list()
-.then(response=>
+function article_callback(response) 
 {
+    if (response.data === "null") 
+    {
+        return;
+    }
+    
     for (var i = 0; i <= response.data.length - 1; ++i) 
     {
         var obj = response.data[i];
@@ -31,16 +35,16 @@ article_list()
                     </article>";
         $("#list").append(article);
     }
-})
-.catch(error=>
-{
-    console.log(error);
-});
+}
 
 //滚动图片
-slider_images()
-.then(response=>
+function slider_callback(response) 
 {
+    if (response.data === "null") 
+    {
+        return;
+    }
+
     for (var i = response.data.length - 1; i >= 0; i--) 
     {
         var slider = $("<div><a href='#'><img class='slider_image'></a> \
@@ -53,19 +57,14 @@ slider_images()
     var description = document.getElementsByClassName("description");
     for (var i = slider_imgs.length - 1; i >= 0; i--) 
     {
-        slider_imgs[i].setAttribute("src", response.data[i]["src"]);
+        slider_imgs[i].setAttribute("src", response.data[i]["path"]);
         slider_imgs[i].setAttribute("alt", response.data[i]["description"]);
         description[i].innerHTML = response.data[i]["description"];
     }
-})
-.catch(error=>
-{
-    console.log(error);
-});
+}
 
 //导航栏
-navigation_bar()
-.then(response=>
+function navigation_callback(response) 
 {
     //思路参考：https://blog.csdn.net/Mr_JavaScript/article/details/82817177
     let cloneData = JSON.parse(JSON.stringify(response.data));
@@ -75,20 +74,7 @@ navigation_bar()
         return father.parentId==0;
     });
     navigation(tree, "#menu");
-})
-.catch(error=>
-{
-    console.log(error);
-});
-
-//数据库测试接口
-test_database(0)
-.then(response=>{
-    console.log(response);
-})
-.catch(error=>{
-    console.log(error);
-});
+}
 
 //思路参考：https://blog.csdn.net/cc_fys/article/details/81284638
 function navigation(tree, parentElement) 
@@ -113,10 +99,22 @@ function navigation(tree, parentElement)
     }
 }
 
-$.getScript("assets/js/plugins.js",function()
+//接口并发
+axios.all([article_list(), slider_images(), navigation_bar()])
+.then(axios.spread(function (resArticles, resSlider, resNavigation) 
 {
-    $.getScript("assets/js/scripts.js");
+    article_callback(resArticles);
+    slider_callback(resSlider);
+    navigation_callback(resNavigation);
+
+    $.getScript("assets/js/plugins.js",function()
+    {
+        $.getScript("assets/js/scripts.js");
+        $("#preloader").fadeOut(500);
+    });
+}))
+.catch(err=>
+{
+    console.log(err);
 });
-
-
 

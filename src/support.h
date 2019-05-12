@@ -98,7 +98,6 @@ struct article : public cppcms::serializable
     unsigned int nLikeCount;    //点赞量
     long long nLastModified;    //最后后修改时间
     std::string strDescribe;    //描述120字
-    int nShowType;              //显示类型
 
     void clear()
     {
@@ -112,12 +111,11 @@ struct article : public cppcms::serializable
         nLikeCount = 0;
         nLastModified = 0;
         strDescribe.clear();
-        nShowType = 0;
     }
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&strTitle&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe&nShowType;
+        a&nId&m_user&strTitle&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
     }
 };
 using articles = std::vector<article>;
@@ -148,7 +146,6 @@ namespace cppcms
                 out.nLikeCount = v.get<unsigned int>("like_count");
                 out.nLastModified = v.get<long long>("last_modified");
                 out.strDescribe = v.get<std::string>("describe");
-                out.nShowType = v.get<int>("show_type");
 
                 return out;
             }
@@ -165,7 +162,6 @@ namespace cppcms
                 v.set("like_count", in.nLikeCount);
                 v.set("last_modified", in.nLastModified);
                 v.set("describe", in.strDescribe);
-                v.set("show_type", in.nShowType);
             }
         };
     } // json
@@ -335,7 +331,7 @@ namespace cppcms
                 }
 
                 out.nId = v.get<unsigned int>("id");
-                out.nParentId = v.get<unsigned int>("parent");
+                out.nParentId = v.get<unsigned int>("parentId");
                 out.strName = v.get<std::string>("name");
                 out.nRank = v.get<int>("rank");
 
@@ -345,7 +341,7 @@ namespace cppcms
             static void set(value &v,sort const &in)
             {
                 v.set("id", in.nId);
-                v.set("parent", in.nParentId);
+                v.set("parentId", in.nParentId);
                 v.set("name", in.strName);
                 v.set("rank", in.nRank);
             }

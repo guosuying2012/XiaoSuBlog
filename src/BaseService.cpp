@@ -19,7 +19,7 @@ BaseService::~BaseService()
 
 cppdb::session& BaseService::database()
 {
-    if(!m_pDBInstence->is_open())
+    if(m_pDBInstence == nullptr)
     {
         m_pDBInstence = std::make_shared<cppdb::session>(m_pDBPool->open());
     }
@@ -51,7 +51,7 @@ void BaseService::buildDbConnString(std::string& strResConn)
     std::string db = settings().get<std::string>("database.db");
     std::string user = settings().get<std::string>("database.user");
     std::string password= settings().get<std::string>("database.password");
-    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";";
+    oss << driver << ":host=" << host <<";database=" << db << ";user=" << user << ";password=" << password << ";set_charset_name=utf8;";
 
     strResConn = oss.str();
 }

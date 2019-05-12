@@ -6,7 +6,7 @@
 	},
 	"http": 
 	{
-		"script_name": "/xiaosu"
+		"script": "/xiaosu"
 	},
 	"security": 
 	{

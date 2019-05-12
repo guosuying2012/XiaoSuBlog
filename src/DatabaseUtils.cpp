@@ -11,6 +11,7 @@ DatabaseUtils::~DatabaseUtils()
     
 }
 
+//导航图片操作
 //查询所有需要显示的记录
 void DatabaseUtils::queryAllSliderImages(cppdb::session& sql, SliderImages& vecRes)
 {
@@ -113,5 +114,45 @@ bool DatabaseUtils::updateSliderImages(cppdb::session& sql, SliderImage recoder)
     }
 
     return stat.affected() <= 0 ? false : true; 
+}
+
+//菜单操作
+void DatabaseUtils::queryAllSorts(cppdb::session& sql, sorts& vecRes)
+{
+    cppdb::result resRecords;
+    sort recoder;
+    resRecords.clear();
+    recoder.clear();
+    vecRes.clear();
+
+    try
+    {
+        resRecords = sql << "SELECT sort_id, sort_parent_id, sort_name, sort_rank FROM yengsu_sorts";
+        while (resRecords.next())
+        {
+            resRecords >> recoder.nId >> recoder.nParentId >> recoder.strName >> recoder.nRank;
+            vecRes.push_back(recoder);
+        }
+    }
+    catch(std::exception const& e)
+    {
+        throw e;
+    }
+
+}
+
+bool DatabaseUtils::insertSorts(cppdb::session& sql, sorts& vecRecoders)
+{
+    return false;
+}
+
+bool DatabaseUtils::deleteSort(cppdb::session& sql, sort& recoder)
+{
+    return false;
+}
+
+bool DatabaseUtils::updateSlort(cppdb::session& sql, sort& recoder)
+{
+    return false;
 }
 
