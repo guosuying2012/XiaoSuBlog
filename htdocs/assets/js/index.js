@@ -66,6 +66,11 @@ function slider_callback(response)
 //导航栏
 function navigation_callback(response) 
 {
+    if (response.data === "null") 
+    {
+        return;
+    }
+
     //思路参考：https://blog.csdn.net/Mr_JavaScript/article/details/82817177
     let cloneData = JSON.parse(JSON.stringify(response.data));
     var tree = cloneData.filter(father=>{
@@ -116,5 +121,6 @@ axios.all([article_list(), slider_images(), navigation_bar()])
 .catch(err=>
 {
     console.log(err);
+    return;
 });
 

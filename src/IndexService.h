@@ -11,11 +11,11 @@ public:
     ~IndexService();
 
 private:
-    void _default();
-    void article_list();
+    void index();
+    void article_list(std::string strCount);
     void navigation_bar();
     void slider_images();
-    void test_database(std::string strId);
+    void website_options();
 };
 
 #endif  //INDEX_SERVICE_H
