@@ -63,7 +63,7 @@ void IndexService::article_list(std::string strCount)
     {
         DatabaseUtils::queryArticles(database() , nReqCount, nRowCount, vecRes);
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         response().out() << e.what();
         return;
@@ -96,7 +96,7 @@ void IndexService::navigation_bar()
     {
         DatabaseUtils::queryAllSorts(database(), vecSorts);
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         response().out() << e.what();
         return;
@@ -129,7 +129,7 @@ void IndexService::slider_images()
     {
         DatabaseUtils::queryAllSliderImages(database(), vecImages);
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         response().out() << e.what();
         return;
@@ -162,7 +162,7 @@ void IndexService::website_options()
     {
         DatabaseUtils::queryAllOptions(database(), vecOptions);
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         response().out() << e.what();
         return;

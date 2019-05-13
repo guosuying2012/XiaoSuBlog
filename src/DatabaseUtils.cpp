@@ -30,7 +30,7 @@ void DatabaseUtils::queryAllSliderImages(cppdb::session& sql, SliderImages& vecR
             vecRes.push_back(recoder);
         }
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -51,7 +51,7 @@ bool DatabaseUtils::insertSliderImage(cppdb::session& sql, const SliderImage& re
         stat.bind(recoder.nIsShow);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -76,7 +76,7 @@ bool DatabaseUtils::deleteSliderImage(cppdb::session& sql, const SliderImage& re
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -104,7 +104,7 @@ bool DatabaseUtils::updateSliderImage(cppdb::session& sql, const SliderImage& re
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -131,7 +131,7 @@ void DatabaseUtils::queryAllSorts(cppdb::session& sql, sorts& vecRes)
             vecRes.push_back(recoder);
         }
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -156,7 +156,7 @@ bool DatabaseUtils::insertSort(cppdb::session& sql, const sort& recoder)
         stat.bind(recoder.nRank);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -181,7 +181,7 @@ bool DatabaseUtils::deleteSort(cppdb::session& sql, const sort& recoder)
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -209,7 +209,7 @@ bool DatabaseUtils::updateSort(cppdb::session& sql, const sort& recoder)
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -235,7 +235,7 @@ void DatabaseUtils::queryAllOptions(cppdb::session& sql, options& vecRes)
             vecRes.push_back(recoder);
         }
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -258,7 +258,7 @@ bool DatabaseUtils::insertOption(cppdb::session& sql, const option& recoder)
         stat.bind(recoder.strValue);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -282,7 +282,7 @@ bool DatabaseUtils::deleteOption(cppdb::session& sql, const option& recoder)
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -308,7 +308,7 @@ bool DatabaseUtils::updateOption(cppdb::session& sql, const option& recoder)
         stat.bind(recoder.nId);
         stat.exec();
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -332,9 +332,11 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, int nStart, int nShowCoun
 
     try
     {
-        resRecords = sql << "SELECT article_id, user_id, article_title, article_views, article_comment_count \
-        article_date, article_like_count, article_describe \
-        FROM yengsu_options limit ?,?" 
+        resRecords = sql << "SELECT article_id, article_title, article_views, \
+                        article_comment_count, article_date, article_like_count, \
+                        article_describe, yengsu_articles.user_id, user_name, user_nikename \
+                        FROM yengsu_articles, yengsu_users \
+                        WHERE yengsu_articles.user_id = yengsu_users.user_id LIMIT ?, ?"
         << nStartNum << nShowCount;
         while (resRecords.next())
         {
@@ -345,16 +347,13 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, int nStart, int nShowCoun
             recoder.nTime = resRecords.get<long long>("article_date");
             recoder.nLikeCount = resRecords.get<unsigned int>("article_like_count");
             recoder.strDescribe = resRecords.get<std::string>("article_describe");
-            int nUserId = resRecords.get<unsigned int>("user_id");
-            cppdb::result res = sql << "SELECT user_id, user_name, user_nikename FROM yengsu_users WHERE user_id=?" << nUserId << cppdb::row;
-            if(!res.empty()) 
-            {
-                res >> recoder.m_user.nId >> recoder.m_user.strName >> recoder.m_user.strNikeName;
-                vecRes.push_back(recoder);
-            }
+            recoder.m_user.nId = resRecords.get<unsigned int>("user_id");
+            recoder.m_user.strName = resRecords.get<unsigned int>("user_name");
+            recoder.m_user.strNikeName = resRecords.get<unsigned int>("user_nikename");
+            vecRes.push_back(recoder);
         }
     }
-    catch(std::exception const& e)
+    catch(cppdb::cppdb_error const& e)
     {
         throw e;
     }
