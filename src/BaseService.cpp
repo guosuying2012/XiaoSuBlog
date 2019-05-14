@@ -1,5 +1,6 @@
 #include "BaseService.h"
 #include <cppcms/service.h>
+#include <cppcms/http_context.h>
 #include <cppdb/frontend.h>
 #include <sstream>
 
@@ -15,6 +16,14 @@ BaseService::BaseService(cppcms::service &s)
 BaseService::~BaseService()
 {
     close();
+}
+
+cppcms::http::response& BaseService::response(int nCode, std::string const& strReponseType)
+{
+    context().response().status(nCode);
+    context().response().content_type(strReponseType);
+    context().response().add_header("Accept", strReponseType);
+    return context().response();
 }
 
 cppdb::session& BaseService::database()

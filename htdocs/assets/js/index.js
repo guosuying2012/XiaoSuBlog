@@ -6,11 +6,6 @@ window.onload = function()
 //文章列表
 function article_callback(response) 
 {
-    if (response.data === "null") 
-    {
-        return;
-    }
-    
     for (var i = 0; i <= response.data.length - 1; ++i) 
     {
         var obj = response.data[i];
@@ -21,18 +16,13 @@ function article_callback(response)
             article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }
         article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>"+obj.title+"</a></h3> \
-                    <span><span>"+obj.time+"</span> \
-                    / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.id+"\")'><span>"+ obj.author +"</span></a> \
-                    / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.travel+"</a></span> \
-                    / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comments+"</span> Comments</a></span> \
-                    </header> \
-                    <div class='editor-styles'>"+obj.content+"</div> \
-                    <footer> \
-                    <div> \
-                    <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.uuid+"\")'>Continue Reading...</a> \
-                    </div><hr> \
-                    </footer> \
-                    </article>";
+        <span><span>"+obj.time+"</span> \
+        / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.id+"\")'><span>"+ obj.user.name +"</span></a> \
+        / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.sort.name+"</a></span> \
+        / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comment_count+"</span> Comments</a></span> \
+        </header> <div class='editor-styles'>"+obj.describe+"</div> <footer> <div> \
+        <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>Continue Reading...</a> \
+        </div><hr> </footer> </article>";
         $("#list").append(article);
     }
 }
@@ -40,11 +30,6 @@ function article_callback(response)
 //滚动图片
 function slider_callback(response) 
 {
-    if (response.data === "null") 
-    {
-        return;
-    }
-
     for (var i = response.data.length - 1; i >= 0; i--) 
     {
         var slider = $("<div><a href='#'><img class='slider_image'></a> \
@@ -66,11 +51,6 @@ function slider_callback(response)
 //导航栏
 function navigation_callback(response) 
 {
-    if (response.data === "null") 
-    {
-        return;
-    }
-
     //思路参考：https://blog.csdn.net/Mr_JavaScript/article/details/82817177
     let cloneData = JSON.parse(JSON.stringify(response.data));
     var tree = cloneData.filter(father=>{
@@ -105,9 +85,16 @@ function navigation(tree, parentElement)
 }
 
 //接口并发
-axios.all([article_list(), slider_images(), navigation_bar()])
+axios.all([article_list("/1"), slider_images(), navigation_bar()])
 .then(axios.spread(function (resArticles, resSlider, resNavigation) 
 {
+    if (resArticles.data === "null" 
+        || resSlider.data === "null" 
+        || resNavigation.data === "null") 
+    {
+        return;
+    }
+
     article_callback(resArticles);
     slider_callback(resSlider);
     navigation_callback(resNavigation);

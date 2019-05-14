@@ -1,4 +1,5 @@
 #include "DatabaseUtils.h"
+#include <cppcms/util.h>
 #include <iostream>
 
 DatabaseUtils::DatabaseUtils()
@@ -317,10 +318,11 @@ bool DatabaseUtils::updateOption(cppdb::session& sql, const option& recoder)
 }
 
 //文章操作
-void DatabaseUtils::queryArticles(cppdb::session& sql, int nStart, int nShowCount, articles& vecRes)
+void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition, int nStart, int nShowCount, articles& vecRes)
 {
     cppdb::result resRecords;
     article recoder;
+    std::stringstream ssSQL;
     int nStartNum;
 
     resRecords.clear();
@@ -328,28 +330,61 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, int nStart, int nShowCoun
     vecRes.clear();
     nStartNum = 0;
 
-    nStartNum = nStart == 1 ? 0 : nStart * 10;
+    if (nShowCount <= 0)
+    {
+        return;
+    }
+
+    if (strCondition.empty())
+    {
+        return;
+    }
+
+    nStartNum = nStart == 1 ? 0 : nShowCount - 1;
+
+    ssSQL << "SELECT \
+                yengsu_articles.article_id, \
+                article_title, \
+                article_views, \
+                article_comment_count, \
+                article_date, \
+                article_like_count, \
+                article_describe, \
+                yengsu_articles.user_id, \
+                user_name, \
+                user_nikename, \
+                yengsu_sorts.sort_id, \
+                sort_name \
+            FROM \
+                yengsu_articles, \
+                yengsu_users, \
+                yengsu_set_article_sort, \
+                yengsu_sorts \
+            WHERE "
+            << strCondition
+            << " ORDER BY article_date DESC" 
+            << " LIMIT " 
+            << nStartNum 
+            << ", " << nShowCount;
 
     try
     {
-        resRecords = sql << "SELECT article_id, article_title, article_views, \
-                        article_comment_count, article_date, article_like_count, \
-                        article_describe, yengsu_articles.user_id, user_name, user_nikename \
-                        FROM yengsu_articles, yengsu_users \
-                        WHERE yengsu_articles.user_id = yengsu_users.user_id LIMIT ?, ?"
-        << nStartNum << nShowCount;
+        resRecords = sql << ssSQL.str();
         while (resRecords.next())
         {
+            std::string strDescribe = resRecords.get<std::string>("article_describe");
             recoder.nId = resRecords.get<unsigned int>("article_id");
             recoder.strTitle = resRecords.get<std::string>("article_title");
             recoder.nViews = resRecords.get<unsigned int>("article_views");
             recoder.nCommentCount = resRecords.get<unsigned int>("article_comment_count");
-            recoder.nTime = resRecords.get<long long>("article_date");
+            recoder.nTime = resRecords.get<unsigned long long>("article_date");
             recoder.nLikeCount = resRecords.get<unsigned int>("article_like_count");
-            recoder.strDescribe = resRecords.get<std::string>("article_describe");
+            recoder.strDescribe = cppcms::util::escape(strDescribe);
             recoder.m_user.nId = resRecords.get<unsigned int>("user_id");
-            recoder.m_user.strName = resRecords.get<unsigned int>("user_name");
-            recoder.m_user.strNikeName = resRecords.get<unsigned int>("user_nikename");
+            recoder.m_user.strName = resRecords.get<std::string>("user_name");
+            recoder.m_user.strNikeName = resRecords.get<std::string>("user_nikename");
+            recoder.m_sort.nId = resRecords.get<unsigned int>("sort_id");
+            recoder.m_sort.strName = resRecords.get<std::string>("sort_name");
             vecRes.push_back(recoder);
         }
     }

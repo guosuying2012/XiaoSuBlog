@@ -17,17 +17,17 @@ IndexService::IndexService(cppcms::service& srv)
     dispatcher().assign("/index", &IndexService::index, this);
     mapper().assign("index", "/index");
 
-    dispatcher().assign("/index/get_article_list/(\\d+)", &IndexService::article_list, this, 1);
-    mapper().assign("get_article_list", "/index/get_article_list/{1}");
+    dispatcher().assign("/index/getArticles/(\\d+)", &IndexService::articleList, this, 1);
+    mapper().assign("getArticles", "/index/getArticles/{1}");
 
-    dispatcher().assign("/index/get_navigation_bar", &IndexService::navigation_bar, this);
-    mapper().assign("get_navigation_bar", "/index/get_navigation_bar");
+    dispatcher().assign("/index/getNavigations", &IndexService::navigationBar, this);
+    mapper().assign("getNavigations", "/index/getNavigations");
 
-    dispatcher().assign("/index/get_slider_images", &IndexService::slider_images, this);
-    mapper().assign("get_slider_images", "/index/get_slider_images");
+    dispatcher().assign("/index/getSliderImages", &IndexService::sliderImages, this);
+    mapper().assign("getSliderImages", "/index/getSliderImages");
 
-    dispatcher().assign("/index/get_website_options", &IndexService::website_options, this);
-    mapper().assign("get_website_options", "/index/get_website_options");
+    dispatcher().assign("/index/getWebsiteOptions", &IndexService::websiteOptions, this);
+    mapper().assign("getWebsiteOptions", "/index/getWebsiteOptions");
 
     mapper().root("/xiaosu");
 }
@@ -41,56 +41,54 @@ void IndexService::index()
     response().out() << "index";
 }
 
-void IndexService::article_list(std::string strCount)
+void IndexService::articleList(std::string strCount)
 {
     cppcms::json::value jsonRes;
     articles vecRes;
+    std::string strCondition;
     std::stringstream ss;
     int nReqCount;
     int nRowCount;
-    size_t nArticleLength;
 
     vecRes.clear();
+    strCondition.clear();
     ss.clear();
     nRowCount = 10;
     nReqCount = 0;
-    nArticleLength = 0;
 
     ss << strCount;
     ss >> nReqCount;
+    strCondition = "yengsu_articles.user_id = yengsu_users.user_id AND yengsu_set_article_sort.sort_id = yengsu_sorts.sort_id";
 
     try
     {
-        DatabaseUtils::queryArticles(database() , nReqCount, nRowCount, vecRes);
+        DatabaseUtils::queryArticles(database(), strCondition, nReqCount, nRowCount, vecRes);
     }
     catch(cppdb::cppdb_error const& e)
     {
-        response().out() << e.what();
+        jsonRes["data"] = "null";
+        jsonRes["error"] = e.what();
+        response(500).out() << jsonRes;
         return;
     }
 
-    nArticleLength = vecRes.size();
-    if (nArticleLength <= 0)
+    if (vecRes.size() <= 0)
     {
         jsonRes["data"] = "null";
+        return;
     }
 
-    for (int i = 0; i < nArticleLength; ++i)
-    {
-        cppcms::json::value obj = vecRes.at(i);
-        jsonRes["data"][i] = obj;
-    }
+    jsonRes["data"] = vecRes;
 
     response().out() << jsonRes;
 }
 
-void IndexService::navigation_bar()
+void IndexService::navigationBar()
 {
     sorts vecSorts;
-    size_t nSortLength;
     cppcms::json::value jsonRes;
+
     vecSorts.clear();
-    nSortLength = 0;
 
     try
     {
@@ -98,32 +96,28 @@ void IndexService::navigation_bar()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        response().out() << e.what();
+        jsonRes["data"] = "null";
+        jsonRes["error"] = e.what();
+        response(500).out() << jsonRes;
         return;
     }
 
-    nSortLength = vecSorts.size();
-    if (nSortLength <= 0)
+    if (vecSorts.size() <= 0)
     {
         jsonRes["data"] = "null";
+        return;
     }
 
-    for (int i = 0; i < nSortLength; ++i)
-    {
-        cppcms::json::value obj = vecSorts.at(i);
-        jsonRes["data"][i] = obj;
-    }
-
+    jsonRes["data"] = vecSorts;
     response().out() << jsonRes;
 }
 
-void IndexService::slider_images()
+void IndexService::sliderImages()
 {
     SliderImages vecImages;
-    size_t nImagesLength;
     cppcms::json::value jsonRes;
+
     vecImages.clear();
-    nImagesLength = 0;
 
     try
     {
@@ -131,32 +125,28 @@ void IndexService::slider_images()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        response().out() << e.what();
+        jsonRes["data"] = "null";
+        jsonRes["error"] = e.what();
+        response(500).out() << jsonRes;
         return;
     }
 
-    nImagesLength = vecImages.size();
-    if (nImagesLength <= 0)
+    if (vecImages.size() <= 0)
     {
         jsonRes["data"] = "null";
+        return;
     }
 
-    for (int i = 0; i < nImagesLength; ++i)
-    {
-        cppcms::json::value obj = vecImages.at(i);
-        jsonRes["data"][i] = obj;
-    }
-
+    jsonRes["data"] = vecImages;
     response().out() << jsonRes;
 }
 
-void IndexService::website_options()
+void IndexService::websiteOptions()
 {
     options vecOptions;
-    size_t nImagesLength;
     cppcms::json::value jsonRes;
+
     vecOptions.clear();
-    nImagesLength = 0;
 
     try
     {
@@ -164,21 +154,18 @@ void IndexService::website_options()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        response().out() << e.what();
+        jsonRes["data"] = "null";
+        jsonRes["error"] = e.what();
+        response(500).out() << jsonRes;
         return;
     }
 
-    nImagesLength = vecOptions.size();
-    if (nImagesLength <= 0)
+    if (vecOptions.size() <= 0)
     {
         jsonRes["data"] = "null";
+        return;
     }
 
-    for (int i = 0; i < nImagesLength; ++i)
-    {
-        cppcms::json::value obj = vecOptions.at(i);
-        jsonRes["data"][i] = obj;
-    }
-
+    jsonRes["data"] = vecOptions;
     response().out() << jsonRes;
 }

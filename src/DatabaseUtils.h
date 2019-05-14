@@ -31,7 +31,8 @@ public:
     static bool updateOption(cppdb::session&, const option& recoder);
 
     //文章操作
-    static void queryArticles(cppdb::session&, int nStart, int nShowCount, articles& vecRes);
+    //用于首页和分类等展示用途
+    static void queryArticles(cppdb::session&, std::string strCondition, int nStart, int nShowCount, articles& vecRes);
 };
 
 #endif //DATABASE_UTLIS_H

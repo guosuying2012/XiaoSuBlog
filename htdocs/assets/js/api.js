@@ -1,8 +1,8 @@
 //首页相关接口
-const article_list = p=>get("index/get_article_list", p);
-const slider_images = p=>get("index/get_slider_images", p);
-const navigation_bar = p=>get("index/get_navigation_bar", p);
-
+const article_list = p=>get("index/getArticles", p);
+const slider_images = p=>get("index/getSliderImages", p);
+const navigation_bar = p=>get("index/getNavigations", p);
+const website_options = p=>get("index/getWebsiteOptions", p);
 
 
 

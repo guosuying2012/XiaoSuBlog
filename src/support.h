@@ -84,25 +84,84 @@ namespace cppcms
     } // json
 } // cppcms
 
+//分类信息结构体
+struct sort : public cppcms::serializable
+{
+    unsigned int nId;       //分类ID
+    unsigned int nParentId; //父ID
+    std::string strName;    //分类名称
+    int nRank;              //排序
+
+    void clear()
+    {
+        nId = 0;
+        nParentId = 0;
+        strName.clear();
+        nRank = 0;
+    }
+
+    void serialize(cppcms::archive &a)
+    {
+        a&nId&nParentId&strName&nRank;
+    }
+};
+using sorts = std::vector<sort>;
+
+//sort json 方法
+namespace cppcms 
+{
+    namespace json 
+    {
+        template<>
+        struct traits<sort> 
+        {
+            static sort get(value const &v)
+            {
+                sort out;
+                if(v.type()!=is_object)
+                {
+                    throw bad_value_cast();
+                }
+
+                out.nId = v.get<unsigned int>("id");
+                out.nParentId = v.get<unsigned int>("parentId");
+                out.strName = v.get<std::string>("name");
+                out.nRank = v.get<int>("rank");
+
+                return out;
+            }
+
+            static void set(value &v,sort const &in)
+            {
+                v.set("id", in.nId);
+                v.set("parentId", in.nParentId);
+                v.set("name", in.strName);
+                v.set("rank", in.nRank);
+            }
+        };
+    } // json
+} // cppcms
 
 //博客信息结构体
 struct article : public cppcms::serializable
 {
-    unsigned int nId;           //博客ID
-    user m_user;                //用户
-    std::string strTitle;       //标题
-    std::string strContent;     //内容
-    unsigned int nViews;        //浏览量
-    unsigned int nCommentCount; //评论量
-    long long nTime;            //发布时间
-    unsigned int nLikeCount;    //点赞量
-    long long nLastModified;    //最后后修改时间
-    std::string strDescribe;    //描述120字
+    unsigned int nId;                   //博客ID
+    user m_user;                        //用户
+    sort m_sort;                        //分类
+    std::string strTitle;               //标题
+    std::string strContent;             //内容
+    unsigned int nViews;                //浏览量
+    unsigned int nCommentCount;         //评论量
+    unsigned long long nTime;           //发布时间
+    unsigned int nLikeCount;            //点赞量
+    unsigned long long nLastModified;   //最后后修改时间
+    std::string strDescribe;            //描述120字
 
     void clear()
     {
         nId = 0;
         m_user.clear();
+        m_sort.clear();
         strTitle.clear();
         strContent.clear();
         nViews = 0;
@@ -115,7 +174,7 @@ struct article : public cppcms::serializable
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&strTitle&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
+        a&nId&m_user&m_sort&strTitle&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
     }
 };
 using articles = std::vector<article>;
@@ -138,13 +197,14 @@ namespace cppcms
 
                 out.nId = v.get<unsigned int>("id");
                 out.m_user = v.get<user>("user");
+                out.m_sort = v.get<sort>("sort");
                 out.strTitle = v.get<std::string>("title");
                 out.strContent = v.get<std::string>("content");
                 out.nViews = v.get<unsigned int>("views");
                 out.nCommentCount = v.get<unsigned int>("comment_count");
-                out.nTime = v.get<long long>("time");
+                out.nTime = v.get<unsigned long long>("time");
                 out.nLikeCount = v.get<unsigned int>("like_count");
-                out.nLastModified = v.get<long long>("last_modified");
+                out.nLastModified = v.get<unsigned long long>("last_modified");
                 out.strDescribe = v.get<std::string>("describe");
 
                 return out;
@@ -154,6 +214,7 @@ namespace cppcms
             {
                 v.set("id", in.nId);
                 v.set("user", in.m_user);
+                v.set("sort", in.m_sort);
                 v.set("title", in.strTitle);
                 v.set("content", in.strContent);
                 v.set("views", in.nViews);
@@ -286,64 +347,6 @@ namespace cppcms
                 v.set("id", in.nId);
                 v.set("name", in.strName);
                 v.set("value", in.strValue);
-            }
-        };
-    } // json
-} // cppcms
-
-//分类信息结构体
-struct sort : public cppcms::serializable
-{
-    unsigned int nId;       //分类ID
-    unsigned int nParentId; //父ID
-    std::string strName;    //分类名称
-    int nRank;              //排序
-
-    void clear()
-    {
-        nId = 0;
-        nParentId = 0;
-        strName.clear();
-        nRank = 0;
-    }
-
-    void serialize(cppcms::archive &a)
-    {
-        a&nId&nParentId&strName&nRank;
-    }
-};
-using sorts = std::vector<sort>;
-
-//sort json 方法
-namespace cppcms 
-{
-    namespace json 
-    {
-        template<>
-        struct traits<sort> 
-        {
-            static sort get(value const &v)
-            {
-                sort out;
-                if(v.type()!=is_object)
-                {
-                    throw bad_value_cast();
-                }
-
-                out.nId = v.get<unsigned int>("id");
-                out.nParentId = v.get<unsigned int>("parentId");
-                out.strName = v.get<std::string>("name");
-                out.nRank = v.get<int>("rank");
-
-                return out;
-            }
-
-            static void set(value &v,sort const &in)
-            {
-                v.set("id", in.nId);
-                v.set("parentId", in.nParentId);
-                v.set("name", in.strName);
-                v.set("rank", in.nRank);
             }
         };
     } // json

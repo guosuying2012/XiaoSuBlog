@@ -12,10 +12,10 @@ public:
 
 private:
     void index();
-    void article_list(std::string strCount);
-    void navigation_bar();
-    void slider_images();
-    void website_options();
+    void articleList(std::string strCount);
+    void navigationBar();
+    void sliderImages();
+    void websiteOptions();
 };
 
 #endif  //INDEX_SERVICE_H

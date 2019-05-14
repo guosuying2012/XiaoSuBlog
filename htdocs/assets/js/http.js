@@ -6,33 +6,27 @@ axios.defaults.timeout = 10000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // 响应拦截器
 axios.interceptors.response.use(    
-    response => {
-        // 如果返回的状态码为200
+    response =>
+    {
+        //如果返回的状态码为200
         if (response.status === 200) 
         {
             return Promise.resolve(response);        
         }
-        else// 否则的话抛出错误
+        else//否则的话抛出错误
         {
             return Promise.reject(response);        
         }
-    },    
-    // 后台错误状态码
-    error => {           
+    },
+    //后台错误状态码
+    error => 
+    {           
         if (error.response.status) 
         {
             switch (error.response.status) 
             {
-                // 401: 未登录          
-                case 401:
-                    break;
-                // 403 token过期
-                case 403:
-                    break; 
-                // 404请求不存在
                 case 404:
                     break;
-                // 其他错误，直接抛出错误提示
                 default:
                     break;
             }
@@ -48,13 +42,19 @@ axios.interceptors.response.use(
  */
 function get(url, params)
 {
-    return new Promise((resolve, reject) =>{        
-        axios.get(url + (params==undefined?"":params)).then(res => {
+    return new Promise((resolve, reject) =>
+    {        
+        axios.get(url + (params == undefined ? "" : params))
+        .then(res => 
+        {
             resolve(res.data);
-        }).catch(err =>{
-            reject(err.data)        
-    })    
-});}
+        })
+        .catch(err =>
+        {
+            reject(err.data)
+        })
+    });
+}
 
 /** 
  * post方法，对应post请求 
@@ -63,12 +63,15 @@ function get(url, params)
  */
 function post(url, params) 
 {
-    return new Promise((resolve, reject) => {
-         axios.post(url, QS.stringify(params))
-        .then(res => {
+    return new Promise((resolve, reject) => 
+    {
+        axios.post(url, QS.stringify(params))
+        .then(res => 
+        {
             resolve(res.data);
         })
-        .catch(err =>{
+        .catch(err =>
+        {
             reject(err.data)
         })
     });
@@ -76,10 +79,10 @@ function post(url, params)
 
 //链接类型枚举
 /*
-    TEXT: 博客连接
-    AUTHOR: 作者连接，因为要列出作者所有的作品所以跳转到列表页
-    TRAVEL: 列表连接
-    COMMENTS: 评论区连接
+    TEXT: 博客
+    AUTHOR: 作者，因为要列出作者所有的作品所以跳转到列表页
+    TRAVEL: 列表
+    COMMENTS: 评论区
 */
 var LinkTypeEnum = { TEXT: 1, AUTHOR: 2, TRAVEL: 3, COMMENTS: 4 };
 
@@ -103,7 +106,7 @@ function pageJump(type, id)
         self.location = 'single.html#comments';
         break;
     default:
-        self.location = '/blog/';
+        self.location = '/';
         break;
     }
 }
