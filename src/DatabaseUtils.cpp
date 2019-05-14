@@ -329,15 +329,16 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
     recoder.clear();
     vecRes.clear();
     nStartNum = 0;
+    ssSQL.clear();
 
     if (nShowCount <= 0)
     {
         return;
     }
 
-    if (strCondition.empty())
+    if (!strCondition.empty())
     {
-        return;
+        strCondition = "AND" + strCondition;
     }
 
     nStartNum = nStart == 1 ? 0 : nShowCount - 1;
@@ -345,27 +346,26 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
     ssSQL << "SELECT \
                 yengsu_articles.article_id, \
                 article_title, \
-                article_views, \
-                article_comment_count, \
-                article_date, \
-                article_like_count, \
                 article_describe, \
+                article_date, \
+                article_comment_count, \
                 yengsu_articles.user_id, \
                 user_name, \
                 user_nikename, \
-                yengsu_sorts.sort_id, \
-                sort_name \
+                yengsu_set_article_sort.sort_id, \
+                yengsu_sorts.sort_name \
             FROM \
                 yengsu_articles, \
                 yengsu_users, \
                 yengsu_set_article_sort, \
                 yengsu_sorts \
-            WHERE "
+            WHERE \
+                yengsu_articles.user_id = yengsu_users.user_id \
+                AND yengsu_set_article_sort.article_id = yengsu_articles.article_id \
+                AND yengsu_set_article_sort.sort_id = yengsu_sorts.sort_id "
             << strCondition
             << " ORDER BY article_date DESC" 
-            << " LIMIT " 
-            << nStartNum 
-            << ", " << nShowCount;
+            << " LIMIT " << nStartNum << ", " << nShowCount;
 
     try
     {
@@ -375,10 +375,8 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
             std::string strDescribe = resRecords.get<std::string>("article_describe");
             recoder.nId = resRecords.get<unsigned int>("article_id");
             recoder.strTitle = resRecords.get<std::string>("article_title");
-            recoder.nViews = resRecords.get<unsigned int>("article_views");
             recoder.nCommentCount = resRecords.get<unsigned int>("article_comment_count");
             recoder.nTime = resRecords.get<unsigned long long>("article_date");
-            recoder.nLikeCount = resRecords.get<unsigned int>("article_like_count");
             recoder.strDescribe = cppcms::util::escape(strDescribe);
             recoder.m_user.nId = resRecords.get<unsigned int>("user_id");
             recoder.m_user.strName = resRecords.get<std::string>("user_name");

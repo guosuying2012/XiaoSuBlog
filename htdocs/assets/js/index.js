@@ -11,12 +11,12 @@ function article_callback(response)
         var obj = response.data[i];
         var article = "";
         article = "<article class='post'> <header>";
-        if (obj.image != "")
+        if (obj.image != undefined)
         {
             article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }
         article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>"+obj.title+"</a></h3> \
-        <span><span>"+obj.time+"</span> \
+        <span><span>"+timetrans(obj.time)+"</span> \
         / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.id+"\")'><span>"+ obj.user.name +"</span></a> \
         / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.sort.name+"</a></span> \
         / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comment_count+"</span> Comments</a></span> \

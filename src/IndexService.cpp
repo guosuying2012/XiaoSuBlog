@@ -45,24 +45,21 @@ void IndexService::articleList(std::string strCount)
 {
     cppcms::json::value jsonRes;
     articles vecRes;
-    std::string strCondition;
     std::stringstream ss;
     int nReqCount;
     int nRowCount;
 
     vecRes.clear();
-    strCondition.clear();
     ss.clear();
     nRowCount = 10;
     nReqCount = 0;
 
     ss << strCount;
     ss >> nReqCount;
-    strCondition = "yengsu_articles.user_id = yengsu_users.user_id AND yengsu_set_article_sort.sort_id = yengsu_sorts.sort_id";
 
     try
     {
-        DatabaseUtils::queryArticles(database(), strCondition, nReqCount, nRowCount, vecRes);
+        DatabaseUtils::queryArticles(database(), "", nReqCount, nRowCount, vecRes);
     }
     catch(cppdb::cppdb_error const& e)
     {
