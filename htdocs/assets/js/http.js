@@ -4,6 +4,9 @@ axios.defaults.baseURL = 'http://localhost/xiaosu/';
 axios.defaults.timeout = 10000;
 //post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+//页面样式
+document.cookie = "layout=boxed";
+document.cookie = "bg=bg2";
 // 响应拦截器
 axios.interceptors.response.use(    
     response =>
@@ -135,12 +138,24 @@ function pageJump(type, id)
 
 function timetrans(date)
 {
-    var date = new Date(date);//如果date为13位不需要乘1000
-    var Y = date.getFullYear() + '-';
-    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    var date = new Date(date);
+    var Y = date.getFullYear() + '/';
+    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '/';
     var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
     var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
     var m = (date.getMinutes() <10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
     var s = (date.getSeconds() <10 ? '0' + date.getSeconds() : date.getSeconds());
-    return Y+M+D+h+m+s;
+    return Y + M + D + h + m + s;
+}
+
+function spopAlert(strMessage, strStyle, strPosition) 
+{
+    spop({
+        template: strMessage,
+        position: strPosition,          //top-left, top-center, bottom-left, bottom-center, bottom-right
+        style: strStyle,                //info, error, success
+        autoclose: 5000,                //false, miliseconds
+        icon: true,                     //true or false
+        group: false                    // string, add a id reference 
+    });
 }

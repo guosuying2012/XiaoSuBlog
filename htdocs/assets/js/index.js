@@ -17,10 +17,10 @@ function article_callback(response)
         }
         article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>"+obj.title+"</a></h3> \
         <span><span>"+timetrans(obj.time)+"</span> \
-        / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.id+"\")'><span>"+ obj.user.name +"</span></a> \
-        / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.sort.name+"</a></span> \
+        / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.user.id+"\")'><span>"+ obj.user.name +"</span></a> \
+        / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.sort.id+"\")'>"+obj.sort.name+"</a></span> \
         / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comment_count+"</span> Comments</a></span> \
-        </header> <div class='editor-styles'>"+obj.describe+"</div> <footer> <div> \
+        </header> <div class='editor-styles' style='text-indent:2em'>"+obj.describe+"......</div> <footer> <div> \
         <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>Continue Reading...</a> \
         </div><hr> </footer> </article>";
         $("#list").append(article);
@@ -32,7 +32,7 @@ function slider_callback(response)
 {
     for (var i = response.data.length - 1; i >= 0; i--) 
     {
-        var slider = $("<div><a href='#'><img class='slider_image'></a> \
+        var slider = $("<div><a><img class='slider_image'></a> \
                     <span class='description'></span> \
                     </div>");
         $("#featured").append(slider);
@@ -102,11 +102,14 @@ function loadmore()
         if (response.data != "null") 
         {
             article_callback(response);
+            return;
         }
+        spopAlert(response.error, "info", "bottom-right");
     })
     .catch(error=>
     {
-        console.log(error);
+        $("#preloader").fadeOut(500);
+        spopAlert(error.error, "error", "bottom-right");
         return;
     });
 }
@@ -144,8 +147,8 @@ axios.all([article_list("/1"), slider_images(), navigation_bar(), website_option
 }))
 .catch(err=>
 {
-    console.log(err);
     $("#preloader").fadeOut(500);
+    spopAlert(err.error, "error", "bottom-right");
     return;
 });
 

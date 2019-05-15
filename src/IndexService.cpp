@@ -72,6 +72,7 @@ void IndexService::articleList(std::string strCount)
     if (vecRes.size() <= 0)
     {
         jsonRes["data"] = "null";
+        jsonRes["error"] = u8"没有找到更多记录!";
         response().out() << jsonRes;
         return;
     }
@@ -103,6 +104,7 @@ void IndexService::navigationBar()
     if (vecSorts.size() <= 0)
     {
         jsonRes["data"] = "null";
+        jsonRes["error"] = "No more records";
         response().out() << jsonRes;
         return;
     }
@@ -133,6 +135,7 @@ void IndexService::sliderImages()
     if (vecImages.size() <= 0)
     {
         jsonRes["data"] = "null";
+        jsonRes["error"] = "No more records";
         response().out() << jsonRes;
         return;
     }
@@ -163,6 +166,7 @@ void IndexService::websiteOptions()
     if (vecOptions.size() <= 0)
     {
         jsonRes["data"] = "null";
+        jsonRes["error"] = "No more records";
         response().out() << jsonRes;
         return;
     }
