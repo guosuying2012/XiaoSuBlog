@@ -71,6 +71,8 @@ int http_client::curl(http_request& req, http_response& res)
     case http_request::id: psz = str;    break;
         FOREACH_CONTENT_TYPE(CASE_CONTENT_TYPE)
 #undef  CASE_CONTENT_TYPE
+    case http_request::NONE:  break;
+    case http_request::LAST:  break;
     }
     std::string strContentType("Content-type: ");
     strContentType += psz;

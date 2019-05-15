@@ -9,6 +9,7 @@ BaseService::BaseService(cppcms::service &s)
 {
     m_pDBPool = nullptr;
     m_pDBInstence = nullptr;
+    m_strConnectString.clear();
 
     init();
 }
@@ -28,25 +29,26 @@ cppcms::http::response& BaseService::response(int nCode, std::string const& strR
 
 cppdb::session& BaseService::database()
 {
-    if(m_pDBInstence == nullptr)
+    if (!m_pDBInstence->is_open())
     {
-        m_pDBInstence = std::make_shared<cppdb::session>(m_pDBPool->open());
+        m_pDBInstence->open(m_strConnectString);
     }
     return *m_pDBInstence;
 }
 
 void BaseService::close()
 {
-    m_pDBInstence->close();
+    if (m_pDBInstence->is_open())
+    {
+        m_pDBInstence->close();
+    }
 }
 
 void BaseService::init()
 {
-    std::string strConnectString;
-    strConnectString.clear();
-
-    buildDbConnString(strConnectString);
-    m_pDBPool = cppdb::pool::create(strConnectString);
+    buildDbConnString(m_strConnectString);
+    m_pDBPool = cppdb::pool::create(m_strConnectString);
+    m_pDBInstence = std::make_shared<cppdb::session>(m_pDBPool->open());
 }
 
 void BaseService::buildDbConnString(std::string& strResConn)

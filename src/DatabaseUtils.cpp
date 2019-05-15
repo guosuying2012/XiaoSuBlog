@@ -341,7 +341,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
         strCondition = "AND" + strCondition;
     }
 
-    nStartNum = nStart == 1 ? 0 : nShowCount - 1;
+    nStartNum = nStart <= 1 ? 0 : (nStart - 1) * nShowCount;
 
     ssSQL << "SELECT \
                 yengsu_articles.article_id, \

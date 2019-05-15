@@ -61,6 +61,14 @@ function navigation_callback(response)
     navigation(tree, "#menu");
 }
 
+function website_callback(response) 
+{
+    for (var i = response.data.length - 1; i >= 0; i--) 
+    {
+        document.getElementsByClassName(response.data[i].name).innerHTML = response.data[i].value;
+    }
+}
+
 //思路参考：https://blog.csdn.net/cc_fys/article/details/81284638
 function navigation(tree, parentElement) 
 {
@@ -84,30 +92,60 @@ function navigation(tree, parentElement)
     }
 }
 
-//接口并发
-axios.all([article_list("/1"), slider_images(), navigation_bar()])
-.then(axios.spread(function (resArticles, resSlider, resNavigation) 
+var nNumber = 1;
+function loadmore() 
 {
-    if (resArticles.data === "null" 
-        || resSlider.data === "null" 
-        || resNavigation.data === "null") 
+    ++nNumber;
+    article_list("/" + nNumber)
+    .then(response=>
     {
+        if (response.data != "null") 
+        {
+            article_callback(response);
+        }
+    })
+    .catch(error=>
+    {
+        console.log(error);
         return;
+    });
+}
+
+//接口并发
+axios.all([article_list("/1"), slider_images(), navigation_bar(), website_options()])
+.then(axios.spread(function (resArticles, resSlider, resNavigation, resWebsiteOptions) 
+{
+    if (resArticles.data != "null") 
+    {
+        article_callback(resArticles);
     }
 
-    article_callback(resArticles);
-    slider_callback(resSlider);
-    navigation_callback(resNavigation);
+    if (resSlider.data != "null") 
+    {
+        slider_callback(resSlider);
+    }
+    
+    if (resNavigation.data != "null") 
+    {
+        navigation_callback(resNavigation);
+    }
+
+    if (resWebsiteOptions.data != "null") 
+    {
+        website_callback(resWebsiteOptions);
+    }
 
     $.getScript("assets/js/plugins.js",function()
     {
         $.getScript("assets/js/scripts.js");
         $("#preloader").fadeOut(500);
     });
+    $("#content").append("<nav id='post-nav'><a href='javascript:void(0)' onclick='loadmore()'>Older Posts »</a></nav>")
 }))
 .catch(err=>
 {
     console.log(err);
+    $("#preloader").fadeOut(500);
     return;
 });
 

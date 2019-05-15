@@ -72,6 +72,7 @@ void IndexService::articleList(std::string strCount)
     if (vecRes.size() <= 0)
     {
         jsonRes["data"] = "null";
+        response().out() << jsonRes;
         return;
     }
 
@@ -102,6 +103,7 @@ void IndexService::navigationBar()
     if (vecSorts.size() <= 0)
     {
         jsonRes["data"] = "null";
+        response().out() << jsonRes;
         return;
     }
 
@@ -131,6 +133,7 @@ void IndexService::sliderImages()
     if (vecImages.size() <= 0)
     {
         jsonRes["data"] = "null";
+        response().out() << jsonRes;
         return;
     }
 
@@ -160,6 +163,7 @@ void IndexService::websiteOptions()
     if (vecOptions.size() <= 0)
     {
         jsonRes["data"] = "null";
+        response().out() << jsonRes;
         return;
     }
 

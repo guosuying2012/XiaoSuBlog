@@ -26,6 +26,7 @@ protected:
     void buildDbConnString(std::string& strResConn);
     
 private:
+    std::string m_strConnectString;
     cppdb::pool::pointer m_pDBPool;
     std::shared_ptr<cppdb::session> m_pDBInstence;
 };
