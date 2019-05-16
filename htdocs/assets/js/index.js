@@ -32,9 +32,7 @@ function slider_callback(response)
 {
     for (var i = response.data.length - 1; i >= 0; i--) 
     {
-        var slider = $("<div><a><img class='slider_image'></a> \
-                    <span class='description'></span> \
-                    </div>");
+        var slider = $("<div><a><img class='slider_image'></a><span class='description'></span></div>");
         $("#featured").append(slider);
     }
 

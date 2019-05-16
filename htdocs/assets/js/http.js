@@ -5,8 +5,12 @@ axios.defaults.timeout = 10000;
 //post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 //页面样式
-document.cookie = "layout=boxed";
-document.cookie = "bg=bg2";
+var style = document.cookie;
+if (style === "")
+{
+    document.cookie = "layout=boxed";
+    document.cookie = "bg=bg2";
+}
 // 响应拦截器
 axios.interceptors.response.use(    
     response =>
