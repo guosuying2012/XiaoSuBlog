@@ -20,6 +20,7 @@ public:
     virtual cppcms::http::response& response(int nCode = 200, std::string const& strReponseType = "application/json");
     virtual cppdb::session& database();
     virtual void close();
+    virtual void index() = 0;
 
 protected:
     void init();

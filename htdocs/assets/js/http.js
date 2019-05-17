@@ -12,7 +12,7 @@ if (style === "")
     document.cookie = "bg=bg2";
 }
 // 响应拦截器
-axios.interceptors.response.use(    
+axios.interceptors.response.use(
     response =>
     {
         //如果返回的状态码为200

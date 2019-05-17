@@ -2,7 +2,6 @@
 #define INDEX_SERVICE_H
 
 #include "BaseService.h"
-#include <string>
 
 class IndexService : public BaseService
 {
@@ -11,11 +10,8 @@ public:
     ~IndexService();
 
 private:
-    void index();
+    virtual void index() override;
     void articleList(std::string strCount);
-    void navigationBar();
-    void sliderImages();
-    void websiteOptions();
 };
 
 #endif  //INDEX_SERVICE_H
