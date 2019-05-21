@@ -11,7 +11,7 @@ public:
 
 private:
     virtual void index() override;
-    void articleList(std::string strCount);
+    void articleList(int nCount);
 };
 
 #endif  //INDEX_SERVICE_H

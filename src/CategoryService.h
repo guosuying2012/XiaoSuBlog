@@ -11,6 +11,8 @@ public:
     
 private:
     virtual void index() override;
+    void articleSortList(int nSortId, int nCount);
+    void articleAuthorList(int nSortId, int nCount);
 };
 
-#endif  //CATEGOTY_SERVICE_H
+#endif  //CATEGOTY_SERVICE_H设置

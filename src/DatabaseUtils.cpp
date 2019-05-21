@@ -338,7 +338,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
 
     if (!strCondition.empty())
     {
-        strCondition = "AND" + strCondition;
+        strCondition = "AND " + strCondition;
     }
 
     nStartNum = nStart <= 1 ? 0 : (nStart - 1) * nShowCount;
@@ -360,11 +360,11 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
                 yengsu_set_article_sort, \
                 yengsu_sorts \
             WHERE \
-                yengsu_articles.user_id = yengsu_users.user_id \
-                AND yengsu_set_article_sort.article_id = yengsu_articles.article_id \
-                AND yengsu_set_article_sort.sort_id = yengsu_sorts.sort_id "
+                yengsu_users.user_id = yengsu_articles.user_id \
+                AND yengsu_set_article_sort.sort_id = yengsu_sorts.sort_id \
+                AND yengsu_set_article_sort.article_id = yengsu_articles.article_id "
             << strCondition
-            << " ORDER BY article_date DESC" 
+            << " ORDER BY article_date DESC"
             << " LIMIT " << nStartNum << ", " << nShowCount;
 
     try

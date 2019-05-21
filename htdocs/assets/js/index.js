@@ -1,6 +1,6 @@
 window.onload = function() 
 {
-    localStorage.clear();
+    sendRequest();
 };
 
 //文章列表
@@ -31,38 +31,33 @@ var nNumber = 1;
 function loadmore() 
 {
     ++nNumber;
-    article_list("/" + nNumber)
-    .then(response=>
+    sendRequest();
+}
+
+function sendRequest()
+{
+    axios.all([article_list("/" + nNumber)])
+    .then(axios.spread(function (resArticles) 
     {
-        if (response.data != "null") 
+        if (resArticles.data != "null") 
         {
-            article_callback(response);
+            article_callback(resArticles);
+        }
+        else
+        {
+            spopAlert(resArticles.error, "error", "bottom-right");
             return;
         }
-        spopAlert(response.error, "info", "bottom-right");
-    })
-    .catch(error=>
+
+        var post = document.getElementById("post-nav");
+        if (post === null) 
+        {
+            $("#content").append("<nav id='post-nav'><a href='javascript:void(0)' onclick='loadmore()'>Older Posts »</a></nav>");
+        }
+    }))
+    .catch(err=>
     {
-        $("#preloader").fadeOut(500);
-        spopAlert(error.error, "error", "bottom-right");
+        spopAlert(err.error, "error", "bottom-right");
         return;
     });
 }
-
-//接口并发
-axios.all([article_list("/1")])
-.then(axios.spread(function (resArticles) 
-{
-    if (resArticles.data != "null") 
-    {
-        article_callback(resArticles);
-    }
-
-    $("#content").append("<nav id='post-nav'><a href='javascript:void(0)' onclick='loadmore()'>Older Posts »</a></nav>")
-}))
-.catch(err=>
-{
-    spopAlert(err.error, "error", "bottom-right");
-    return;
-});
-

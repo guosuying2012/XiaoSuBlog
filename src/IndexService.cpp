@@ -4,17 +4,14 @@
 
 #include <cppcms/http_response.h>
 #include <cppcms/url_dispatcher.h>  
-#include <cppcms/url_mapper.h> 
-#include <cppdb/frontend.h>
+#include <cppcms/url_mapper.h>
 
 IndexService::IndexService(cppcms::service& srv)
     :BaseService(srv)
 {
-    dispatcher().assign("", &IndexService::index, this);
-    mapper().assign("");
+    dispatcher().map("", &IndexService::index, this);
 
-    dispatcher().assign("/getArticles/(\\d+)", &IndexService::articleList, this, 1);
-    mapper().assign("getArticles", "/getArticles/{1}");
+    dispatcher().map("GET", "/getArticles/(\\d+)", &IndexService::articleList, this, 1);
 
     mapper().root("/xiaosu");
 }
@@ -29,25 +26,18 @@ void IndexService::index()
     response().out() << "index";
 }
 
-void IndexService::articleList(std::string strCount)
+void IndexService::articleList(int nCount)
 {
     cppcms::json::value jsonRes;
     articles vecRes;
-    std::stringstream ss;
-    int nReqCount;
     int nRowCount;
 
     vecRes.clear();
-    ss.clear();
     nRowCount = 10;
-    nReqCount = 0;
-
-    ss << strCount;
-    ss >> nReqCount;
 
     try
     {
-        DatabaseUtils::queryArticles(database(), "", nReqCount, nRowCount, vecRes);
+        DatabaseUtils::queryArticles(database(), "", nCount, nRowCount, vecRes);
     }
     catch(cppdb::cppdb_error const& e)
     {
