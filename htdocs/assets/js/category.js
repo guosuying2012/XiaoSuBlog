@@ -17,7 +17,7 @@ function article_callback(response)
         var obj = response.data[i];
         var article = "";
         article = "<article class='post'> <header>";
-        if (obj.image != undefined)
+        if (obj.image != "")
         {
             article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }

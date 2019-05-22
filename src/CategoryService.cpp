@@ -9,11 +9,9 @@
 CategoryService::CategoryService(cppcms::service& srv)
     :BaseService(srv)
 {
-    dispatcher().map("", &CategoryService::index, this);
-
+    dispatcher().map("GET", "", &CategoryService::index, this);
     dispatcher().map("GET", "/getSortArticles/(\\d+)(/(\\d+))", &CategoryService::articleSortList, this, 1, 3);
     dispatcher().map("GET", "/getAuthorArticles/(\\d+)(/(\\d+))", &CategoryService::articleAuthorList, this, 1, 3);
-
     mapper().root("/xiaosu");
 }
 

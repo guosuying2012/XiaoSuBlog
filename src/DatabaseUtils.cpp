@@ -346,6 +346,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
     ssSQL << "SELECT \
                 yengsu_articles.article_id, \
                 article_title, \
+                article_image, \
                 article_describe, \
                 article_date, \
                 article_comment_count, \
@@ -375,6 +376,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
             std::string strDescribe = resRecords.get<std::string>("article_describe");
             recoder.nId = resRecords.get<unsigned int>("article_id");
             recoder.strTitle = resRecords.get<std::string>("article_title");
+            recoder.strImage = resRecords.get<std::string>("article_image");
             recoder.nCommentCount = resRecords.get<unsigned int>("article_comment_count");
             recoder.nTime = resRecords.get<unsigned long long>("article_date");
             recoder.strDescribe = cppcms::util::escape(strDescribe);
@@ -390,4 +392,124 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
     {
         throw e;
     }
+}
+
+void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resArticle)
+{
+    cppdb::result resRecord;
+    
+    resRecord.clear();
+
+    if (nId <= 0)
+    {
+        throw cppdb::not_supported_by_backend("未找到相关的文章!");
+        return;
+    }
+
+    try
+    {
+        resRecord = sql << "SELECT \
+                    article_id, \
+                    user_id, \
+                    article_title, \
+                    article_image, \
+                    article_content, \
+                    article_views, \
+                    article_comment_count, \
+                    article_date, \
+                    article_like_count, \
+                    article_last_modified, \
+                    article_describe \
+                FROM yengsu_articles \
+                WHERE article_id = ?" << nId << cppdb::row;
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+
+    if (resRecord.empty())
+    {
+        throw cppdb::not_supported_by_backend("未找到相关的文章!");
+        return;
+    }
+
+    resArticle.nId = resRecord.get<unsigned int>("article_id");
+    resArticle.m_user.nId = resRecord.get<unsigned int>("user_id");
+    resArticle.strTitle = resRecord.get<std::string>("article_title");
+    resArticle.strImage = resRecord.get<std::string>("article_image");
+    resArticle.strContent = resRecord.get<std::string>("article_content");
+    resArticle.nViews = resRecord.get<unsigned int>("article_views");
+    resArticle.nCommentCount = resRecord.get<unsigned int>("article_comment_count");
+    resArticle.nTime = resRecord.get<unsigned long long>("article_date");
+    resArticle.nLikeCount = resRecord.get<unsigned int>("article_like_count");
+    resArticle.nLastModified = resRecord.get<unsigned long long>("article_last_modified");
+    resArticle.strDescribe = resRecord.get<std::string>("article_describe");
+}
+
+bool DatabaseUtils::insertArticle(cppdb::session& sql, const article& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::deleteArticle(cppdb::session& sql, const article& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::updateArticle(cppdb::session& sql, const article& recoder)
+{
+    return true;
+}
+
+//用户操作
+void DatabaseUtils::queryUsers(cppdb::session& sql, articles& vecRes)
+{
+
+}
+
+void DatabaseUtils::queryUserById(cppdb::session& sql, user& resUser)
+{
+    
+}
+
+bool DatabaseUtils::insertUser(cppdb::session& sql, const user& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::deleteUser(cppdb::session& sql, const user& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::updateUser(cppdb::session& sql, const user& recoder)
+{
+    return true;
+}
+
+//评论操作
+void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId, comments& vecRes)
+{
+    
+}
+
+void DatabaseUtils::queryCommentsByUserId(cppdb::session& sql, int nUserId, comments& vecRes)
+{
+    
+}
+
+bool DatabaseUtils::insertComment(cppdb::session& sql, comment& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::deleteComment(cppdb::session& sql, comment& recoder)
+{
+    return true;
+}
+
+bool DatabaseUtils::updateComment(cppdb::session& sql, comment& recoder)
+{
+    return true;
 }

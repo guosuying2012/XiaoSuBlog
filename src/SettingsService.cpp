@@ -10,12 +10,10 @@
 SettingsService::SettingsService(cppcms::service& srv)
     :BaseService(srv)
 {
-    dispatcher().map("", &SettingsService::index, this);
-
+    dispatcher().map("GET", "", &SettingsService::index, this);
     dispatcher().map("GET", "/getNavigations", &SettingsService::navigationBar, this);
     dispatcher().map("GET", "/getSliderImages", &SettingsService::sliderImages, this);
     dispatcher().map("GET", "/getWebsiteOptions", &SettingsService::websiteOptions, this);
-
     mapper().root("/xiaosu");
 }
 

@@ -11,8 +11,7 @@
 ApplicationService::ApplicationService(cppcms::service& srv)
     :BaseService(srv)
 {
-    dispatcher().assign("",&ApplicationService::index,this);  
-    mapper().assign("");
+    dispatcher().map("GET", "", &ApplicationService::index, this);
 
     attach(new IndexService(srv), "index", "/index{1}", "/index((/?.*))", 1);
     attach(new ArticleService(srv), "article", "/article{1}", "/article((/?.*))", 1);
@@ -29,4 +28,5 @@ ApplicationService::~ApplicationService()
 void ApplicationService::index()
 {
     //API LIST
+    response().out() << "ApplicationService";
 }

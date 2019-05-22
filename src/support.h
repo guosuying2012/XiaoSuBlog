@@ -18,6 +18,7 @@ struct user : public cppcms::serializable
     int nRights;                    //权限
     long long nRegistrationTime;    //注册时间
     std::string strNikeName;        //昵称
+    std::string strSignature;       //个性签名
 
     void clear()
     {
@@ -30,11 +31,12 @@ struct user : public cppcms::serializable
         nRights = 0;
         strNikeName.clear();
         nRegistrationTime = 0;
+        strSignature.clear();
     }
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&strIp&strName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strNikeName;
+        a&nId&strIp&strName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strNikeName&strSignature;
     }
 };
 using users = std::vector<user>;
@@ -64,6 +66,7 @@ namespace cppcms
                 out.nRights = v.get<int>("rights");
                 out.nRegistrationTime = v.get<long long>("registration_time");
                 out.strNikeName = v.get<std::string>("nikename");
+                out.strSignature = v.get<std::string>("signature");
 
                 return out;
             }
@@ -79,6 +82,7 @@ namespace cppcms
                 v.set("rights", in.nRights);
                 v.set("registration_time", in.nRegistrationTime);
                 v.set("nikename", in.strNikeName);
+                v.set("signature", in.strSignature);
             }
         };
     } // json
@@ -149,6 +153,7 @@ struct article : public cppcms::serializable
     user m_user;                        //用户
     sort m_sort;                        //分类
     std::string strTitle;               //标题
+    std::string strImage;               //封面图片地址
     std::string strContent;             //内容
     unsigned int nViews;                //浏览量
     unsigned int nCommentCount;         //评论量
@@ -163,6 +168,7 @@ struct article : public cppcms::serializable
         m_user.clear();
         m_sort.clear();
         strTitle.clear();
+        strImage.clear();
         strContent.clear();
         nViews = 0;
         nCommentCount = 0;
@@ -174,7 +180,7 @@ struct article : public cppcms::serializable
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&m_sort&strTitle&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
+        a&nId&m_user&m_sort&strTitle&strImage&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
     }
 };
 using articles = std::vector<article>;
@@ -199,6 +205,7 @@ namespace cppcms
                 out.m_user = v.get<user>("user");
                 out.m_sort = v.get<sort>("sort");
                 out.strTitle = v.get<std::string>("title");
+                out.strImage = v.get<std::string>("image");
                 out.strContent = v.get<std::string>("content");
                 out.nViews = v.get<unsigned int>("views");
                 out.nCommentCount = v.get<unsigned int>("comment_count");
@@ -216,6 +223,7 @@ namespace cppcms
                 v.set("user", in.m_user);
                 v.set("sort", in.m_sort);
                 v.set("title", in.strTitle);
+                v.set("image", in.strImage);
                 v.set("content", in.strContent);
                 v.set("views", in.nViews);
                 v.set("comment_count", in.nCommentCount);

@@ -11,6 +11,7 @@ public:
     
 private:
     virtual void index() override;
+    void articleById(int nArticleId);
 };
 
 #endif

@@ -33,6 +33,24 @@ public:
     //文章操作
     //用于首页和分类等展示用途
     static void queryArticles(cppdb::session&, std::string strCondition, int nStart, int nShowCount, articles& vecRes);
+    static void queryArticleById(cppdb::session&, int nId, article& resArticle);
+    static bool insertArticle(cppdb::session&, const article& recoder);
+    static bool deleteArticle(cppdb::session&, const article& recoder);
+    static bool updateArticle(cppdb::session&, const article& recoder);
+
+    //用户操作
+    static void queryUsers(cppdb::session&, articles& vecRes);
+    static void queryUserById(cppdb::session&, user& resUser);
+    static bool insertUser(cppdb::session&, const user& recoder);
+    static bool deleteUser(cppdb::session&, const user& recoder);
+    static bool updateUser(cppdb::session&, const user& recoder);
+
+    //评论操作
+    static void queryCommentsByArticleId(cppdb::session&, int nArticleId, comments& vecRes);
+    static void queryCommentsByUserId(cppdb::session&, int nUserId, comments& vecRes);
+    static bool insertComment(cppdb::session&, comment& recoder);
+    static bool deleteComment(cppdb::session&, comment& recoder);
+    static bool updateComment(cppdb::session&, comment& recoder);
 };
 
 #endif //DATABASE_UTLIS_H
