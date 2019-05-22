@@ -3,6 +3,7 @@
 #include "ArticleService.h"
 #include "CategoryService.h"
 #include "SettingsService.h"
+#include "UserService.h"
 
 #include <cppcms/url_mapper.h>
 #include <cppcms/url_dispatcher.h>
@@ -17,6 +18,7 @@ ApplicationService::ApplicationService(cppcms::service& srv)
     attach(new ArticleService(srv), "article", "/article{1}", "/article((/?.*))", 1);
     attach(new CategoryService(srv), "category", "/category{1}", "/category((/?.*))", 1);
     attach(new SettingsService(srv), "settings", "/settings{1}", "/settings((/?.*))", 1);
+    attach(new UserService(srv), "user", "/user{1}", "/user((/?.*))", 1);
 
     mapper().root("/xiaosu");
 }

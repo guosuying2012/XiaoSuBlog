@@ -30,7 +30,6 @@ void SettingsService::index()
 void SettingsService::navigationBar()
 {
     sorts vecSorts;
-    cppcms::json::value jsonRes;
 
     vecSorts.clear();
 
@@ -40,28 +39,27 @@ void SettingsService::navigationBar()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecSorts.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = "No more records";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = "No more records";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecSorts;
-    response().out() << jsonRes;
+    json()["data"] = vecSorts;
+    response().out() << json();
 }
 
 void SettingsService::sliderImages()
 {
     SliderImages vecImages;
-    cppcms::json::value jsonRes;
 
     vecImages.clear();
 
@@ -71,29 +69,27 @@ void SettingsService::sliderImages()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecImages.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = "No more records";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = "No more records";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecImages;
-    response().out() << jsonRes;
+    json()["data"] = vecImages;
+    response().out() << json();
 }
 
 void SettingsService::websiteOptions()
 {
     options vecOptions;
-    cppcms::json::value jsonRes;
-
     vecOptions.clear();
 
     try
@@ -102,20 +98,20 @@ void SettingsService::websiteOptions()
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecOptions.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = "No more records";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = "No more records";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecOptions;
-    response().out() << jsonRes;
+    json()["data"] = vecOptions;
+    response().out() << json();
 }

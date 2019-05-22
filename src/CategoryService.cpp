@@ -27,7 +27,6 @@ void CategoryService::index()
 
 void CategoryService::articleSortList(int nSortId, int nCount)
 {
-    cppcms::json::value jsonRes;
     articles vecRes;
     int nRowCount;
     std::string strCondition;
@@ -48,27 +47,26 @@ void CategoryService::articleSortList(int nSortId, int nCount)
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecRes.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = u8"没有找到更多记录!";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = u8"没有找到更多记录!";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecRes;
-    response().out() << jsonRes;
+    json()["data"] = vecRes;
+    response().out() << json();
 }
 
 void CategoryService::articleAuthorList(int nAuthorId, int nCount)
 {
-    cppcms::json::value jsonRes;
     articles vecRes;
     int nRowCount;
     std::string strCondition;
@@ -88,20 +86,20 @@ void CategoryService::articleAuthorList(int nAuthorId, int nCount)
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecRes.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = u8"没有找到更多记录!";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = u8"没有找到更多记录!";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecRes;
-    response().out() << jsonRes;
+    json()["data"] = vecRes;
+    response().out() << json();
 }

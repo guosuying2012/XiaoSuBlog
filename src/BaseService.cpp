@@ -36,6 +36,11 @@ cppdb::session& BaseService::database()
     return *m_pDBInstence;
 }
 
+cppcms::json::value& BaseService::json()
+{
+    return m_json_value;
+}
+
 void BaseService::close()
 {
     if (m_pDBInstence->is_open())

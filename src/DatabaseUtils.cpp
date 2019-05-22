@@ -402,7 +402,7 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resA
 
     if (nId <= 0)
     {
-        throw cppdb::not_supported_by_backend("未找到相关的文章!");
+        throw cppdb::cppdb_error("未找到相关的文章!");
         return;
     }
 
@@ -428,9 +428,9 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resA
         throw e;
     }
 
-    if (resRecord.empty())
+    if (resRecord.empty())  
     {
-        throw cppdb::not_supported_by_backend("未找到相关的文章!");
+        throw cppdb::cppdb_error("未找到相关的文章!");
         return;
     }
 
@@ -468,9 +468,49 @@ void DatabaseUtils::queryUsers(cppdb::session& sql, articles& vecRes)
 
 }
 
-void DatabaseUtils::queryUserById(cppdb::session& sql, user& resUser)
+void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
 {
+    cppdb::result resRecord;
     
+    resRecord.clear();
+
+    if (nId <= 0)
+    {
+        throw cppdb::cppdb_error("未找到相关用户!");
+        return;
+    }
+
+    try
+    {
+        resRecord = sql << "SELECT \
+                    user_id, \
+                    user_name, \
+                    user_email, \
+                    user_level, \
+                    user_profile_photo, \
+                    user_nikename, \
+                    user_signature \
+                FROM yengsu_users \
+                WHERE user_id = ?" << nId << cppdb::row;
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+
+    if (resRecord.empty())  
+    {
+        throw cppdb::cppdb_error("未找到相关用户");
+        return;
+    }
+
+    resUser.nId = resRecord.get<unsigned int>("user_id");
+    resUser.strName = resRecord.get<std::string>("user_name");
+    resUser.strEmail = resRecord.get<std::string>("user_email");
+    resUser.strProfilePhoto = resRecord.get<std::string>("user_profile_photo");
+    resUser.strLevel = resRecord.get<std::string>("user_level");
+    resUser.strNikeName = resRecord.get<std::string>("user_nikename");
+    //resUser.strSignature = resRecord.get<std::string>("user_signature");
 }
 
 bool DatabaseUtils::insertUser(cppdb::session& sql, const user& recoder)

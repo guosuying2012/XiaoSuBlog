@@ -27,7 +27,6 @@ void ArticleService::index()
 void ArticleService::articleById(int nArticleId)
 {
     article recoder;
-    cppcms::json::value jsonRes;
     recoder.clear();
 
     try
@@ -36,12 +35,12 @@ void ArticleService::articleById(int nArticleId)
     }
     catch (cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
-    jsonRes["data"] = recoder;
-    response().out() << jsonRes;
+    json()["data"] = recoder;
+    response().out() << json();
 }

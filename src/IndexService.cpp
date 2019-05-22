@@ -26,7 +26,6 @@ void IndexService::index()
 
 void IndexService::articleList(int nCount)
 {
-    cppcms::json::value jsonRes;
     articles vecRes;
     int nRowCount;
 
@@ -39,22 +38,22 @@ void IndexService::articleList(int nCount)
     }
     catch(cppdb::cppdb_error const& e)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = e.what();
-        response(500).out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = e.what();
+        response(500).out() << json();
         return;
     }
 
     if (vecRes.size() <= 0)
     {
-        jsonRes["data"] = "null";
-        jsonRes["error"] = u8"没有找到更多记录!";
-        response().out() << jsonRes;
+        json()["data"] = "null";
+        json()["error"] = u8"没有找到更多记录!";
+        response().out() << json();
         return;
     }
 
-    jsonRes["data"] = vecRes;
+    json()["data"] = vecRes;
 
-    response().out() << jsonRes;
+    response().out() << json();
 }
 
