@@ -75,7 +75,7 @@ function sendRequest()
         {
         case LinkTypeEnum.AUTHOR:
             $("#sub_title").html("Author");
-            $("#title").html(resArticles.data[0].user.name);
+            $("#title").html(resArticles.data[0].user.nikename);
             break;
         case LinkTypeEnum.TRAVEL:
             $("#sub_title").html("Category");
