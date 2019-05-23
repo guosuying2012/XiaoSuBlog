@@ -4,6 +4,7 @@
 #include "CategoryService.h"
 #include "SettingsService.h"
 #include "UserService.h"
+#include "CommentService.h"
 
 #include <cppcms/url_mapper.h>
 #include <cppcms/url_dispatcher.h>
@@ -19,6 +20,7 @@ ApplicationService::ApplicationService(cppcms::service& srv)
     attach(new CategoryService(srv), "category", "/category{1}", "/category((/?.*))", 1);
     attach(new SettingsService(srv), "settings", "/settings{1}", "/settings((/?.*))", 1);
     attach(new UserService(srv), "user", "/user{1}", "/user((/?.*))", 1);
+    attach(new CommentService(srv), "comment", "/comment{1}", "/comment((/?.*))", 1);
 
     mapper().root("/xiaosu");
 }
@@ -29,6 +31,5 @@ ApplicationService::~ApplicationService()
 
 void ApplicationService::index()
 {
-    //API LIST
     response().out() << "ApplicationService";
 }

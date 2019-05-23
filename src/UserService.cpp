@@ -16,7 +16,6 @@ UserService::UserService(cppcms::service& srv)
 
 UserService::~UserService()
 {
-
 }
 
 void UserService::index()
@@ -29,6 +28,14 @@ void UserService::userById(int nId)
     user record;
     record.clear();
 
+    if (nId <= 0)
+    {
+        json()["data"] = "null";
+        json()["error"] = "未找到相关用户!";
+        response().out() << json();
+        return;
+    }
+    
     try
     {
         DatabaseUtils::queryUserById(database(), nId, record);

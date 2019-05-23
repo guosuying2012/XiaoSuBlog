@@ -397,14 +397,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
 void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resArticle)
 {
     cppdb::result resRecord;
-    
     resRecord.clear();
-
-    if (nId <= 0)
-    {
-        throw cppdb::cppdb_error("未找到相关的文章!");
-        return;
-    }
 
     try
     {
@@ -471,14 +464,7 @@ void DatabaseUtils::queryUsers(cppdb::session& sql, articles& vecRes)
 void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
 {
     cppdb::result resRecord;
-    
     resRecord.clear();
-
-    if (nId <= 0)
-    {
-        throw cppdb::cppdb_error("未找到相关用户!");
-        return;
-    }
 
     try
     {
@@ -500,7 +486,7 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
 
     if (resRecord.empty())  
     {
-        throw cppdb::cppdb_error("未找到相关用户");
+        throw cppdb::cppdb_error("未找到相关用户!");
         return;
     }
 
@@ -510,7 +496,14 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
     resUser.strProfilePhoto = resRecord.get<std::string>("user_profile_photo");
     resUser.strLevel = resRecord.get<std::string>("user_level");
     resUser.strNikeName = resRecord.get<std::string>("user_nikename");
-    //resUser.strSignature = resRecord.get<std::string>("user_signature");
+    if (resRecord.is_null("user_signature"))
+    {
+        resUser.strSignature = std::string("这个人很懒,什么都没有留下!");
+    }
+    else
+    {
+        resUser.strSignature = resRecord.get<std::string>("user_signature");
+    }
 }
 
 bool DatabaseUtils::insertUser(cppdb::session& sql, const user& recoder)
@@ -531,7 +524,40 @@ bool DatabaseUtils::updateUser(cppdb::session& sql, const user& recoder)
 //评论操作
 void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId, comments& vecRes)
 {
-    
+    cppdb::result resRecords;
+    comment recoder;
+
+    recoder.clear();
+    resRecords.clear();
+
+    try
+    {
+        resRecords = sql << "SELECT \
+                        comment_id, \
+                        user_id, article_id, \
+                        comment_like_count, \
+                        comment_date, \
+                        comment_content, \
+                        parent_comment_id \
+                    FROM yengsu_comments \
+                    WHERE article_id = ?" << nArticleId;
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+
+    while (resRecords.next())  
+    {
+        recoder.nId = resRecords.get<unsigned int>("comment_id");
+        recoder.m_user.nId = resRecords.get<unsigned int>("user_id");
+        recoder.m_article.nId = resRecords.get<unsigned int>("article_id");
+        recoder.nLikeCount = resRecords.get<unsigned int>("comment_like_count");
+        recoder.nTime = resRecords.get<unsigned int>("comment_date");
+        recoder.strContent = resRecords.get<std::string>("comment_content");
+        recoder.nParentId = resRecords.get<unsigned int>("parent_comment_id");
+        vecRes.push_back(recoder);
+    }
 }
 
 void DatabaseUtils::queryCommentsByUserId(cppdb::session& sql, int nUserId, comments& vecRes)

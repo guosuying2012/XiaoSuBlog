@@ -110,7 +110,7 @@ function pageJump(type, id)
         self.location = 'category.html';
         break;
     case LinkTypeEnum.COMMENTS:
-        self.location = 'single.html#comments';
+        self.location = 'single.html#post-nav-2';
         break;
     default:
         self.location = '/';
