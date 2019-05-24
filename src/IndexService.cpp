@@ -53,7 +53,7 @@ void IndexService::articleList(int nCount)
     }
 
     json()["data"] = vecRes;
-
+    json()["error"] = "null";
     response().out() << json();
 }
 

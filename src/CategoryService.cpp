@@ -62,6 +62,7 @@ void CategoryService::articleSortList(int nSortId, int nCount)
     }
 
     json()["data"] = vecRes;
+    json()["error"] = "null";
     response().out() << json();
 }
 
@@ -101,5 +102,6 @@ void CategoryService::articleAuthorList(int nAuthorId, int nCount)
     }
 
     json()["data"] = vecRes;
+    json()["error"] = "null";
     response().out() << json();
 }

@@ -49,5 +49,6 @@ void UserService::userById(int nId)
     }
 
     json()["data"] = record;
+    json()["error"] = "null";
     response().out() << json();
 }

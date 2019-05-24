@@ -57,5 +57,6 @@ void CommentService::commentByArticleId(int nArticleId)
     }
 
     json()["data"] = resRecoders;
+    json()["error"] = "null";
     response().out() << json();
 }

@@ -31,7 +31,7 @@ protected:
 private:
     std::string m_strConnectString;
     cppdb::pool::pointer m_pDBPool;
-    cppcms::json::value m_json_value;
+    cppcms::json::value m_JsonValue;
     std::shared_ptr<cppdb::session> m_pDBInstence;
 };
 

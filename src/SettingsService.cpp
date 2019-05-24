@@ -54,6 +54,7 @@ void SettingsService::navigationBar()
     }
 
     json()["data"] = vecSorts;
+    json()["error"] = "null";
     response().out() << json();
 }
 
@@ -84,6 +85,7 @@ void SettingsService::sliderImages()
     }
 
     json()["data"] = vecImages;
+    json()["error"] = "null";
     response().out() << json();
 }
 
@@ -113,5 +115,6 @@ void SettingsService::websiteOptions()
     }
 
     json()["data"] = vecOptions;
+    json()["error"] = "null";
     response().out() << json();
 }

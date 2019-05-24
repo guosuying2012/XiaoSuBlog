@@ -38,7 +38,7 @@ cppdb::session& BaseService::database()
 
 cppcms::json::value& BaseService::json()
 {
-    return m_json_value;
+    return m_JsonValue;
 }
 
 void BaseService::close()

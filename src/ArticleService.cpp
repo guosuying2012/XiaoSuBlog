@@ -49,5 +49,6 @@ void ArticleService::articleById(int nArticleId)
     }
 
     json()["data"] = recoder;
+    json()["error"] = "null";
     response().out() << json();
 }
