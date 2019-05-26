@@ -1,11 +1,13 @@
 window.onload = function() 
 {
+    localStorage.removeItem("list");
     sendRequest();
 };
 
 //文章列表
 function article_callback(response) 
 {
+    var articles = [];
     for (var i = 0; i <= response.data.length - 1; ++i) 
     {
         var obj = response.data[i];
@@ -24,7 +26,13 @@ function article_callback(response)
         <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>Continue Reading...</a> \
         </div><hr> </footer> </article>";
         $("#list").append(article);
+
+        var data = {};
+        data["id"] = obj.id;
+        data["title"] = obj.title;
+        articles.push(data);
     }
+    localStorage.setItem("list", JSON.stringify(articles));
 }
 
 var nNumber = 1;

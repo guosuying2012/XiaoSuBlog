@@ -96,18 +96,19 @@ var LinkTypeEnum = { TEXT: 1, AUTHOR: 2, TRAVEL: 3, COMMENTS: 4 };
 function pageJump(type, id)
 {
     localStorage.setItem("type", type);
-    localStorage.setItem("id", id);
-
     switch (type)
     {
     case LinkTypeEnum.TEXT:
         self.location = 'single.html';
+        localStorage.setItem("article_id", id);
         break;
     case LinkTypeEnum.AUTHOR:
         self.location = 'category.html';
+        localStorage.setItem("author_id", id);
         break;
     case LinkTypeEnum.TRAVEL:
         self.location = 'category.html';
+        localStorage.setItem("travel_id", id);
         break;
     case LinkTypeEnum.COMMENTS:
         self.location = 'single.html#post-nav-2';

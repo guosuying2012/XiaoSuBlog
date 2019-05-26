@@ -1,12 +1,12 @@
-var nId = 0;
 var nType = 0;
 var nNumber = 1;
+var articles = [];
 
 window.onload = function() 
 {
-    nId = localStorage.getItem("id");
     nType = localStorage.getItem("type");
-    sendRequest();
+    localStorage.removeItem("list");
+    sendRequest(nType);
 }
 
 //文章列表
@@ -30,26 +30,47 @@ function article_callback(response)
         <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>Continue Reading...</a> \
         </div><hr> </footer> </article>";
         $("#list").append(article);
+
+        var data = {};
+        data["id"] = obj.id;
+        data["title"] = obj.title;
+        articles.push(data);
     }
+    localStorage.setItem("list", JSON.stringify(articles));
 }
 
 function loadmore() 
 {
     ++nNumber;
-    sendRequest();
+    sendRequest(nType);
 }
 
-function sendRequest() 
+function sendRequest(type) 
 {
     var api = "";
-    switch (parseInt(nType))
+    switch (parseInt(type))
     {
     case LinkTypeEnum.AUTHOR:
+        var nId = localStorage.getItem("author_id");
         api = author_articles("/"+nId+"/"+nNumber);
+        localStorage.setItem("LastType", type);
         break;
     case LinkTypeEnum.TRAVEL:
+        var nId = localStorage.getItem("travel_id");
         api = sort_articles("/"+nId+"/"+nNumber);
+        localStorage.setItem("LastType", type);
         break;
+    default:
+        var lastType = localStorage.getItem("LastType");
+        localStorage.setItem("type", lastType);
+        sendRequest(lastType);
+        localStorage.removeItem("LastType");
+        break;
+    }
+
+    if (api === "") 
+    {
+        return;
     }
 
     axios.all([api])

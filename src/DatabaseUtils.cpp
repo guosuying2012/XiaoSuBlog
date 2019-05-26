@@ -553,7 +553,7 @@ void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId
         recoder.m_user.nId = resRecords.get<unsigned int>("user_id");
         recoder.m_article.nId = resRecords.get<unsigned int>("article_id");
         recoder.nLikeCount = resRecords.get<unsigned int>("comment_like_count");
-        recoder.nTime = resRecords.get<unsigned int>("comment_date");
+        recoder.nTime = resRecords.get<long long>("comment_date");
         recoder.strContent = resRecords.get<std::string>("comment_content");
         recoder.nParentId = resRecords.get<unsigned int>("parent_comment_id");
         vecRes.push_back(recoder);
