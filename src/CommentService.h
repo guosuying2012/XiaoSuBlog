@@ -12,6 +12,7 @@ public:
 private:
     virtual void index() override;
     void commentByArticleId(int nArticleId);
+    void replyComment();
 };
 
 #endif

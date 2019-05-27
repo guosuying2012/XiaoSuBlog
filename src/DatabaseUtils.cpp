@@ -582,7 +582,7 @@ void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId
     {
         resRecords = sql << "SELECT \
                         comment_id, \
-                        user_id, article_id, \
+                        user_id, \
                         comment_like_count, \
                         comment_date, \
                         comment_content, \
@@ -593,7 +593,6 @@ void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId
         {
             record.nId = resRecords.get<unsigned int>("comment_id");
             record.m_user.nId = resRecords.get<unsigned int>("user_id");
-            record.m_article.nId = resRecords.get<unsigned int>("article_id");
             record.nLikeCount = resRecords.get<unsigned int>("comment_like_count");
             record.nTime = resRecords.get<long long>("comment_date");
             record.strContent = resRecords.get<std::string>("comment_content");

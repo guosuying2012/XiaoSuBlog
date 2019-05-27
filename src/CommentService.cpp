@@ -3,6 +3,7 @@
 #include "DatabaseUtils.h"
 
 #include <cppcms/http_response.h>
+#include <cppcms/http_request.h>
 #include <cppcms/url_dispatcher.h>  
 #include <cppcms/url_mapper.h>
 
@@ -11,6 +12,7 @@ CommentService::CommentService(cppcms::service& srv)
 {
     dispatcher().map("GET", "", &CommentService::index, this);
     dispatcher().map("GET", "/getCommentByArticleId/(\\d+)", &CommentService::commentByArticleId, this, 1);
+    dispatcher().map("POST", "/postReplyComment", &CommentService::replyComment, this);
     mapper().root("/xiaosu");
 }
 
@@ -59,4 +61,11 @@ void CommentService::commentByArticleId(int nArticleId)
     json()["data"] = resRecoders;
     json()["error"] = "null";
     response().out() << json();
+}
+
+void CommentService::replyComment()
+{
+    response().out() << request().post("article");
+    response().out() << request().post("user");
+    response().out() << request().post("reply");
 }
