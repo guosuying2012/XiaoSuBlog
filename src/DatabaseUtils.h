@@ -19,6 +19,7 @@ public:
     static bool updateSliderImage(cppdb::session&, const SliderImage& recoder);
 
     //菜单栏
+    static void querySortByArticleId(cppdb::session& sql, int nArticleId, sort& record);
     static void queryAllSorts(cppdb::session&, sorts& vecRes);
     static bool insertSort(cppdb::session&, const sort& recoder);
     static bool deleteSort(cppdb::session&, const sort& recoder);

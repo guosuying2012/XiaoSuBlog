@@ -17,7 +17,7 @@ struct user : public cppcms::serializable
     std::string strLevel;           //等级
     int nRights;                    //权限
     long long nRegistrationTime;    //注册时间
-    std::string strNikeName;        //昵称
+    std::string strDisplayName;        //昵称
     std::string strSignature;       //个性签名
 
     void clear()
@@ -29,14 +29,14 @@ struct user : public cppcms::serializable
         strProfilePhoto.clear();
         strLevel.clear();
         nRights = 0;
-        strNikeName.clear();
+        strDisplayName.clear();
         nRegistrationTime = 0;
         strSignature.clear();
     }
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&strIp&strName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strNikeName&strSignature;
+        a&nId&strIp&strName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strDisplayName&strSignature;
     }
 };
 using users = std::vector<user>;
@@ -65,7 +65,7 @@ namespace cppcms
                 out.strLevel = v.get<std::string>("level");
                 out.nRights = v.get<int>("rights");
                 out.nRegistrationTime = v.get<long long>("registration_time");
-                out.strNikeName = v.get<std::string>("nikename");
+                out.strDisplayName = v.get<std::string>("displayname");
                 out.strSignature = v.get<std::string>("signature");
 
                 return out;
@@ -81,7 +81,7 @@ namespace cppcms
                 v.set("level", in.strLevel);
                 v.set("rights", in.nRights);
                 v.set("registration_time", in.nRegistrationTime);
-                v.set("nikename", in.strNikeName);
+                v.set("displayname", in.strDisplayName);
                 v.set("signature", in.strSignature);
             }
         };

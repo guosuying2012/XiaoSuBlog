@@ -12,16 +12,28 @@ function getArticle(articleId)
     article("/" + articleId)
     .then(article=> 
     {
-        getUser(article.data.user.id);
+        //getUser(article.data.user.id);
         getComment(articleId);
 
-        $("#header").append("<h3><a>"+article.data.title+"</a></h3><span>"+timetrans(article.data.time)+" / "+ article.data.comment_count +" Comments</a></span>");
+        $("#header").append("<h3><a>"+article.data.title+"</a></h3><span>"+timetrans(article.data.time)+" / by "+article.data.user.nikename+" / in: "+article.data.sort.name+" / "+ article.data.comment_count +" Comments</a></span>");
         if (article.data.image != "") 
         {
             $("#header").append("<div class='media'><img src='"+ article.data.image +"' alt=''></div>");
         }
         $("#content").append(article.data.content);
         $("#comment").html(article.data.comment_count + " Comments");
+
+        $("#post-author").append("<h4><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+article.data.user.id+"\")'>"+article.data.user.nikename+"</a></h4>");
+        $("#post-author").append("<p>"+ article.data.user.signature +"</p>");
+        if (article.data.user.profile_photo != "") 
+        {
+            $("#post-author").append("<img src='"+article.data.user.profile_photo+"' alt=''>");
+        }
+        else
+        {
+            $("#post-author").append("<img src='assets/img/avatar.png' alt=''>");
+        }
+
     })
     .catch(err=>
     {
@@ -30,7 +42,7 @@ function getArticle(articleId)
     });
 }
 
-function getUser(userId) 
+/*function getUser(userId) 
 {
     user("/" + userId)
     .then(user=> 
@@ -51,7 +63,7 @@ function getUser(userId)
         spopAlert(err.error, "error", "bottom-right");
         return;
     });
-}
+}*/
 
 function getComment(articleId) 
 {
