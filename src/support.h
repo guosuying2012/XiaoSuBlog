@@ -241,6 +241,7 @@ struct comment : public cppcms::serializable
 {
     unsigned int nId;           //评论ID
     user m_user;                //评论用户
+    unsigned int nArticle;      //文章ID
     unsigned int nLikeCount;    //点赞量
     long long nTime;            //发表时间
     std::string strContent;     //评论内容
@@ -250,6 +251,7 @@ struct comment : public cppcms::serializable
     {
         nId = 0;
         m_user.clear();
+        nArticle = 0;
         nLikeCount = 0;
         nTime = 0;
         strContent.clear();
@@ -258,7 +260,7 @@ struct comment : public cppcms::serializable
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&nLikeCount&nTime&strContent&nParentId;
+        a&nId&m_user&nArticle&nLikeCount&nTime&strContent&nParentId;
     }
 };
 using comments = std::vector<comment>;
@@ -280,7 +282,8 @@ namespace cppcms
                 }
 
                 out.nId = v.get<unsigned int>("id");
-                out.m_user = v.get<user>("user");
+                out.m_user.nId = v.get<unsigned int>("user");
+                out.nArticle = v.get<unsigned int>("article");
                 out.nLikeCount = v.get<unsigned int>("like_count");
                 out.nTime = v.get<long long>("time");
                 out.strContent = v.get<std::string>("content");
@@ -293,6 +296,7 @@ namespace cppcms
             {
                 v.set("id", in.nId);
                 v.set("user", in.m_user);
+                v.set("article", in.nArticle);
                 v.set("like_count", in.nLikeCount);
                 v.set("time", in.nTime);
                 v.set("content", in.strContent);

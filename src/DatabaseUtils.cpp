@@ -45,7 +45,7 @@ bool DatabaseUtils::insertSliderImage(cppdb::session& sql, const SliderImage& re
 
     try
     {
-        stat = sql << "INSERT INTO yengsu_slider_images(image_path, image_description, image_isshow) VALUES('?', '?', ?)";
+        stat = sql << "INSERT INTO yengsu_slider_images(image_path, image_description, image_isshow) VALUES(?, ?, ?)";
 
         stat.bind(record.strPath);
         stat.bind(record.strDescription);
@@ -98,7 +98,7 @@ bool DatabaseUtils::updateSliderImage(cppdb::session& sql, const SliderImage& re
 
     try
     {
-        stat = sql << "UPDATE yengsu_slider_images SET image_path='?', image_description='?', image_isshow=? WHERE id = ?";
+        stat = sql << "UPDATE yengsu_slider_images SET image_path=?, image_description=?, image_isshow=? WHERE id = ?";
         stat.bind(record.strPath);
         stat.bind(record.strDescription);
         stat.bind(record.nIsShow);
@@ -113,7 +113,6 @@ bool DatabaseUtils::updateSliderImage(cppdb::session& sql, const SliderImage& re
     return stat.affected() <= 0 ? false : true; 
 }
 
-//菜单操作
 void DatabaseUtils::querySortByArticleId(cppdb::session& sql, int nArticleId, sort& record)
 {
     cppdb::result resRecords;
@@ -138,6 +137,27 @@ void DatabaseUtils::querySortByArticleId(cppdb::session& sql, int nArticleId, so
         resRecords >> record.nParentId >> record.strName >> record.nRank;
     }
     catch(cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+}
+
+void DatabaseUtils::querySortById(cppdb::session& sql, int nId, sort& record)
+{
+    cppdb::result resRecord;
+    resRecord.clear();
+    record.clear();
+
+    try
+    {
+        resRecord = sql << "SELECT sort_id, sort_parent_id, sort_name, sort_rank FROM yengsu_sorts WHERE sort_id = ?" << nId << cppdb::row;
+        if (resRecord.empty())
+        {
+            throw cppdb::cppdb_error("未找到相关记录!");
+        }
+        resRecord >> record.nId >> record.nParentId >> record.strName >> record.nRank;
+    }
+    catch (cppdb::cppdb_error const& e)
     {
         throw e;
     }
@@ -180,7 +200,7 @@ bool DatabaseUtils::insertSort(cppdb::session& sql, const sort& record)
 
     try
     {
-        stat = sql << "INSERT INTO yengsu_sorts(sort_parent_id, sort_name, sort_rank) VALUES('?', '?', ?)";
+        stat = sql << "INSERT INTO yengsu_sorts(sort_parent_id, sort_name, sort_rank) VALUES(?, ?, ?)";
         stat.bind(record.nParentId);
         stat.bind(record.strName);
         stat.bind(record.nRank);
@@ -232,7 +252,7 @@ bool DatabaseUtils::updateSort(cppdb::session& sql, const sort& record)
 
     try
     {
-        stat = sql << "UPDATE yengsu_sorts SET sort_parent_id='?', sort_name='?', sort_rank=? WHERE sort_id = ?";
+        stat = sql << "UPDATE yengsu_sorts SET sort_parent_id=?, sort_name=?, sort_rank=? WHERE sort_id = ?";
         stat.bind(record.nParentId);
         stat.bind(record.strName);
         stat.bind(record.nRank);
@@ -283,7 +303,7 @@ bool DatabaseUtils::insertOption(cppdb::session& sql, const option& record)
 
     try
     {
-        stat = sql << "INSERT INTO yengsu_options(option_name, option_value) VALUES('?', '?')";
+        stat = sql << "INSERT INTO yengsu_options(option_name, option_value) VALUES(?, ?)";
         stat.bind(record.strName);
         stat.bind(record.strValue);
         stat.exec();
@@ -332,7 +352,7 @@ bool DatabaseUtils::updateOption(cppdb::session& sql, const option& record)
 
     try
     {
-        stat = sql << "UPDATE yengsu_sorts SET option_name='?', option_value='?' WHERE option_id = ?";
+        stat = sql << "UPDATE yengsu_sorts SET option_name=?, option_value=? WHERE option_id = ?";
         stat.bind(record.strName);
         stat.bind(record.strValue);
         stat.bind(record.nId);
@@ -570,6 +590,45 @@ bool DatabaseUtils::updateUser(cppdb::session& sql, const user& record)
 }
 
 //评论操作
+void DatabaseUtils::queryCommentById(cppdb::session& sql, int nId, comment& record)
+{
+    cppdb::result resRecord;
+
+    record.clear();
+    resRecord.clear();
+
+    try
+    {
+        resRecord = sql << "SELECT \
+                        comment_id, \
+                        user_id, \
+                        article_id, \
+                        comment_like_count, \
+                        comment_date, \
+                        comment_content, \
+                        parent_comment_id \
+                    FROM yengsu_comments \
+                    WHERE comment_id = ?" << nId << cppdb::row;
+        if (resRecord.empty())  
+        {
+            throw cppdb::cppdb_error("未找到相关记录!");
+            return;
+        }
+        record.nId = resRecord.get<unsigned int>("comment_id");
+        record.m_user.nId = resRecord.get<unsigned int>("user_id");
+        record.nArticle = resRecord.get<unsigned int>("article_id");
+        record.nLikeCount = resRecord.get<unsigned int>("comment_like_count");
+        record.nTime = resRecord.get<long long>("comment_date");
+        record.strContent = resRecord.get<std::string>("comment_content");
+        record.nParentId = resRecord.get<unsigned int>("parent_comment_id");
+        DatabaseUtils::queryUserById(sql, record.m_user.nId, record.m_user);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+}
+
 void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId, comments& vecRes)
 {
     cppdb::result resRecords;
@@ -595,7 +654,8 @@ void DatabaseUtils::queryCommentsByArticleId(cppdb::session& sql, int nArticleId
             record.m_user.nId = resRecords.get<unsigned int>("user_id");
             record.nLikeCount = resRecords.get<unsigned int>("comment_like_count");
             record.nTime = resRecords.get<long long>("comment_date");
-            record.strContent = resRecords.get<std::string>("comment_content");
+            std::string strContent = resRecords.get<std::string>("comment_content");
+            record.strContent = cppcms::util::escape(strContent);
             record.nParentId = resRecords.get<unsigned int>("parent_comment_id");
             DatabaseUtils::queryUserById(sql, record.m_user.nId, record.m_user);
             vecRes.push_back(record);
@@ -612,9 +672,45 @@ void DatabaseUtils::queryCommentsByUserId(cppdb::session& sql, int nUserId, comm
     
 }
 
-bool DatabaseUtils::insertComment(cppdb::session& sql, comment& record)
+bool DatabaseUtils::insertComment(cppdb::session& sql, int& nInseredId, comment& record)
 {
-    return true;
+    cppdb::statement stat;
+    cppdb::result article_conunt;
+    int nArticleCount;
+
+    stat.clear();
+    nArticleCount = 0;
+
+    try
+    {
+        stat = sql << "INSERT INTO yengsu_comments(user_id, article_id, comment_like_count, comment_date, comment_content, parent_comment_id) VALUES(?, ?, ?, ?, ?, ?)";
+        stat.bind(record.m_user.nId);
+        stat.bind(record.nArticle);
+        stat.bind(record.nLikeCount);
+        stat.bind(record.nTime);
+        stat.bind(record.strContent);
+        stat.bind(record.nParentId);
+        stat.exec();
+        nInseredId = stat.last_insert_id();
+
+        //更新文章评论次数
+        article_conunt = sql << "SELECT article_comment_count FROM yengsu_articles WHERE article_id = ?" << record.nArticle << cppdb::row;
+        if (!article_conunt.empty())
+        {
+            nArticleCount = article_conunt.get<unsigned int>("article_comment_count");
+        }
+
+        stat.reset();
+        stat = sql << "UPDATE yengsu_articles SET article_comment_count=? WHERE article_id = ?";
+        stat.bind(nArticleCount+1);
+        stat.bind(record.nArticle);
+        stat.exec();
+    }
+    catch(cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+    return stat.affected() <= 0 ? false : true;
 }
 
 bool DatabaseUtils::deleteComment(cppdb::session& sql, comment& record)

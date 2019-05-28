@@ -88,12 +88,12 @@ axios.all([slider_images(), navigation_bar(), website_options()])
     $.getScript("assets/js/plugins.js",function()
     {
         $.getScript("assets/js/scripts.js");
-        $("#preloader").fadeOut(500);
+        $("#preloader").fadeOut(1500);
     });
 }))
 .catch(err=>
 {
-    $("#preloader").fadeOut(500);
+    $("#preloader").fadeOut(1500);
     spopAlert(err.error, "error", "bottom-right");
     return;
 });

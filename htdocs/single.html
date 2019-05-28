@@ -94,12 +94,10 @@
 								<!-- 评论输入框开始 -->
 								<div id="commentform">
 									<h4>Leave a reply</h4>
-									<form method="post">
-										<input type="text" name="personal" placeholder="Name*">
-										<input type="text" name="email" placeholder="Email*">
-										<textarea name="comment" placeholder="Message" style="resize:none"></textarea>
-										<button type="submit">Send messsage</button>
-									</form>
+									<input type="text" name="personal" placeholder="Name*">
+									<input type="text" name="email" placeholder="Email*">
+									<textarea name="comment" id="comment_text" placeholder="Message" style="resize:none"></textarea>
+									<button type="submit" onclick="sendComment()">Send messsage</button>
 								</div>
 								<!-- 评论输入框结束 -->
 							</div>
@@ -165,7 +163,6 @@
 		</div>
         <!-- ======== OTHER SCRIPTS ======== -->
         <script type="text/javascript" src="assets/js/lib/axios.min.js"></script>
-		<script type="text/javascript" src="assets/js/lib/qs.js"></script>
 		<script type="text/javascript" src="assets/js/http.js"></script>
 		<script type="text/javascript" src="assets/js/api.js"></script>
         <script type="text/javascript" src="assets/js/single.js"></script>

@@ -76,6 +76,25 @@ function sendRequest(type)
     axios.all([api])
     .then(axios.spread(function(resArticles) 
     {
+        switch (parseInt(nType))
+        {
+        case LinkTypeEnum.AUTHOR:
+            $("#sub_title").html("Author");
+            $("#title").html(resArticles.data[0].user.displayname);
+            break;
+        case LinkTypeEnum.TRAVEL:
+            $("#sub_title").html("Category");
+            var nId = localStorage.getItem("travel_id");
+            sort_byid("/"+nId).
+            then(function(sort) {
+                $("#title").html(sort.data.name);
+            })
+            .catch(function(error) {
+                spopAlert(error.error, "info", "bottom-right");
+            })
+            break;
+        }
+        
         if (resArticles.data != "null") 
         {
             article_callback(resArticles);
@@ -85,25 +104,12 @@ function sendRequest(type)
             spopAlert(resArticles.error, "error", "bottom-right");
             return;
         }
-        
+
         var post = document.getElementById("post-nav");
         if (post === null) 
         {
             $("#content").append("<nav id='post-nav'><a href='javascript:void(0)' onclick='loadmore()'>Older Posts »</a></nav>");
         }
-
-        switch (parseInt(nType))
-        {
-        case LinkTypeEnum.AUTHOR:
-            $("#sub_title").html("Author");
-            $("#title").html(resArticles.data[0].user.displayname);
-            break;
-        case LinkTypeEnum.TRAVEL:
-            $("#sub_title").html("Category");
-            $("#title").html(resArticles.data[0].sort.name);
-            break;
-        }
-
     }))
     .catch(err=>
     {

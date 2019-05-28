@@ -3,7 +3,7 @@ axios.defaults.baseURL = 'http://localhost/xiaosu/';
 //响应超时
 axios.defaults.timeout = 10000;
 //post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 //页面样式
 var style = document.cookie;
 if (style === "")
@@ -72,7 +72,7 @@ function post(url, params)
 {
     return new Promise((resolve, reject) => 
     {
-        axios.post(url, QS.stringify(params))
+        axios.post(url, params)
         .then(res => 
         {
             resolve(res.data);

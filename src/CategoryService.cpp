@@ -12,6 +12,7 @@ CategoryService::CategoryService(cppcms::service& srv)
     dispatcher().map("GET", "", &CategoryService::index, this);
     dispatcher().map("GET", "/getSortArticles/(\\d+)(/(\\d+))", &CategoryService::articleSortList, this, 1, 3);
     dispatcher().map("GET", "/getAuthorArticles/(\\d+)(/(\\d+))", &CategoryService::articleAuthorList, this, 1, 3);
+    dispatcher().map("GET", "/getSortById/(\\d+)", &CategoryService::sortById, this, 1);
     mapper().root("/xiaosu");
 }
 
@@ -57,7 +58,7 @@ void CategoryService::articleSortList(int nSortId, int nCount)
     {
         json()["data"] = "null";
         json()["error"] = u8"没有找到更多记录!";
-        response().out() << json();
+        response(500).out() << json();
         return;
     }
 
@@ -97,11 +98,33 @@ void CategoryService::articleAuthorList(int nAuthorId, int nCount)
     {
         json()["data"] = "null";
         json()["error"] = u8"没有找到更多记录!";
-        response().out() << json();
+        response(500).out() << json();
         return;
     }
 
     json()["data"] = vecRes;
+    json()["error"] = "null";
+    response().out() << json();
+}
+
+void CategoryService::sortById(int nId)
+{
+    sort record;
+    record.clear();
+
+    try
+    {
+        DatabaseUtils::querySortById(database(), nId, record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"没有找到更多记录!";
+        response(500).out() << json();
+        return;
+    }
+
+    json()["data"] = record;
     json()["error"] = "null";
     response().out() << json();
 }
