@@ -1,12 +1,23 @@
-var nType = 0;
 var nNumber = 1;
+var nType = 0;
 var articles = [];
+var nId = 0;
+let url = new URL(window.location.href);
 
 window.onload = function() 
 {
-    nType = localStorage.getItem("type");
     localStorage.removeItem("list");
-    sendRequest(nType);
+
+    if (url.searchParams.has("author"))
+    {
+        nType = 1;
+        nId = url.searchParams.get("author");
+        sendRequest(nType, nId);
+        return;
+    }
+    nType = 2;
+    nId = url.searchParams.get("category");
+    sendRequest(nType, nId);
 }
 
 //文章列表
@@ -19,15 +30,15 @@ function article_callback(response)
         article = "<article class='post'> <header>";
         if (obj.image != "")
         {
-            article += "<div class='media'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
+            article += "<div class='media'><a href='?single=\""+obj.id+"\"'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }
-        article += "<h3><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>"+obj.title+"</a></h3> \
+        article += "<h3><a href='single.html?single="+obj.id+"'>"+obj.title+"</a></h3> \
         <span><span>"+timetrans(obj.time)+"</span> \
-        / by <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+obj.user.id+"\")'><span>"+ obj.user.displayname +"</span></a> \
-        / in: <span><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.sort.id+"\")'>"+obj.sort.name+"</a></span> \
-        / <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.COMMENTS, \""+obj.id+"\")'><span>"+obj.comment_count+"</span> Comments</a></span> \
+        / by <a href='category.html?author="+obj.user.id+"'><span>"+ obj.user.displayname +"</span></a> \
+        / in: <span><a href='category.html?category="+obj.sort.id+"'>"+obj.sort.name+"</a></span> \
+        / <a href='single.html?single="+obj.id+"#comments'><span>"+obj.comment_count+"</span> Comments</a></span> \
         </header> <div class='editor-styles' style='text-indent:2em'>"+obj.describe+"......</div> <footer> <div> \
-        <a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+obj.id+"\")'>Continue Reading...</a> \
+        <a href='single.html?single="+obj.id+"''>Continue Reading...</a> \
         </div><hr> </footer> </article>";
         $("#list").append(article);
 
@@ -42,29 +53,19 @@ function article_callback(response)
 function loadmore() 
 {
     ++nNumber;
-    sendRequest(nType);
+    sendRequest(nType, nId);
 }
 
-function sendRequest(type) 
+function sendRequest(type, nId) 
 {
     var api = "";
     switch (parseInt(type))
     {
-    case LinkTypeEnum.AUTHOR:
-        var nId = localStorage.getItem("author_id");
-        api = author_articles("/"+nId+"/"+nNumber);
-        localStorage.setItem("LastType", type);
+    case 1:
+        api = author_articles("/"+nId+"/"+ nNumber);
         break;
-    case LinkTypeEnum.TRAVEL:
-        var nId = localStorage.getItem("travel_id");
-        api = sort_articles("/"+nId+"/"+nNumber);
-        localStorage.setItem("LastType", type);
-        break;
-    default:
-        var lastType = localStorage.getItem("LastType");
-        localStorage.setItem("type", lastType);
-        sendRequest(lastType);
-        localStorage.removeItem("LastType");
+    case 2:
+        api = sort_articles("/"+nId+"/"+ nNumber);
         break;
     }
 
@@ -78,16 +79,16 @@ function sendRequest(type)
     {
         switch (parseInt(nType))
         {
-        case LinkTypeEnum.AUTHOR:
+        case 1:
             $("#sub_title").html("Author");
             $("#title").html(resArticles.data[0].user.displayname);
             break;
-        case LinkTypeEnum.TRAVEL:
+        case 2:
             $("#sub_title").html("Category");
-            var nId = localStorage.getItem("travel_id");
             sort_byid("/"+nId).
             then(function(sort) {
                 $("#title").html(sort.data.name);
+                document.title = sort.data.name + " - 小蘇-XiaoSU";
             })
             .catch(function(error) {
                 spopAlert(error.error, "info", "bottom-right");

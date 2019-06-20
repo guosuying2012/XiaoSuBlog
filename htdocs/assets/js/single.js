@@ -1,8 +1,15 @@
+var nId = 0;
+let url = new URL(window.location.href);
 
 window.onload = function() 
 {
-    var nId = localStorage.getItem("article_id");
     var json = JSON.parse(localStorage.getItem("list"));
+
+    if (!url.searchParams.has("single"))
+    {
+        return;
+    }
+    nId = url.searchParams.get("single");
     getArticle(nId);
     setPreviousNextJson(json, nId);
 }
@@ -22,7 +29,7 @@ function getArticle(articleId)
         $("#content").append(article.data.content);
         $("#comment").html(article.data.comment_count + " Comments");
 
-        $("#post-author").append("<h4><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.AUTHOR, \""+article.data.user.id+"\")'>"+article.data.user.displayname+"</a></h4>");
+        $("#post-author").append("<h4><a href='category.html?author=\""+article.data.user.id+"\"'>"+article.data.user.displayname+"</a></h4>");
         $("#post-author").append("<p>"+ article.data.user.signature +"</p>");
         if (article.data.user.profile_photo != "") 
         {
@@ -32,7 +39,7 @@ function getArticle(articleId)
         {
             $("#post-author").append("<img src='assets/img/avatar.png' alt=''>");
         }
-
+        document.title = article.data.title + " - 小蘇-XiaoSU";
     })
     .catch(err=>
     {
@@ -121,7 +128,7 @@ function setPreviousNextJson(json, nId)
 
         if (json[i - 1] != undefined) 
         {
-            $("#post-nav-2").append("<div class='push-left'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+json[i - 1].id+"\")'>« Previous</a><h6> "+json[i-1].title+" </h6></div>");
+            $("#post-nav-2").append("<div class='push-left'><a href='single.html?single="+json[i + 1].id+")'>« Previous</a><h6> "+json[i-1].title+" </h6></div>");
         }
         else
         {
@@ -130,7 +137,7 @@ function setPreviousNextJson(json, nId)
 
         if (json[i + 1] != undefined) 
         {
-            $("#post-nav-2").append("<div class='push-right'><a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TEXT, \""+json[i + 1].id+"\")'>Next »</a><h6>"+json[i+1].title+"</h6></div>");
+            $("#post-nav-2").append("<div class='push-right'><a href='single.html?single="+json[i + 1].id+"'>Next »</a><h6>"+json[i+1].title+"</h6></div>");
         }
         else
         {
@@ -141,9 +148,8 @@ function setPreviousNextJson(json, nId)
 
 function sendComment() 
 {
-    var article_id = localStorage.getItem("article_id");
     let data = new FormData();
-    let json = "{\"id\":0, \"user\":1, \"article\":"+article_id+" ,\"like_count\":"+0+" ,\"time\": "+Math.round(new Date() / 1000)+",\"content\": \""+$("#comment_text").val()+"\",\"parent\":"+parentId+"}";
+    let json = "{\"id\":0, \"user\":1, \"article\":"+nId+" ,\"like_count\":"+0+" ,\"time\": "+Math.round(new Date() / 1000)+",\"content\": \""+$("#comment_text").val()+"\",\"parent\":"+parentId+"}";
     data.append('comment',json);
 
     post_comment(data)
@@ -179,10 +185,14 @@ function sendComment()
                 $("#list-comments").append(html);
             })
             .catch (function(error) {
-                spopAlert(error.error, "success", "bottom-right");
+                spopAlert(error.error, "error", "bottom-right");
             });
-
+            $("#comment_count").text(count);
             spopAlert(response.data, "success", "bottom-right");
+        }
+        else
+        {
+            spopAlert(response.error, "error", "bottom-right");
         }
     })
     .catch(function(error) {

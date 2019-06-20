@@ -84,63 +84,6 @@ function post(url, params)
     });
 }
 
-//链接类型枚举
-/*
-    TEXT: 博客
-    AUTHOR: 作者，因为要列出作者所有的作品所以跳转到列表页
-    TRAVEL: 列表
-    COMMENTS: 评论区
-*/
-var LinkTypeEnum = { TEXT: 1, AUTHOR: 2, TRAVEL: 3, COMMENTS: 4 };
-
-function pageJump(type, id)
-{
-    localStorage.setItem("type", type);
-    switch (type)
-    {
-    case LinkTypeEnum.TEXT:
-        self.location = 'single.html';
-        localStorage.setItem("article_id", id);
-        break;
-    case LinkTypeEnum.AUTHOR:
-        self.location = 'category.html';
-        localStorage.setItem("author_id", id);
-        break;
-    case LinkTypeEnum.TRAVEL:
-        self.location = 'category.html';
-        localStorage.setItem("travel_id", id);
-        break;
-    case LinkTypeEnum.COMMENTS:
-        self.location = 'single.html#post-nav-2';
-        break;
-    default:
-        self.location = '/';
-        break;
-    }
-}
-
-/*
-1.localStorage - 没有时间限制的数据存储 
-　var arr=[1,2,3];
-　localStorage.setItem("temp",arr); //存入 参数： 1.调用的值 2.所要存入的数据 
-　console.log(localStorage.getItem("temp"));//输出
-
-2.清空localStorage
-　localStorage.clear(); //
-
-3.删除键值对
-　localStorage.removeItem("arr");　　
-　注意：存入的数据只能以字符串形式存入。
-
-三.提供转JOSN数据方法：
-　//JSON对象转JSON字符串
-　var obj = {"a": 1,"b": 2};
-　obj = JSON.stringify(obj); //转化为JSON字符串
-　localStorage.setItem("temp2", obj);
-　//JSON字符串转JSON对象
-　obj=JSON.parse(localStorage.getItem("temp2"));
-*/
-
 function timetrans(date)
 {
     var date = new Date(date);
@@ -161,6 +104,6 @@ function spopAlert(strMessage, strStyle, strPosition)
         style: strStyle,                //info, error, success
         autoclose: 5000,                //false, miliseconds
         icon: true,                     //true or false
-        group: false                    // string, add a id reference 
+        group: false                    //string, add a id reference 
     });
 }

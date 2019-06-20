@@ -47,7 +47,7 @@ function navigation(tree, parentElement)
         var element = document.createElement('li');
         if (obj.children != undefined)
         {
-            element.innerHTML = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.name+"</a>";
+            element.innerHTML = "<a href='category.html?category="+obj.id+"'>"+obj.name+"</a>";
             var nextpar = document.createElement('ul');
             nextpar.classList.add("sub-menu");
             element.appendChild(nextpar);
@@ -55,7 +55,7 @@ function navigation(tree, parentElement)
         }
         else
         {
-            var strATag = "<a href='javascript:void(0)' onclick='pageJump(LinkTypeEnum.TRAVEL, \""+obj.id+"\")'>"+obj.name+"</a>";;
+            var strATag = "<a href='category.html?category="+obj.id+"''>"+obj.name+"</a>";;
             if (obj.id === 1) 
             {
                 strATag = "<a href='/'>"+obj.name+"</a>";
