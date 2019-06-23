@@ -148,6 +148,10 @@ function setPreviousNextJson(json, nId)
 
 function sendComment() 
 {
+
+    spopAlert("评论系统正在施工!", "error", "bottom-right");
+    return;
+
     let data = new FormData();
     let json = "{\"id\":0, \"user\":1, \"article\":"+nId+" ,\"like_count\":"+0+" ,\"time\": "+Math.round(new Date() / 1000)+",\"content\": \""+$("#comment_text").val()+"\",\"parent\":"+parentId+"}";
     data.append('comment',json);
