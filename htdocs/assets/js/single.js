@@ -29,7 +29,7 @@ function getArticle(articleId)
         $("#content").append(article.data.content);
         $("#comment").html(article.data.comment_count + " Comments");
 
-        $("#post-author").append("<h4><a href='category.html?author=\""+article.data.user.id+"\"'>"+article.data.user.displayname+"</a></h4>");
+        $("#post-author").append("<h4><a href='category.html?author="+article.data.user.id+"'>"+article.data.user.displayname+"</a></h4>");
         $("#post-author").append("<p>"+ article.data.user.signature +"</p>");
         if (article.data.user.profile_photo != "") 
         {
@@ -128,7 +128,7 @@ function setPreviousNextJson(json, nId)
 
         if (json[i - 1] != undefined) 
         {
-            $("#post-nav-2").append("<div class='push-left'><a href='single.html?single="+json[i + 1].id+")'>« Previous</a><h6> "+json[i-1].title+" </h6></div>");
+            $("#post-nav-2").append("<div class='push-left'><a href='single.html?single="+json[i - 1].id+"'>« Previous</a><h6> "+json[i-1].title+" </h6></div>");
         }
         else
         {
