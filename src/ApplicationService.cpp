@@ -5,6 +5,7 @@
 #include "SettingsService.h"
 #include "UserService.h"
 #include "CommentService.h"
+#include "AdminService.h"
 
 #include <cppcms/url_mapper.h>
 #include <cppcms/url_dispatcher.h>
@@ -21,6 +22,7 @@ ApplicationService::ApplicationService(cppcms::service& srv)
     attach(new SettingsService(srv), "settings", "/settings{1}", "/settings((/?.*))", 1);
     attach(new UserService(srv), "user", "/user{1}", "/user((/?.*))", 1);
     attach(new CommentService(srv), "comment", "/comment{1}", "/comment((/?.*))", 1);
+    attach(new AdminService(srv), "admin", "/admin{1}", "/admin((/?.*))", 1);
 
     mapper().root("/xiaosu");
 }

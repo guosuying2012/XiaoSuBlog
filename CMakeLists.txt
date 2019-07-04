@@ -15,4 +15,4 @@ aux_source_directory(src DIR_SRCS)
 add_executable(../bin/xiaosu ${DIR_SRCS})
 
 #添加连接库
-target_link_libraries(../bin/xiaosu booster cppcms cppdb curl ssl)
+target_link_libraries(../bin/xiaosu booster cppcms cppdb curl ssl stringtemplate)
