@@ -35,7 +35,7 @@ void SettingsService::navigationBar()
 
     try
     {
-        DatabaseUtils::queryAllSorts(database(), vecSorts);
+        DatabaseUtils::queryAllSorts(database(), false, vecSorts);
     }
     catch(cppdb::cppdb_error const& e)
     {

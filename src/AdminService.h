@@ -2,6 +2,8 @@
 #define ADMIN_SERVICE_H
 
 #include "BaseService.h"
+#include <StringTemplate/StringTemplate.hpp>
+using namespace StringTemplate;
 
 class AdminService : public BaseService
 {
@@ -11,6 +13,15 @@ public:
     
 private:
     virtual void index() override;
+    void publish();
+    void article();
+    void users();
+    void system();
+
+    void renderMenu(Template& tpl);
+
+private:
+    int m_nIndex;
 };
 
 #endif
