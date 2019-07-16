@@ -21,7 +21,7 @@ public:
     //菜单栏
     static void querySortByArticleId(cppdb::session& sql, int nArticleId, sort& record);
     static void querySortById(cppdb::session& sql, int nId, sort& record);
-    static void queryAllSorts(cppdb::session&, bool bIsAdmin, sorts& vecRes);
+    static void queryAllSorts(cppdb::session&, bool bIsMenu, sorts& vecRes);
     static bool insertSort(cppdb::session&, const sort& record);
     static bool deleteSort(cppdb::session&, const sort& record);
     static bool updateSort(cppdb::session&, const sort& record);

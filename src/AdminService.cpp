@@ -39,9 +39,21 @@ void AdminService::index()
 void AdminService::publish()
 {
     Template tpl("./admin/publish.html");
+    sorts vecRes;
+
+    vecRes.clear();
     tpl.set("function", "发表文章");
     m_nIndex = 1;
     renderMenu(tpl);
+
+    DatabaseUtils::queryAllSorts(database(), false, vecRes);
+    auto sorts_block = tpl.block("option").repeat(vecRes.size());
+    for (int i = 0; i < vecRes.size(); ++i)
+    {
+        sorts_block.set("value", vecRes.at(i).strName);
+        sorts_block.set("value_id", vecRes.at(i).nId);
+        sorts_block = sorts_block.next();
+    }
 
     tpl.render(response(200, "text/html").out(), true);
 }
