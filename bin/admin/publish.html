@@ -48,11 +48,6 @@
     var sort_value =sort.options[sort_index].value;
     var content_value = editor.getMarkdown();
 
-    console.log(title.value);
-    console.log(sort_value)
-    console.log(describe.value);
-    console.log(content_value);
-
     //标题 最少1个字，最多12字
     var title_rules = 
     {
@@ -65,14 +60,7 @@
     var result = approve.value(title.value, title_rules);
     if (!result.approved) 
     {
-      spop({
-        template: result.errors[0],
-        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
-        style: "error",                   //info, error, success
-        autoclose: 10000,                  //false, miliseconds
-        icon: true,                       //true or false
-        group: false                      //string, add a id reference 
-      });
+      showpop("标题：最少1个字符或者最多12字符")
       return;
     }
 
@@ -88,14 +76,7 @@
     result = approve.value(describe.value, describe_rules);
     if (!result.approved) 
     {
-      spop({
-        template: result.errors[0],
-        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
-        style: "error",                   //info, error, success
-        autoclose: 10000,                  //false, miliseconds
-        icon: true,                       //true or false
-        group: false                      //string, add a id reference 
-      });
+      showpop("简介：最少120个字符或者最多200字符")
       return;
     }
 
@@ -111,14 +92,7 @@
     result = approve.value(content_value, content_rules);
     if (!result.approved) 
     {
-      spop({
-        template: result.errors[0],
-        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
-        style: "error",                   //info, error, success
-        autoclose: 10000,                  //false, miliseconds
-        icon: true,                       //true or false
-        group: false                      //string, add a id reference 
-      });
+      showpop("正文：最少200个字符或者最多5000字符");
       return;
     }
   }
@@ -132,7 +106,7 @@
       } 
       else 
       {  
-          alert("这都已经9102年了你的设备居然还不支持图片预览功能？");  
+          showpop("这都已经9102年了你的设备居然还不支持图片预览功能？");  
           return;
       }  
 
@@ -143,7 +117,7 @@
       //是否是图片  
       if (!imageType.test(file.type)) 
       {  
-          alert("不要闹着玩儿!等会儿玩儿出BUG来了。。。");  
+          showpop("不要闹着玩儿!等会儿玩儿出BUG来了。。。");  
           return;
       } 
       
@@ -157,6 +131,19 @@
       };  
       reader.readAsDataURL(file);  
   } 
+
+  function showpop(error) 
+  {
+    spop({
+        template: error,
+        position: "bottom-center",        //top-left, top-center, bottom-left, bottom-center, bottom-right
+        style: "error",                   //info, error, success
+        autoclose: 10000,                 //false, miliseconds
+        icon: true,                       //true or false
+        group: false                      //string, add a id reference 
+      });
+  }
+
 </script>
 
 {=./admin/public/footer.html}

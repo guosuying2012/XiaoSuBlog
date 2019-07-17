@@ -27,6 +27,8 @@ function navigation_callback(response)
         branchArr.length>0 ? father.children=branchArr : '';
         return father.parentId==0;
     });
+    tree.unshift({'id':10086, 'name':'Home', 'parentId':0, 'rank':1});
+    tree.push({'id':10010, 'name':'About', 'parentId':0, 'rank':1});
     navigation(tree, "#menu");
 }
 
@@ -56,9 +58,13 @@ function navigation(tree, parentElement)
         else
         {
             var strATag = "<a href='category.html?category="+obj.id+"''>"+obj.name+"</a>";;
-            if (obj.id === 1) 
+            if (obj.id === 10086) 
             {
                 strATag = "<a href='/'>"+obj.name+"</a>";
+            }
+            if (obj.id === 10010)
+            {
+                strATag = "<a href='/about.html'>"+obj.name+"</a>";
             }
             element.innerHTML = strATag;
         }

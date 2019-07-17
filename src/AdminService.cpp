@@ -46,7 +46,7 @@ void AdminService::publish()
     m_nIndex = 1;
     renderMenu(tpl);
 
-    DatabaseUtils::queryAllSorts(database(), false, vecRes);
+    DatabaseUtils::queryAllSorts(database(), vecRes);
     auto sorts_block = tpl.block("option").repeat(vecRes.size());
     for (int i = 0; i < vecRes.size(); ++i)
     {

@@ -164,7 +164,7 @@ void DatabaseUtils::querySortById(cppdb::session& sql, int nId, sort& record)
 }
 
 //查询所有分类
-void DatabaseUtils::queryAllSorts(cppdb::session& sql, bool bIsMenu, sorts& vecRes)
+void DatabaseUtils::queryAllSorts(cppdb::session& sql, sorts& vecRes)
 {
     cppdb::result resRecords;
     sort record;
@@ -174,7 +174,7 @@ void DatabaseUtils::queryAllSorts(cppdb::session& sql, bool bIsMenu, sorts& vecR
 
     try
     {
-        resRecords = sql << "SELECT sort_id, sort_parent_id, sort_name, sort_rank FROM yengsu_sorts where sort_ismenu = ?" << bIsMenu;
+        resRecords = sql << "SELECT sort_id, sort_parent_id, sort_name, sort_rank FROM yengsu_sorts";
         while (resRecords.next())
         {
             resRecords >> record.nId >> record.nParentId >> record.strName >> record.nRank;
