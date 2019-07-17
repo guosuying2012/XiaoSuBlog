@@ -1,0 +1,162 @@
+{=./admin/public/header.html}
+
+<div class="container">
+  
+  <label class="c-field__label" for="input1">标题</label>
+  <div class="c-field">
+    <input class="c-input" type="text" value="" id="title">
+  </div><br>
+
+  <label class="c-field__label" for="input1">分类</label>
+  <div class="c-select">
+    <select class="c-select__input" id="sort">
+      {#option}<option value="{$value_id}">{$value}</option>{/option}
+    </select>
+  </div><br>
+
+  <label class="c-field__label" for="input1">简述</label>
+  <div class="c-field">
+    <textarea class="c-input" type="text" id="describe"></textarea>
+  </div><br>
+
+  <label class="c-field__label" for="input1">封面</label>
+  <div class="row">
+    <div class="col-6 col-lg-3 u-mb-xsmall">
+      <input type="file" style="display: none;" name="file-5[]" id="file-5" class="inputfile inputfile-4" data-multiple-caption="{count} files selected" multiple onchange="imgPreview(this)" />
+      <label for="file-5"><figure><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></figure></label>
+    </div>
+    <div class="col-6 col-lg-3 u-mb-xsmall">
+        <img class="c-avatar__img" src="http://via.placeholder.com/100" id="preview" style="width: 100px;height: 100px;margin-top: 10px">
+    </div>
+  </div>
+
+  <label class="c-field__label" for="input1">正文</label>
+  {=./admin/public/editor.html}
+
+  <button class="c-btn c-btn--fullwidth" onclick="check()" style="margin-top: 20px; margin-bottom: 120px; position: static;">发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布</button>
+
+</div>
+
+<script type="text/javascript">
+
+  function check() 
+  {
+    var title = document.getElementById("title");
+    var describe = document.getElementById("describe");
+    var sort = document.getElementById("sort");
+    var sort_index =sort.selectedIndex;
+    var sort_value =sort.options[sort_index].value;
+    var content_value = editor.getMarkdown();
+
+    console.log(title.value);
+    console.log(sort_value)
+    console.log(describe.value);
+    console.log(content_value);
+
+    //标题 最少1个字，最多12字
+    var title_rules = 
+    {
+      range: 
+      {
+        min: 1,
+        max: 12
+      }
+    };
+    var result = approve.value(title.value, title_rules);
+    if (!result.approved) 
+    {
+      spop({
+        template: result.errors[0],
+        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
+        style: "error",                   //info, error, success
+        autoclose: 10000,                  //false, miliseconds
+        icon: true,                       //true or false
+        group: false                      //string, add a id reference 
+      });
+      return;
+    }
+
+    //简介 最少120字，最多200字
+    var describe_rules = 
+    {
+      range: 
+      {
+        min: 120,
+        max: 200
+      }
+    };
+    result = approve.value(describe.value, describe_rules);
+    if (!result.approved) 
+    {
+      spop({
+        template: result.errors[0],
+        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
+        style: "error",                   //info, error, success
+        autoclose: 10000,                  //false, miliseconds
+        icon: true,                       //true or false
+        group: false                      //string, add a id reference 
+      });
+      return;
+    }
+
+    //正文 最少200字，最多5000字
+    var content_rules = 
+    {
+      range: 
+      {
+        min: 200,
+        max: 5000
+      }
+    };
+    result = approve.value(content_value, content_rules);
+    if (!result.approved) 
+    {
+      spop({
+        template: result.errors[0],
+        position: "bottom-left",           //top-left, top-center, bottom-left, bottom-center, bottom-right
+        style: "error",                   //info, error, success
+        autoclose: 10000,                  //false, miliseconds
+        icon: true,                       //true or false
+        group: false                      //string, add a id reference 
+      });
+      return;
+    }
+  }
+
+  function imgPreview(fileDom)
+  {
+      //判断是否支持FileReader  
+      if (window.FileReader) 
+      {  
+          var reader = new FileReader();  
+      } 
+      else 
+      {  
+          alert("这都已经9102年了你的设备居然还不支持图片预览功能？");  
+          return;
+      }  
+
+      //获取文件  
+      var file = fileDom.files[0];  
+      var imageType = /^image\//;  
+
+      //是否是图片  
+      if (!imageType.test(file.type)) 
+      {  
+          alert("不要闹着玩儿!等会儿玩儿出BUG来了。。。");  
+          return;
+      } 
+      
+      //读取完成  
+      reader.onload = function(e) 
+      {  
+          //获取图片dom  
+          var img = document.getElementById("preview");  
+          //图片路径设置为读取的图片  
+          img.src = e.target.result;  
+      };  
+      reader.readAsDataURL(file);  
+  } 
+</script>
+
+{=./admin/public/footer.html}

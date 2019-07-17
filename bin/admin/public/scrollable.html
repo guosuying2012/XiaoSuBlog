@@ -1,0 +1,47 @@
+<!-- Logo -->
+<div class="c-sidebar__brand"><h2>{$title}</h2></div>
+<!-- Scrollable -->
+<div class="c-sidebar__body">
+
+  <ul class="c-sidebar__list">
+    {#menu_group}
+    <li>
+      <!-- is-active -->
+      <a class="c-sidebar__link {$menu_active}" href="{$menu_link}">
+        <i class="c-sidebar__icon feather" data-feather="{$menu_icon}"></i>{$menu_text}
+      </a>
+    </li>
+    {/menu_group}
+  </ul>
+
+</div>
+
+<a class="c-sidebar__footer" href="admin/logout">Logout <i class="c-sidebar__footer-icon feather" data-feather="power"></i></a>
+<!-- Scrollable End -->
+
+<!-- 
+<li class="c-sidebar__item has-submenu">
+  <a class="c-sidebar__link" data-toggle="collapse" href="#sidebar-submenu" aria-expanded="false" aria-controls="sidebar-submenu">
+      <i class="c-sidebar__icon feather icon-hash"></i>Sub Menu
+  </a>
+  <div>
+    <ul class="c-sidebar__list collapse" id="sidebar-submenu">
+      <li>
+          <a class="c-sidebar__link" href="#">Submenu link
+              <span class="c-badge c-badge--danger c-badge--small" style="margin-left: 20px">100+</span>
+          </a>
+      </li>
+      <li>
+          <a class="c-sidebar__link" href="#">Submenu link
+            <span class="c-badge c-badge--danger c-badge--small" style="margin-left: 20px">100+</span>
+          </a>
+      </li>
+      <li>
+          <a class="c-sidebar__link" href="#">Submenu link
+            <span class="c-badge c-badge--danger c-badge--small" style="margin-left: 20px">100+</span>
+          </a>
+      </li>
+    </ul>
+  </div>
+</li>
+ -->
