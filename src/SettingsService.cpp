@@ -14,7 +14,7 @@ SettingsService::SettingsService(cppcms::service& srv)
     dispatcher().map("GET", "/getNavigations", &SettingsService::navigationBar, this);
     dispatcher().map("GET", "/getSliderImages", &SettingsService::sliderImages, this);
     dispatcher().map("GET", "/getWebsiteOptions", &SettingsService::websiteOptions, this);
-    mapper().root("/xiaosu");
+    mapper().root("/settings");
 }
 
 SettingsService::~SettingsService()

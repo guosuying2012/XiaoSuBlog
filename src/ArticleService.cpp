@@ -11,7 +11,7 @@ ArticleService::ArticleService(cppcms::service& srv)
 {
     dispatcher().map("GET", "", &ArticleService::index, this);
     dispatcher().map("GET", "/getArticleById/(\\d+)", &ArticleService::articleById, this, 1);
-    mapper().root("/xiaosu");
+    mapper().root("/article");
 }
 
 ArticleService::~ArticleService()

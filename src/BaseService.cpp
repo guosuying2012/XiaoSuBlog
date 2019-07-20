@@ -41,6 +41,11 @@ cppcms::json::value& BaseService::json()
     return m_JsonValue;
 }
 
+std::string BaseService::setting(std::string const& strSetting)
+{
+    return settings().get<std::string>(strSetting);
+}
+
 void BaseService::close()
 {
     if (m_pDBInstence->is_open())

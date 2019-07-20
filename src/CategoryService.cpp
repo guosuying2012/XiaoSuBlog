@@ -13,7 +13,7 @@ CategoryService::CategoryService(cppcms::service& srv)
     dispatcher().map("GET", "/getSortArticles/(\\d+)(/(\\d+))", &CategoryService::articleSortList, this, 1, 3);
     dispatcher().map("GET", "/getAuthorArticles/(\\d+)(/(\\d+))", &CategoryService::articleAuthorList, this, 1, 3);
     dispatcher().map("GET", "/getSortById/(\\d+)", &CategoryService::sortById, this, 1);
-    mapper().root("/xiaosu");
+    mapper().root("/category");
 }
 
 CategoryService::~CategoryService()

@@ -1,0 +1,18 @@
+{=./admin/public/header.html}
+<div class="container">
+    
+    <div class="c-alert c-alert--{$message_type} u-mb-medium">
+        <span class="c-alert__icon"><i class="feather icon-check"></i></span>
+
+        <div class="c-alert__content">
+          <h4 class="c-alert__title">{$message_title}</h4>
+          <p>{$message_content}</p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        setTimeout("window.location.href='../admin'", 5000);
+    </script> 
+
+</div>
+{=./admin/public/footer.html}

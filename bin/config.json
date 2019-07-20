@@ -22,6 +22,8 @@
 		"db": "xiaosu_blog",
 		"user": "yengsu",
 		"password": "guo19960730"
-	}
+	},
+	"htdocs": "/home/yengsu/project/xiaosu/htdocs/",
+	"host": "http://localhost/"
 }
 

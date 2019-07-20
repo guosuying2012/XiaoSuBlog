@@ -501,6 +501,38 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resA
 
 bool DatabaseUtils::insertArticle(cppdb::session& sql, const article& record)
 {
+    cppdb::statement stat;
+    int nLastId;
+    nLastId = 0;
+
+    try
+    {
+        stat = sql << 
+                "INSERT INTO yengsu_articles(user_id,article_title,article_image,article_content,article_date,article_last_modified,article_describe,article_approval_status) "
+                "VALUES(?,?,?,?,?,?,?,?)";
+        stat.bind(record.m_user.nId);
+        stat.bind(record.strTitle);
+        stat.bind(record.strImage);
+        stat.bind(record.strContent);
+        stat.bind(record.nTime);
+        stat.bind(record.nLastModified);
+        stat.bind(record.strDescribe);
+        stat.bind(false);
+        stat.exec();
+        nLastId = stat.last_insert_id();
+        stat.reset();
+
+        stat = sql << "INSERT INTO yengsu_set_article_sort(article_id, sort_id) VALUES(?,?)";
+        stat.bind(nLastId);
+        stat.bind(record.m_sort.nId);
+        stat.exec();
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+        return false;
+    }
+
     return true;
 }
 

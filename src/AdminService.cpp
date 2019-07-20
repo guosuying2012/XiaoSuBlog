@@ -1,13 +1,17 @@
 #include "AdminService.h"
-
 #include "support.h"
 #include "DatabaseUtils.h"
 
 #include <cppcms/http_response.h>
+#include <cppcms/http_request.h>
+#include <cppcms/http_file.h>
 #include <cppcms/url_dispatcher.h>  
 #include <cppcms/url_mapper.h>
 
+#include <sstream>
+#include <string>
 #include <vector>
+#include <chrono>
 
 AdminService::AdminService(cppcms::service& srv)
     :BaseService(srv)
@@ -18,7 +22,9 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/article", &AdminService::article, this);
     dispatcher().map("GET", "/users", &AdminService::users, this);
     dispatcher().map("GET", "/system", &AdminService::system, this);
-    mapper().root("/xiaosu");
+    dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
+    dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
+    mapper().root("/admin");
 }
 
 AdminService::~AdminService()
@@ -86,6 +92,137 @@ void AdminService::system()
     renderMenu(tpl);
 
     tpl.render(response(200, "text/html").out(), true);
+}
+
+void AdminService::edit()
+{
+
+}
+
+void AdminService::message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText)
+{
+    Template tpl("./admin/message.html");
+    tpl.set("function", strMsgTitle);
+    tpl.set("message_title", strMsgTitle);
+    tpl.set("message_type", strMsgType);
+    tpl.set("message_content", strMsgText);
+    m_nIndex = 1;
+    renderMenu(tpl);
+    tpl.render(response(200, "text/html").out(), true);
+}
+
+void AdminService::postArticle()
+{
+    std::string strTitle;
+    std::string strSortId;
+    std::string strDescribe;
+    std::string strContent;
+    cppcms::http::request::files_type vecFiles;
+    std::ostringstream ostrFileName;
+    std::string strPostToken;
+    std::ostringstream ostrFilePath;
+    struct article record;
+
+    strTitle.clear();
+    strSortId.clear();
+    strDescribe.clear();
+    strContent.clear();
+    vecFiles.clear();
+    ostrFileName.clear();
+    strPostToken.clear();
+    ostrFilePath.clear();
+    record.clear();
+
+    strTitle = request().post("title");
+    strSortId = request().post("sort");
+    strDescribe = request().post("describe");
+    strContent = request().post("content");
+    strPostToken = request().post("posttoken");
+    if (strPostToken == m_strPostToken)
+    {
+        message("danger", "发布错误", "请勿刷新页面！");
+        return;
+    }
+    else
+    {
+        m_strPostToken = strPostToken;
+    }
+
+    vecFiles = request().files();
+    for (std::size_t i = 0; i < vecFiles.size(); ++i)
+    {
+        const std::string& strFileName = vecFiles.at(i)->filename();
+        if (strFileName.empty())
+        {
+            continue;
+        }
+
+        const std::string& strSuffix = strFileName.substr(strFileName.find_last_of('.'));
+        std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds >(
+            std::chrono::system_clock::now().time_since_epoch()
+        );
+        ostrFileName << setting("htdocs") << "/assets/upload/cover/" << ms.count() << strSuffix;
+        vecFiles.at(i)->save_to(ostrFileName.str());
+        ostrFilePath << setting("host") << "/assets/upload/cover/" << ms.count() << strSuffix;
+        ostrFileName.clear();
+    }
+
+    std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds >(
+        std::chrono::system_clock::now().time_since_epoch()
+    );
+
+    record.m_user.nId = 1;
+    record.m_sort.nId = std::stoi(strSortId,nullptr,0);
+    record.strTitle = strTitle;
+    record.strImage = ostrFilePath.str();
+    record.strContent = strContent;
+    record.nTime = ms.count();
+    record.nLastModified = ms.count();
+    record.strDescribe = strDescribe;
+
+    try
+    {
+        DatabaseUtils::insertArticle(database(), record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "发布失败", e.what());
+    }
+
+    message("success", "发布成功", "您的博客发表成功！");
+}
+
+void AdminService::uploadImages()
+{
+    std::string strFileName;
+    cppcms::http::request::files_type vecFiles;
+    std::ostringstream ostrFileName;
+    cppcms::json::value jObject; 
+
+    strFileName.clear();
+    vecFiles.clear();
+    ostrFileName.clear();
+
+    vecFiles = request().files();
+    for (std::size_t i = 0; i < vecFiles.size(); ++i)
+    {
+        const std::string& strFileName = vecFiles.at(i)->filename();
+        const std::string& strSuffix = strFileName.substr(strFileName.find_last_of('.'));
+        std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds >(
+            std::chrono::system_clock::now().time_since_epoch()
+        );
+        ostrFileName << setting("htdocs") << "/assets/upload/images/" << ms.count() << strSuffix;
+        vecFiles.at(i)->save_to(ostrFileName.str());
+
+        std::ostringstream ostrPath;
+        ostrPath << setting("host") << "/assets/upload/images/" << ms.count() << strSuffix;
+        jObject["success"] = 1;
+        jObject["message"] = "上传成功!";
+        jObject["url"] = ostrPath.str();
+        response().out() << jObject;
+
+        ostrFileName.clear();
+    }
 }
 
 void AdminService::renderMenu(Template& tpl)

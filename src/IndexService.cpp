@@ -11,7 +11,7 @@ IndexService::IndexService(cppcms::service& srv)
 {
     dispatcher().map("GET", "", &IndexService::index, this);
     dispatcher().map("GET", "/getArticles/(\\d+)", &IndexService::articleList, this, 1);
-    mapper().root("/xiaosu");
+    mapper().root("/index");
 }
 
 IndexService::~IndexService()

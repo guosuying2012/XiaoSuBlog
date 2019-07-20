@@ -17,7 +17,7 @@ CommentService::CommentService(cppcms::service& srv)
     dispatcher().map("GET", "/getCommentByArticleId/(\\d+)", &CommentService::commentByArticleId, this, 1);
     dispatcher().map("GET", "/getCommentById/(\\d+)", &CommentService::commentById, this, 1);
     dispatcher().map("POST", "/postComment", &CommentService::postComment, this);
-    mapper().root("/xiaosu");
+    mapper().root("/comment");
 }
 
 CommentService::~CommentService()

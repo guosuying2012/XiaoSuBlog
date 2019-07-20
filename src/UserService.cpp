@@ -11,7 +11,7 @@ UserService::UserService(cppcms::service& srv)
 {
     dispatcher().map("GET", "", &UserService::index, this);
     dispatcher().map("GET", "/getUserById/(\\d+)", &UserService::userById, this, 1);
-    mapper().root("/xiaosu");
+    mapper().root("/user");
 }
 
 UserService::~UserService()
