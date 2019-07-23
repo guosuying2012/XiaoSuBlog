@@ -4,9 +4,6 @@
   h4{
     margin-left: 20px;
   }
-  p{
-      text-align: center;
-  }
   .modal{
       display: none;
       width: 100%;
@@ -99,7 +96,7 @@
   <form enctype="multipart/form-data" action="./postArticle" onsubmit="return check()" method="post">
   <label class="c-field__label" for="input1">标题</label>
   <div class="c-field">
-    <input class="c-input" type="text" value="" id="title" name="title">
+    <input class="c-input" type="text" id="title" name="title">
   </div><br>
 
   <label class="c-field__label" for="input1">分类</label>
@@ -141,7 +138,7 @@
       <span class="close">×</span>
     </header>
     <div class="modal-body">
-      <p>您的简介不满足条件，系统将为您自动剪裁到符合条件的字符长度！</p>
+      <p style="text-align: center;">您的简介不满足条件，系统将为您自动剪裁到符合条件的字符长度！</p>
     </div>
     <footer class="modal-footer">
       <button class="c-btn c-btn--danger u-mb-xsmall" id="cancel">取消</button>
@@ -183,7 +180,7 @@
       range: 
       {
         min: 200,
-        max: 5000
+        max: 10000
       }
     };
     result = approve.value(content_value, content_rules);

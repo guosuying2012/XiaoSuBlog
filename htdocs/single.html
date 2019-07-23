@@ -19,6 +19,8 @@
 		<link rel="stylesheet" href="assets/css/google-font-Playfair.css" type="text/css">
 		<link rel="stylesheet" href="assets/css/google-font-alike.css" type="text/css">
         <link rel="stylesheet" href="assets/css/spop.min.css" type="text/css">
+        <link rel="stylesheet" href="admin/editor/css/editormd.preview.min.css" />
+
         <noscript>
         </noscript>
         <!--[if lt IE 9]>
@@ -26,8 +28,17 @@
         <![endif]-->
         <!-- ======== / STYLESHEETS ======== -->
         <!-- ======== STANDARD SCRIPTS ======== -->
-        <script type="text/javascript" src="assets/js/jquery.js"></script>
+        <script type="text/javascript" src="admin/editor/js/jquery.min.js"></script>
         <script type="text/javascript" src="assets/js/spop.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/marked.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/prettify.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/raphael.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/underscore.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/sequence-diagram.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/flowchart.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/lib/jquery.flowchart.min.js"></script>
+        <script type="text/javascript" src="admin/editor/js/editormd.min.js"></script>
+
         <!--[if lt IE 9]>
                 <script src="assets/js/html5shiv.js"></script>
                 <script src="assets/js/respond.js"></script>
@@ -88,17 +99,18 @@
 							<!-- 上下文章选择结束 -->
 							<!-- 评论区开始 -->
 							<div id="comments">
-								<h4 id="comment"><span id="comment_count">0</span> Comments</h4>
-								<ul id="list-comments"></ul>
+                                <h3 style="text-align: center;">评论区建设中......</h3>
+								<!-- <h4 id="comment"><span id="comment_count">0</span> Comments</h4>
+								<ul id="list-comments"></ul> -->
 								<!-- 评论区结束 -->
 								<!-- 评论输入框开始 -->
-								<div id="commentform">
+								<!-- <div id="commentform">
 									<h4>Leave a reply</h4>
 									<input type="text" name="personal" placeholder="Name*">
 									<input type="text" name="email" placeholder="Email*">
 									<textarea name="comment" id="comment_text" placeholder="Message" style="resize:none"></textarea>
 									<button type="submit" onclick="sendComment()">Send messsage</button>
-								</div>
+								</div> -->
 								<!-- 评论输入框结束 -->
 							</div>
 						</div>
@@ -167,6 +179,8 @@
 		<script type="text/javascript" src="assets/js/api.js"></script>
         <script type="text/javascript" src="assets/js/single.js"></script>
         <script type="text/javascript" src="assets/js/settings.js"></script>
+        <script type="text/javascript">
+        </script>
         <!-- ======== /OTHER SCRIPTS ======== -->
     </body>
 </html>

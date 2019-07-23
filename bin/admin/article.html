@@ -1,4 +1,5 @@
 {=./admin/public/header.html}
+
 <div class="container">
   
     <div class="row">
@@ -7,45 +8,35 @@
         <table class="c-table">
           <thead class="c-table__head">
             <tr class="c-table__row">
-              <th class="c-table__cell c-table__cell--head">Customer</th>
-              <th class="c-table__cell c-table__cell--head">Company</th>
-              <th class="c-table__cell c-table__cell--head">Lead Score</th>
-              <th class="c-table__cell c-table__cell--head">Date</th>
-              <th class="c-table__cell c-table__cell--head">Tags</th>
-              <th class="c-table__cell c-table__cell--head">Actions</th>
+              <th class="c-table__cell c-table__cell--head">ID</th>
+              <th class="c-table__cell c-table__cell--head">标题和作者</th>
+              <th class="c-table__cell c-table__cell--head">浏览量</th>
+              <th class="c-table__cell c-table__cell--head">评论量</th>
+              <th class="c-table__cell c-table__cell--head">点赞量</th>
+              <th class="c-table__cell c-table__cell--head">发表时间</th>
+              <th class="c-table__cell c-table__cell--head">最后修改时间</th>
+              <th class="c-table__cell c-table__cell--head">审核状态</th>
+              <th class="c-table__cell c-table__cell--head">操作</th>
             </tr>
           </thead>
 
           <tbody>
             <tr class="c-table__row">
+              <td class="c-table__cell">{$article_id}</td>
               <td class="c-table__cell">
                 <div class="o-media">
-                  <div class="o-media__img u-mr-xsmall">
-                    <div class="c-avatar c-avatar--small">
-                      <img class="c-avatar__img" src="http://via.placeholder.com/72" alt="Jessica Alba">
-                    </div>
-                  </div>
                   <div class="o-media__body">
-                    <h6>Adam Sandler</h6>
-                    <p>Graphic Designer</p>
+                    <h6>{$article_title}</h6>
+                    <p>{$article_author}</p>
                   </div>
                 </div>
               </td>
-              <td class="c-table__cell">Pinterest</td>
-              <th class="c-table__cell">223</th>
-              <td class="c-table__cell">19-11-2018</td>
-              <td class="c-table__cell">
-                <a class="c-badge c-badge--small c-badge--info" href="#">sketch</a>
-                <a class="c-badge c-badge--small c-badge--primary" href="#">primary</a>
-                <a class="c-badge c-badge--small c-badge--fancy" href="#">fancy</a>
-                <br>
-                <br>
-                <a class="c-badge c-badge--small c-badge--danger" href="#">danger</a>
-                <a class="c-badge c-badge--small c-badge--warning" href="#">warning</a>
-                <a class="c-badge c-badge--small c-badge--success" href="#">success</a>
-              </td>
-              <td class="c-table__cell">
-                <div class="c-dropdown dropdown">
+              <td class="c-table__cell">{$article_views}</td>
+              <th class="c-table__cell">{$article_comment}</th>
+              <td class="c-table__cell">{$article_like}</td>
+              <td class="c-table__cell">{$article_data}</td>
+              <td class="c-table__cell">{$article_last_data}
+                <!-- <div class="c-dropdown dropdown">
                   <a href="#" class="c-btn c-btn--small c-btn--secondary">
                     <i class="feather" data-feather="trash"></i>
                   </a>
@@ -65,6 +56,14 @@
                   </a>
                   <a href="#" class="c-btn c-btn--small c-btn--warning">
                     <i class="feather" data-feather="trash"></i>
+                  </a>
+                </div> -->
+              </td>
+              <td class="c-table__cell">{$article_status}</td>
+              <td class="c-table__cell">
+                <div class="c-dropdown dropdown">
+                  <a href="#" class="c-btn c-btn--small c-btn--warning">
+                      <i class="feather" data-feather="trash"></i>
                   </a>
                 </div>
               </td>

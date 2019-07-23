@@ -1,40 +1,5 @@
 
-<div id="editormd"><textarea name="content">爱是什么？
-一个精灵坐在碧绿的枝叶间沉思。
-风儿若有若无。
-一只鸟儿飞过来，停在枝上，望着远处将要成熟的稻田。
-精灵取出一束黄澄澄的稻谷问道：“你爱这稻谷吗？”
-“爱。”
-“为什么？”
-“它驱赶我的饥饿。”
-鸟儿啄完稻谷，轻轻梳理着光润的羽毛。
-“现在你爱这稻谷吗？”精灵又取出一束黄澄澄的稻谷。
-鸟儿抬头望着远处的一湾泉水回答：“现在我爱那一湾泉水，我有点渴了。”
-精灵摘下一片树叶，里面盛了一汪泉水。
-鸟儿喝完泉水，准备振翅飞去。
-“请再回答我一个问题，”精灵伸出指尖，鸟儿停在上面。
-“你要去做什么更重要的事吗？我这里又稻谷也有泉水。”
-“我要去那片开着风信子的山谷，去看那朵风信子。”
-“为什么？它能驱赶你的饥饿？”
-“不能。”
-“它能滋润你的干渴？”
-“不能。”
-“那你为什么要去看它呢？”
-“我需要它啊。”
-“为什么需要？”
-“我爱它啊。”
-“为什么爱它？”
-“我日日夜夜都在思念它。”
-“为什么思念它？”
-“我爱它。”
-精灵沉默了片刻，又提出一个问题：
-“你为什么只爱那一朵风信子呢？山谷里有无数朵风信子。”
-“因为它是唯一的一朵啊。”
-“为什么？它和其他所有的风信子有什么不同的地方吗？”
-“有的。”
-“哪里不同呢？”
-“只有它才是我爱的那一朵啊。”
-精灵忽然轻轻笑了起来，鸟儿振翅而去。</textarea></div>
+<div id="editormd"><textarea name="content"></textarea></div>
 
 <script type="text/javascript">
     var editor;
@@ -42,23 +7,23 @@
         id:                         "editormd",
         width:                      "100%",
         height:                     700,
-        path:                       '../../admin/editor/js/lib/',
         theme:                      "default",                          // 主题
-        placeholder:                "coding now...",                    // 默认提示文字
+        placeholder:                "",                                 // 默认提示文字
         previewTheme:               "default",                          // 预览主题
         editorTheme:                "default",                          // 编辑器主题
         codeFold:                   true,
-        //syncScrolling:            false,                              // 同步滚动
+        syncScrolling:              true,                               // 同步滚动
         saveHTMLToTextarea:         true,                               // 保存 HTML 到 Textarea
         searchReplace:              true,                               // 搜索替换
-        //watch:                    false,                              // 关闭实时预览
-        htmlDecode:                 "style,script,iframe|on*",          // 开启 HTML 标签解析，为了安全性，默认不开启    
-        //toolbar:                  false,                              // 关闭工具栏
-        //previewCodeHighlight:     false,                              // 关闭预览 HTML 的代码块高亮，默认开启
+        watch:                      true,                               // 关闭实时预览 
+        toolbar:                    true,                               // 关闭工具栏
+        previewCodeHighlight:       true,                               // 关闭预览 HTML 的代码块高亮，默认开启
+        htmlDecode:                 "style,script,iframe|on*",          // 开启 HTML 标签解析，为了安全性，默认不开启
         emoji:                      true,                               // 表情
-        pluginPath:                 "../../admin/editor/js/plugins/",   // 插件路径
         taskList:                   true,                               // 任务列表
-        //toc:                      false,                              // Using [TOC] 
+        toolbarAutoFixed:           false,                              // 工具栏自动固定定位的开启与禁用
+        delay:                      300,                                // Uint : ms, default value is 300
+        toc:                        true,                               // Using [TOC] 
         tocm:                       true,                               // Using [TOCM]
         tex:                        true,                               // 开启科学公式TeX语言支持，默认关闭
         flowChart :                 true,                               // 开启流程图支持，默认关闭
@@ -68,11 +33,9 @@
         dialogDraggable :           false,                              // 设置弹出层对话框不可拖动，全局通用，默认为true
         dialogMaskOpacity :         0.4,                                // 设置透明遮罩层的透明度，全局通用，默认值为0.1
         dialogMaskBgColor :         "#000",                             // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
-        placeholder:                "",                                 // 提示文字
-        atLink:                     false,                              // for @link
-        emailLink:                  false,                              // for email address auto link
-        taskList:                   true,                               // 任务列表
-        imageUpload :               true,                               // 图片上传
+        path:                       '../../admin/editor/js/lib/',
+        pluginPath:                 "../../admin/editor/js/plugins/",
+        imageUpload :               true,
         imageFormats :              ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL :            "./uploadImages",
         toolbarIcons : function() { return ["undo", "redo", "|", 

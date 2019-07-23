@@ -20,13 +20,13 @@ function getArticle(articleId)
     .then(article=> 
     {
         //getUser(article.data.user.id);
-        getComment(articleId);
+        //getComment(articleId);
         if (article.data.image != "") 
         {
             $("#header").append("<div class='media'><img src='"+ article.data.image +"' alt=''></div>");
         }
         $("#header").append("<h3><a>"+article.data.title+"</a></h3><span>"+timetrans(article.data.time)+" / by "+article.data.user.displayname+" / in: "+article.data.sort.name+" / "+ article.data.comment_count +" Comments</a></span>");
-        $("#content").append(article.data.content);
+        showMarkdown(article.data.content);
         $("#comment").html(article.data.comment_count + " Comments");
 
         $("#post-author").append("<h4><a href='category.html?author="+article.data.user.id+"'>"+article.data.user.displayname+"</a></h4>");
@@ -201,5 +201,23 @@ function sendComment()
     })
     .catch(function(error) {
         console.log(error);
+    });
+}
+
+function showMarkdown(markdown) 
+{
+    editormd.markdownToHTML("content", {
+            markdown        : markdown ,
+            htmlDecode      : true,
+            htmlDecode      : "style,script,iframe",
+            toc             : true,
+            tocm            : true,
+            gfm             : true,
+            tocDropdown     : true,
+            emoji           : true,
+            taskList        : true,
+            tex             : true,
+            flowChart       : true,
+            sequenceDiagram : true,
     });
 }

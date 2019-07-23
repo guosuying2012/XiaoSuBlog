@@ -30,14 +30,14 @@ function article_callback(response)
         article = "<article class='post'> <header>";
         if (obj.image != "")
         {
-            article += "<div class='media'><a href='?single=\""+obj.id+"\"'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
+            article += "<div class='media'><a href='single.html?single="+obj.id+"'><img src='"+obj.image+"' alt='"+obj.title+"' /></a></div>";
         }
         article += "<h3><a href='single.html?single="+obj.id+"'>"+obj.title+"</a></h3> \
         <span><span>"+timetrans(obj.time)+"</span> \
         / by <a href='category.html?author="+obj.user.id+"'><span>"+ obj.user.displayname +"</span></a> \
         / in: <span><a href='category.html?category="+obj.sort.id+"'>"+obj.sort.name+"</a></span> \
         / <a href='single.html?single="+obj.id+"#comments'><span>"+obj.comment_count+"</span> Comments</a></span> \
-        </header> <div class='editor-styles' style='text-indent:2em'>"+obj.describe+"......</div> <footer> <div> \
+        </header> <div class='editor-styles' style='text-indent:2em;word-wrap:break-word;'>"+obj.describe+"......</div> <footer> <div> \
         <a href='single.html?single="+obj.id+"''>Continue Reading...</a> \
         </div><hr> </footer> </article>";
         $("#list").append(article);
