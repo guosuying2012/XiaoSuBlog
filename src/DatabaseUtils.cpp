@@ -401,6 +401,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
                     article_describe, \
                     article_date, \
                     article_comment_count, \
+                    article_last_modified, \
                     yengsu_articles.user_id, \
                     user_name, \
                     user_nikename, \
@@ -428,6 +429,7 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
             record.strImage = resRecords.get<std::string>("article_image");
             record.nCommentCount = resRecords.get<unsigned int>("article_comment_count");
             record.nTime = resRecords.get<unsigned long long>("article_date");
+            record.nLastModified = resRecords.get<unsigned long long>("article_last_modified");
             record.strDescribe = cppcms::util::escape(strDescribe);
             record.m_user.nId = resRecords.get<unsigned int>("user_id");
             record.m_user.strName = resRecords.get<std::string>("user_name");

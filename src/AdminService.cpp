@@ -7,10 +7,12 @@
 #include <cppcms/http_file.h>
 #include <cppcms/url_dispatcher.h>  
 #include <cppcms/url_mapper.h>
+#include <cppcms/util.h>
 
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
 #include <chrono>
 
 AdminService::AdminService(cppcms::service& srv)
@@ -66,10 +68,30 @@ void AdminService::publish()
 
 void AdminService::article()
 {
+    articles vecRes;
     Template tpl("./admin/article.html");
+    
+    vecRes.clear();
     tpl.set("function", "文章管理");
     m_nIndex = 2;
     renderMenu(tpl);
+
+    DatabaseUtils::queryArticles(database(), "", 1, 20, vecRes);
+    auto article_list = tpl.block("article_list").repeat(vecRes.size());
+    for (int i = 0; i < vecRes.size(); ++i)
+    {
+        std::time_t t(vecRes.at(i).nTime / 1000);
+        std::time_t lt(vecRes.at(i).nLastModified / 1000);
+        article_list.set("article_id", vecRes.at(i).nId);
+        article_list.set("article_title", vecRes.at(i).strTitle);
+        article_list.set("article_author", vecRes.at(i).m_user.strDisplayName);
+        article_list.set("article_views", vecRes.at(i).nViews);
+        article_list.set("article_comment", vecRes.at(i).nCommentCount);
+        article_list.set("article_like", vecRes.at(i).nLikeCount);
+        article_list.set("article_data", std::put_time(std::localtime(&t), "[%F %T]"));
+        article_list.set("article_last_data", std::put_time(std::localtime(&lt), "[%F %T]"));
+        article_list = article_list.next();
+    }
 
     tpl.render(response(200, "text/html").out(), true);
 }
@@ -175,7 +197,7 @@ void AdminService::postArticle()
     record.m_sort.nId = std::stoi(strSortId,nullptr,0);
     record.strTitle = strTitle;
     record.strImage = ostrFilePath.str();
-    record.strContent = strContent;
+    record.strContent = cppcms::util::escape(strContent);
     record.nTime = ms.count();
     record.nLastModified = ms.count();
     record.strDescribe = strDescribe;

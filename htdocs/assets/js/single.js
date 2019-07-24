@@ -219,5 +219,7 @@ function showMarkdown(markdown)
             tex             : true,
             flowChart       : true,
             sequenceDiagram : true,
+            atLink          : false,
+            emailLink       : false,
     });
 }

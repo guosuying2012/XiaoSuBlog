@@ -191,12 +191,11 @@
     }
 
     //简介 最少120字，最多200字
-    var describe_length = content_value.length > 300 ? 300 : content_value.length / 2;
     var describe_rules = 
     {
       range: 
       {
-        min: parseInt(describe_length),
+        min: parseInt(251),
         max: 500
       }
     };
@@ -229,18 +228,8 @@
     sure.addEventListener('click', function() {
       //特殊字符过滤
       var content_value = editor.getMarkdown();
-      var describe_length = content_value.length > 300 ? 300 : content_value.length / 2;
-      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&mdash;—|{}【】‘；：”“'。，、？]")
-      var str = "";
-      for (var i = 0; i < content_value.length; i++) 
-      {
-        str = str + content_value.substr(i, 1).replace(pattern, '');
-      }
-      var reg = /\\+|\~+|\!+|\@+|\#+|¥+|\￥+|\%+|\^+|\&+|\*+|\(+|\)+|\'+|(\")+|\$+|`+|\“+|\”+|\‘+|\’+|\s+/g;
-      var res = str.replace(reg,"");
-
-      //裁减到120字符
-      document.getElementById("describe").value = res.slice(0, parseInt(describe_length));
+      var str = content_value.slice(0, 252);
+      document.getElementById("describe").value = str;
 
       modal.style.display = "none";
     });

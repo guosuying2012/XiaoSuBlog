@@ -8,19 +8,20 @@
         <table class="c-table">
           <thead class="c-table__head">
             <tr class="c-table__row">
-              <th class="c-table__cell c-table__cell--head">ID</th>
-              <th class="c-table__cell c-table__cell--head">标题和作者</th>
-              <th class="c-table__cell c-table__cell--head">浏览量</th>
-              <th class="c-table__cell c-table__cell--head">评论量</th>
-              <th class="c-table__cell c-table__cell--head">点赞量</th>
-              <th class="c-table__cell c-table__cell--head">发表时间</th>
-              <th class="c-table__cell c-table__cell--head">最后修改时间</th>
-              <th class="c-table__cell c-table__cell--head">审核状态</th>
-              <th class="c-table__cell c-table__cell--head">操作</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">ID</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">标题和作者</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">浏览量</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">评论量</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">点赞量</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">发表时间</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">最后修改时间</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">审核状态</th>
+              <th class="c-table__cell c-table__cell--head" style="text-align: center;font-weight:bold;">操作</th>
             </tr>
           </thead>
 
           <tbody>
+            {#article_list}
             <tr class="c-table__row">
               <td class="c-table__cell">{$article_id}</td>
               <td class="c-table__cell">
@@ -35,8 +36,10 @@
               <th class="c-table__cell">{$article_comment}</th>
               <td class="c-table__cell">{$article_like}</td>
               <td class="c-table__cell">{$article_data}</td>
-              <td class="c-table__cell">{$article_last_data}
-                <!-- <div class="c-dropdown dropdown">
+              <td class="c-table__cell">{$article_last_data}</td>
+              <td class="c-table__cell">{$article_status}</td>
+              <td class="c-table__cell">
+                <div class="c-dropdown dropdown">
                   <a href="#" class="c-btn c-btn--small c-btn--secondary">
                     <i class="feather" data-feather="trash"></i>
                   </a>
@@ -46,7 +49,7 @@
                   <a href="#" class="c-btn c-btn--small c-btn--danger">
                     <i class="feather" data-feather="trash"></i>
                   </a>
-                  <br>
+                  <!-- <br>
                   <br>
                   <a href="#" class="c-btn c-btn--small c-btn--info">
                     <i class="feather" data-feather="trash"></i>
@@ -56,19 +59,11 @@
                   </a>
                   <a href="#" class="c-btn c-btn--small c-btn--warning">
                     <i class="feather" data-feather="trash"></i>
-                  </a>
-                </div> -->
-              </td>
-              <td class="c-table__cell">{$article_status}</td>
-              <td class="c-table__cell">
-                <div class="c-dropdown dropdown">
-                  <a href="#" class="c-btn c-btn--small c-btn--warning">
-                      <i class="feather" data-feather="trash"></i>
-                  </a>
+                  </a> -->
                 </div>
               </td>
             </tr>
-
+            {/article_list}
           </tbody>
         </table>
         
