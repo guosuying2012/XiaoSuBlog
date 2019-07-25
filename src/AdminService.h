@@ -16,7 +16,7 @@ private:
 
     void publish();
     void article();
-    void users();
+    void user();
     void system();
 
     void edit();

@@ -40,7 +40,7 @@ public:
     static bool updateArticle(cppdb::session&, const article& record);
 
     //用户操作
-    static void queryUsers(cppdb::session&, articles& vecRes);
+    static void queryUsers(cppdb::session&, users& vecRes);
     static void queryUserById(cppdb::session&, int nId, user& resUser);
     static bool insertUser(cppdb::session&, const user& record);
     static bool deleteUser(cppdb::session&, const user& record);

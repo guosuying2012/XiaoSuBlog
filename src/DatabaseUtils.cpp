@@ -400,8 +400,11 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
                     article_image, \
                     article_describe, \
                     article_date, \
+                    article_views, \
+                    article_like_count, \
                     article_comment_count, \
                     article_last_modified, \
+                    article_approval_status, \
                     yengsu_articles.user_id, \
                     user_name, \
                     user_nikename, \
@@ -430,6 +433,9 @@ void DatabaseUtils::queryArticles(cppdb::session& sql, std::string strCondition,
             record.nCommentCount = resRecords.get<unsigned int>("article_comment_count");
             record.nTime = resRecords.get<unsigned long long>("article_date");
             record.nLastModified = resRecords.get<unsigned long long>("article_last_modified");
+            record.nViews = resRecords.get<unsigned long long>("article_views");
+            record.nLikeCount = resRecords.get<unsigned long long>("article_like_count");
+            record.bIsApproval = resRecords.get<unsigned short>("article_approval_status");
             record.strDescribe = cppcms::util::escape(strDescribe);
             record.m_user.nId = resRecords.get<unsigned int>("user_id");
             record.m_user.strName = resRecords.get<std::string>("user_name");
@@ -549,9 +555,27 @@ bool DatabaseUtils::updateArticle(cppdb::session& sql, const article& record)
 }
 
 //用户操作
-void DatabaseUtils::queryUsers(cppdb::session& sql, articles& vecRes)
+void DatabaseUtils::queryUsers(cppdb::session& sql, users& vecRes)
 {
+    cppdb::result resRecords;
+    user record;
+    resRecords.clear();
+    record.clear();
+    vecRes.clear();
 
+    try
+    {
+        resRecords = sql << "SELECT user_id, user_ip, user_name, user_profile_photo, user_registration_time, user_nikename, user_signature FROM yengsu_users";
+        while (resRecords.next())
+        {
+            resRecords >> record.nId >> record.strIp >> record.strName >> record.strProfilePhoto >> record.nRegistrationTime >> record.strDisplayName >> record.strSignature;
+            vecRes.push_back(record);
+        }
+    }
+    catch(cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
 }
 
 void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)

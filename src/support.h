@@ -161,6 +161,7 @@ struct article : public cppcms::serializable
     unsigned int nLikeCount;            //点赞量
     unsigned long long nLastModified;   //最后后修改时间
     std::string strDescribe;            //描述120字
+    bool bIsApproval;                   //文章审核状态
 
     void clear()
     {
@@ -176,6 +177,7 @@ struct article : public cppcms::serializable
         nLikeCount = 0;
         nLastModified = 0;
         strDescribe.clear();
+        bIsApproval = false;
     }
 
     void serialize(cppcms::archive &a)

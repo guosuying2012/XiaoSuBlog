@@ -22,7 +22,7 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "", &AdminService::index, this);
     dispatcher().map("GET", "/publish", &AdminService::publish, this);
     dispatcher().map("GET", "/article", &AdminService::article, this);
-    dispatcher().map("GET", "/users", &AdminService::users, this);
+    dispatcher().map("GET", "/users", &AdminService::user, this);
     dispatcher().map("GET", "/system", &AdminService::system, this);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
@@ -90,18 +90,53 @@ void AdminService::article()
         article_list.set("article_like", vecRes.at(i).nLikeCount);
         article_list.set("article_data", std::put_time(std::localtime(&t), "[%F %T]"));
         article_list.set("article_last_data", std::put_time(std::localtime(&lt), "[%F %T]"));
+        if (vecRes.at(i).bIsApproval)
+        {
+            article_list.set("article_status", "smile");
+            article_list.set("color", "#2083fe");
+        }
+        else
+        {
+            article_list.set("article_status", "frown");
+            article_list.set("color", "red");
+        }
         article_list = article_list.next();
     }
 
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::users()
+void AdminService::user()
 {
+    users vecRes;
     Template tpl("./admin/users.html");
+    
+    vecRes.clear();
     tpl.set("function", "用户管理");
+    
     m_nIndex = 3;
     renderMenu(tpl);
+
+    try
+    {
+        DatabaseUtils::queryUsers(database(), vecRes);
+        auto user_list = tpl.block("user_list").repeat(vecRes.size());
+        for (int i = 0; i < vecRes.size(); ++i)
+        {
+            std::time_t t(vecRes.at(i).nRegistrationTime / 1000);
+            user_list.set("user_id", vecRes.at(i).nId);
+            user_list.set("user_ip", vecRes.at(i).strIp);
+            user_list.set("user_nikename", vecRes.at(i).strDisplayName);
+            user_list.set("user_username", vecRes.at(i).strName);
+            user_list.set("user_regtime", std::put_time(std::localtime(&t), "[%F %T]"));
+            user_list.set("user_signature", vecRes.at(i).strSignature);
+            user_list = user_list.next();
+        }
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+
+    }
 
     tpl.render(response(200, "text/html").out(), true);
 }
