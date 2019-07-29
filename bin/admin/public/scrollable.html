@@ -4,14 +4,36 @@
 <div class="c-sidebar__body">
 
   <ul class="c-sidebar__list">
-    {#menu_group}
     <li>
       <!-- is-active -->
-      <a class="c-sidebar__link {$menu_active}" href="{$menu_link}">
-        <i class="c-sidebar__icon feather" data-feather="{$menu_icon}"></i>{$menu_text}
+      <a class="c-sidebar__link {$menu_active}" href="/xiaosu/admin">
+        <i class="c-sidebar__icon feather" data-feather="home"></i>控制台
       </a>
     </li>
-    {/menu_group}
+    <li>
+      <!-- is-active -->
+      <a class="c-sidebar__link {$menu_active}" href="/xiaosu/admin/publish">
+        <i class="c-sidebar__icon feather" data-feather="pen-tool"></i>发表文章
+      </a>
+    </li>
+    <li>
+      <!-- is-active -->
+      <a class="c-sidebar__link {$menu_active}" href="/xiaosu/admin/article">
+        <i class="c-sidebar__icon feather" data-feather="inbox"></i>文章管理
+      </a>
+    </li>
+    <li>
+      <!-- is-active -->
+      <a class="c-sidebar__link {$menu_active}" href="/xiaosu/admin/users">
+        <i class="c-sidebar__icon feather" data-feather="users"></i>用户管理
+      </a>
+    </li>
+    <li>
+      <!-- is-active -->
+      <a class="c-sidebar__link {$menu_active}" href="/xiaosu/admin/system">
+        <i class="c-sidebar__icon feather" data-feather="settings"></i>系统设置
+      </a>
+    </li>
   </ul>
 
 </div>

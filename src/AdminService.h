@@ -2,8 +2,6 @@
 #define ADMIN_SERVICE_H
 
 #include "BaseService.h"
-#include <StringTemplate/StringTemplate.hpp>
-using namespace StringTemplate;
 
 class AdminService : public BaseService
 {
@@ -14,21 +12,18 @@ public:
 private:
     virtual void index() override;
 
-    void publish();
-    void article();
-    void user();
-    void system();
+    void admin_publish();
+    void admin_articles();
+    void admin_users();
+    void admin_system();
 
-    void edit();
+    void edit(int nId);
     void message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText);
 
     void postArticle();
     void uploadImages();
 
-    void renderMenu(Template& tpl);
-
 private:
-    int m_nIndex;
     std::string m_strPostToken;
 };
 

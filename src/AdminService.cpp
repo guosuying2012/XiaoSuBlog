@@ -8,6 +8,7 @@
 #include <cppcms/url_dispatcher.h>  
 #include <cppcms/url_mapper.h>
 #include <cppcms/util.h>
+#include <StringTemplate/StringTemplate.hpp>
 
 #include <sstream>
 #include <string>
@@ -15,15 +16,17 @@
 #include <iomanip>
 #include <chrono>
 
+using namespace StringTemplate;
+
 AdminService::AdminService(cppcms::service& srv)
     :BaseService(srv)
 {
-    m_nIndex = -1;
     dispatcher().map("GET", "", &AdminService::index, this);
-    dispatcher().map("GET", "/publish", &AdminService::publish, this);
-    dispatcher().map("GET", "/article", &AdminService::article, this);
-    dispatcher().map("GET", "/users", &AdminService::user, this);
-    dispatcher().map("GET", "/system", &AdminService::system, this);
+    dispatcher().map("GET", "/publish", &AdminService::admin_publish, this);
+    dispatcher().map("GET", "/article", &AdminService::admin_articles, this);
+    dispatcher().map("GET", "/users", &AdminService::admin_users, this);
+    dispatcher().map("GET", "/system", &AdminService::admin_system, this);
+    dispatcher().map("GET", "/article_edit/(\\d+)", &AdminService::edit, this, 1);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
     mapper().root("/admin");
@@ -37,22 +40,19 @@ AdminService::~AdminService()
 void AdminService::index()
 {
     Template tpl("./admin/index.html");
+    tpl.set("title", "XiaoSu");
     tpl.set("function", "控制台");
-    m_nIndex = 0;
-    renderMenu(tpl);
-
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::publish()
+void AdminService::admin_publish()
 {
-    Template tpl("./admin/publish.html");
     sorts vecRes;
+    Template tpl("./admin/publish.html");
 
     vecRes.clear();
+    tpl.set("title", "XiaoSu");
     tpl.set("function", "发表文章");
-    m_nIndex = 1;
-    renderMenu(tpl);
 
     DatabaseUtils::queryAllSorts(database(), vecRes);
     auto sorts_block = tpl.block("option").repeat(vecRes.size());
@@ -62,19 +62,20 @@ void AdminService::publish()
         sorts_block.set("value_id", vecRes.at(i).nId);
         sorts_block = sorts_block.next();
     }
+    tpl.set("article_preview", "http://via.placeholder.com/100");
+    tpl.set("article_status", "publish");
 
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::article()
+void AdminService::admin_articles()
 {
-    articles vecRes;
     Template tpl("./admin/article.html");
+    articles vecRes;
     
     vecRes.clear();
+    tpl.set("title", "XiaoSu");
     tpl.set("function", "文章管理");
-    m_nIndex = 2;
-    renderMenu(tpl);
 
     DatabaseUtils::queryArticles(database(), "", 1, 20, vecRes);
     auto article_list = tpl.block("article_list").repeat(vecRes.size());
@@ -87,7 +88,7 @@ void AdminService::article()
         article_list.set("article_author", vecRes.at(i).m_user.strDisplayName);
         article_list.set("article_views", vecRes.at(i).nViews);
         article_list.set("article_comment", vecRes.at(i).nCommentCount);
-        article_list.set("article_like", vecRes.at(i).nLikeCount);
+        article_list.set("article_sort", vecRes.at(i).m_sort.strName);
         article_list.set("article_data", std::put_time(std::localtime(&t), "[%F %T]"));
         article_list.set("article_last_data", std::put_time(std::localtime(&lt), "[%F %T]"));
         if (vecRes.at(i).bIsApproval)
@@ -106,16 +107,14 @@ void AdminService::article()
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::user()
+void AdminService::admin_users()
 {
-    users vecRes;
     Template tpl("./admin/users.html");
+    users vecRes;
     
     vecRes.clear();
+    tpl.set("title", "XiaoSu");
     tpl.set("function", "用户管理");
-    
-    m_nIndex = 3;
-    renderMenu(tpl);
 
     try
     {
@@ -141,19 +140,60 @@ void AdminService::user()
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::system()
+void AdminService::admin_system()
 {
     Template tpl("./admin/system.html");
     tpl.set("function", "系统设置");
-    m_nIndex = 4;
-    renderMenu(tpl);
 
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::edit()
+void AdminService::edit(int nId)
 {
+    sorts vecRes;
+    article record;
+    Template tpl("./admin/publish.html");
 
+    vecRes.clear();
+    record.clear();
+    tpl.set("title", "XiaoSu");
+    tpl.set("function", "文章编辑");
+
+    try
+    {
+        DatabaseUtils::queryAllSorts(database(), vecRes);
+        DatabaseUtils::queryArticleById(database(), nId, record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+
+    }
+
+    auto sorts_block = tpl.block("option").repeat(vecRes.size());
+    for (int i = 0; i < vecRes.size(); ++i)
+    {
+        sorts_block.set("value", vecRes.at(i).strName);
+        sorts_block.set("value_id", vecRes.at(i).nId);
+        if (vecRes.at(i).nId == record.m_sort.nId)
+        {
+            sorts_block.set("selected", "selected");
+        }
+        sorts_block = sorts_block.next();
+    }
+    tpl.set("article_title", record.strTitle);
+    tpl.set("article_describe", record.strDescribe);
+    tpl.set("article_ontent", record.strContent);
+    tpl.set("article_status", "edit");
+    if (record.strImage.empty())
+    {
+        tpl.set("article_preview", "http://via.placeholder.com/100");
+    }
+    else
+    {
+        tpl.set("article_preview", record.strImage);
+    }
+
+    tpl.render(response(200, "text/html").out(), true);
 }
 
 void AdminService::message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText)
@@ -163,8 +203,6 @@ void AdminService::message(std::string strMsgType, std::string strMsgTitle, std:
     tpl.set("message_title", strMsgTitle);
     tpl.set("message_type", strMsgType);
     tpl.set("message_content", strMsgText);
-    m_nIndex = 1;
-    renderMenu(tpl);
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -178,6 +216,7 @@ void AdminService::postArticle()
     std::ostringstream ostrFileName;
     std::string strPostToken;
     std::ostringstream ostrFilePath;
+    std::string strStatus;
     struct article record;
 
     strTitle.clear();
@@ -188,6 +227,7 @@ void AdminService::postArticle()
     ostrFileName.clear();
     strPostToken.clear();
     ostrFilePath.clear();
+    strStatus.clear();
     record.clear();
 
     strTitle = request().post("title");
@@ -195,6 +235,7 @@ void AdminService::postArticle()
     strDescribe = request().post("describe");
     strContent = request().post("content");
     strPostToken = request().post("posttoken");
+    strStatus = request().post("article_status");
     if (strPostToken == m_strPostToken)
     {
         message("danger", "发布错误", "请勿刷新页面！");
@@ -203,6 +244,13 @@ void AdminService::postArticle()
     else
     {
         m_strPostToken = strPostToken;
+    }
+
+    if (strStatus == "edit")
+    {
+        //edit
+        message("success", "更新成功", "博客已成功刷新！");
+        return;
     }
 
     vecFiles = request().files();
@@ -279,35 +327,6 @@ void AdminService::uploadImages()
         response().out() << jObject;
 
         ostrFileName.clear();
-    }
-}
-
-void AdminService::renderMenu(Template& tpl)
-{
-    std::vector<std::string> vecMenuTitles{ "控制台", "发表文章", "文章管理", "用户管理", "系统设置" };
-    std::vector<std::string> vecMenuLinks{ "/xiaosu/admin", "/xiaosu/admin/publish", "/xiaosu/admin/article", "/xiaosu/admin/users", "/xiaosu/admin/system" };
-    std::vector<std::string> vecMenuIcons{ "home", "pen-tool", "inbox", "users", "settings" };
-
-    if (vecMenuTitles.size() != vecMenuLinks.size())
-    {
-        return;
-    }
-
-    tpl.set("title", "XiaoSu");
-    
-    auto group = tpl.block("menu_group").repeat(vecMenuTitles.size());
-    for (int i = 0; i < vecMenuTitles.size(); ++i)
-    {
-        group.set("menu_text", vecMenuTitles.at(i));
-        group.set("menu_link", vecMenuLinks.at(i));
-        group.set("menu_icon", vecMenuIcons.at(i));
-
-        if (i == m_nIndex)
-        {
-            group.set("menu_active", "is-active");
-        }
-
-        group = group.next();
     }
 }
 

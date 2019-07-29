@@ -1,10 +1,10 @@
 {=./admin/public/header.html}
 <div class="container">
-  
-    <div class="row">
+
+  <div class="row">
     <div class="col-12">
       <div class="c-table-responsive@wide">
-        <table class="c-table">
+        <table class="c-table" style="margin-bottom: 170px">
           <thead class="c-table__head">
             <tr class="c-table__row">
               <th class="c-table__cell c-table__cell--head">ID</th>
@@ -38,10 +38,10 @@
               <th class="c-table__cell">{$user_signature}</th>
               <td class="c-table__cell">
                 <div class="c-dropdown dropdown">
-                  <a href="#" class="c-btn c-btn--small c-btn--info">
+                  <a href="#{$user_id}" class="c-btn c-btn--small c-btn--info">
                     <i class="feather" data-feather="edit-3"></i>
                   </a>
-                  <a href="#" class="c-btn c-btn--small c-btn--danger">
+                  <a href="#{$user_id}" class="c-btn c-btn--small c-btn--danger">
                     <i class="feather" data-feather="trash"></i>
                   </a>
                 </div>
@@ -54,6 +54,6 @@
       </div>
     </div>
   </div>
-  
 </div>
+
 {=./admin/public/footer.html}

@@ -34,7 +34,7 @@ void IndexService::articleList(int nCount)
 
     try
     {
-        DatabaseUtils::queryArticles(database(), "", nCount, nRowCount, vecRes);
+        DatabaseUtils::queryArticles(database(), "article_approval_status != 0", nCount, nRowCount, vecRes);
     }
     catch(cppdb::cppdb_error const& e)
     {

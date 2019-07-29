@@ -1,5 +1,5 @@
 
-<div id="editormd"><textarea name="content"></textarea></div>
+<div id="editormd"><textarea name="content">{$article_ontent}</textarea></div>
 
 <script type="text/javascript">
     var editor;
@@ -35,8 +35,8 @@
         dialogDraggable :           false,                              // 设置弹出层对话框不可拖动，全局通用，默认为true
         dialogMaskOpacity :         0.4,                                // 设置透明遮罩层的透明度，全局通用，默认值为0.1
         dialogMaskBgColor :         "#000",                             // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
-        path:                       '../../admin/editor/js/lib/',
-        pluginPath:                 "../../admin/editor/js/plugins/",
+        path:                       '/admin/editor/js/lib/',
+        pluginPath:                 "/admin/editor/js/plugins/",
         imageUpload :               true,
         imageFormats :              ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
         imageUploadURL :            "./uploadImages",
@@ -48,7 +48,7 @@
         "help", "info"]},
     });
     editormd.katexURL = {
-        js : "../../admin/editor/js/katex.min",
-        css : "../../admin/editor/css/katex.min"
+        js : "/admin/editor/js/katex.min",
+        css : "/admin/editor/css/katex.min"
     };
 </script>
