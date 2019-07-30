@@ -17,7 +17,10 @@ private:
     void admin_users();
     void admin_system();
 
-    void edit(int nId);
+    void article_edit(int nId);
+    void article_delete(int nId);
+    void article_verify(int nId);
+
     void message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText);
 
     void postArticle();

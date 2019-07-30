@@ -9,8 +9,8 @@
             <tr class="c-table__row">
               <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">ID</th>
               <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">标题/作者</th>
-              <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">浏览量</th>
-              <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">评论量</th>
+              <!-- <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">浏览量</th> -->
+              <!-- <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">评论量</th> -->
               <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">分类</th>
               <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">发表时间</th>
               <th class="c-table__cell c-table__cell--head" style="font-weight:bold;">最后修改时间</th>
@@ -31,8 +31,8 @@
                   </div>
                 </div>
               </td>
-              <td class="c-table__cell">{$article_views}</td>
-              <td class="c-table__cell">{$article_comment}</td>
+              <!-- <td class="c-table__cell">{$article_views}</td> -->
+              <!-- <td class="c-table__cell">{$article_comment}</td> -->
               <td class="c-table__cell">{$article_sort}</td>
               <td class="c-table__cell">{$article_data}</td>
               <td class="c-table__cell">{$article_last_data}</td>
@@ -42,10 +42,10 @@
                   <a href="/xiaosu/admin/article_edit/{$article_id}" class="c-btn c-btn--small c-btn--info" title="编辑">
                     <i class="feather" data-feather="edit-3"></i>
                   </a>
-                  <a href="/xiaosu/admin/article_edit/{$article_id}" class="c-btn c-btn--small c-btn--warning" title="审核">
+                  <a href="/xiaosu/admin/article_verify/{$article_id}" class="c-btn c-btn--small c-btn--warning" title="审核">
                     <i class="feather" data-feather="meh"></i>
                   </a>
-                  <a href="/xiaosu/admin/article_edit/{$article_id}" class="c-btn c-btn--small c-btn--danger" title="删除">
+                  <a onclick="dialog({$article_id})" class="c-btn c-btn--small c-btn--danger" title="删除">
                     <i class="feather" data-feather="trash"></i>
                   </a>
                 </div>
@@ -59,4 +59,49 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <header class="modal-header">
+      <h4>确定要删除这条博文吗？</h4>
+      <span class="close">×</span>
+    </header>
+    <div class="modal-body">
+      <p style="text-align: center;">此操作将不可撤销，确定要删除此博文吗？</p>
+    </div>
+    <footer class="modal-footer">
+      <button class="c-btn c-btn--danger u-mb-xsmall" id="cancel">取消</button>
+      <button class="c-btn c-btn--info u-mb-xsmall" id="sure">确定</button>
+    </footer>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function dialog(id) 
+  {
+    var close = document.getElementsByClassName('close')[0];
+    var cancel = document.getElementById('cancel');
+    var sure = document.getElementById('sure');
+    var modal = document.getElementById('modal');
+    
+    modal.style.display = "block";
+    close.addEventListener('click', function()
+    {
+        modal.style.display = "none";
+    });
+
+    cancel.addEventListener('click', function()
+    {
+        modal.style.display = "none";
+    });
+
+    sure.addEventListener('click', function() 
+    {
+      modal.style.display = "none";
+      window.location.href = "/xiaosu/admin/article_delete/"+id+"";
+    });
+  }
+</script>
+
 {=./admin/public/footer.html}

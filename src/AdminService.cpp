@@ -26,7 +26,9 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/article", &AdminService::admin_articles, this);
     dispatcher().map("GET", "/users", &AdminService::admin_users, this);
     dispatcher().map("GET", "/system", &AdminService::admin_system, this);
-    dispatcher().map("GET", "/article_edit/(\\d+)", &AdminService::edit, this, 1);
+    dispatcher().map("GET", "/article_edit/(\\d+)", &AdminService::article_edit, this, 1);
+    dispatcher().map("GET", "/article_delete/(\\d+)", &AdminService::article_delete, this, 1);
+    dispatcher().map("GET", "/article_verify/(\\d+)", &AdminService::article_verify, this, 1);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
     mapper().root("/admin");
@@ -63,7 +65,6 @@ void AdminService::admin_publish()
         sorts_block = sorts_block.next();
     }
     tpl.set("article_preview", "http://via.placeholder.com/100");
-    tpl.set("article_status", "publish");
 
     tpl.render(response(200, "text/html").out(), true);
 }
@@ -86,8 +87,8 @@ void AdminService::admin_articles()
         article_list.set("article_id", vecRes.at(i).nId);
         article_list.set("article_title", vecRes.at(i).strTitle);
         article_list.set("article_author", vecRes.at(i).m_user.strDisplayName);
-        article_list.set("article_views", vecRes.at(i).nViews);
-        article_list.set("article_comment", vecRes.at(i).nCommentCount);
+        //article_list.set("article_views", vecRes.at(i).nViews);
+        //article_list.set("article_comment", vecRes.at(i).nCommentCount);
         article_list.set("article_sort", vecRes.at(i).m_sort.strName);
         article_list.set("article_data", std::put_time(std::localtime(&t), "[%F %T]"));
         article_list.set("article_last_data", std::put_time(std::localtime(&lt), "[%F %T]"));
@@ -134,7 +135,8 @@ void AdminService::admin_users()
     }
     catch (cppdb::cppdb_error const& e)
     {
-
+        message("danger", "发生错误", std::string("发生内部错误: ") + e.what());
+        return;
     }
 
     tpl.render(response(200, "text/html").out(), true);
@@ -148,7 +150,7 @@ void AdminService::admin_system()
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::edit(int nId)
+void AdminService::article_edit(int nId)
 {
     sorts vecRes;
     article record;
@@ -166,7 +168,8 @@ void AdminService::edit(int nId)
     }
     catch (cppdb::cppdb_error const& e)
     {
-
+        message("danger", "发生错误", std::string("发生内部错误: ") + e.what());
+        return;
     }
 
     auto sorts_block = tpl.block("option").repeat(vecRes.size());
@@ -183,7 +186,7 @@ void AdminService::edit(int nId)
     tpl.set("article_title", record.strTitle);
     tpl.set("article_describe", record.strDescribe);
     tpl.set("article_ontent", record.strContent);
-    tpl.set("article_status", "edit");
+    tpl.set("article_id", record.nId);
     if (record.strImage.empty())
     {
         tpl.set("article_preview", "http://via.placeholder.com/100");
@@ -196,14 +199,64 @@ void AdminService::edit(int nId)
     tpl.render(response(200, "text/html").out(), true);
 }
 
+void AdminService::article_delete(int nId)
+{
+    article record;
+    record.clear();
+
+    record.nId = nId;
+
+    try
+    {
+        DatabaseUtils::deleteArticle(database(), record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "发生错误", std::string("发生内部错误: ") + e.what());
+        return;
+    }
+
+    message("success", "删除成功", "博文删除成功");
+    return;
+}
+
 void AdminService::message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText)
 {
     Template tpl("./admin/message.html");
+    tpl.set("title", "XiaoSu");
     tpl.set("function", strMsgTitle);
     tpl.set("message_title", strMsgTitle);
     tpl.set("message_type", strMsgType);
     tpl.set("message_content", strMsgText);
     tpl.render(response(200, "text/html").out(), true);
+}
+
+void AdminService::article_verify(int nId)
+{
+    article record;
+    record.clear();
+
+    try
+    {
+        DatabaseUtils::queryArticleById(database(), nId, record);
+        record.bIsApproval = !record.bIsApproval;
+        DatabaseUtils::updateArticle(database(), record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "状态修改失败", std::string("状态修改失败: ") + e.what());
+        return;
+    }
+
+    if (record.bIsApproval)
+    {
+        message("success", "博文审核成功", "博文审核成功，现在转到前台即可查看博文！");
+    }
+    else
+    {
+        message("success", "状态已更改", "博文状态已被更改，现在转到文章管理可预览博文！");
+    }
+    return;
 }
 
 void AdminService::postArticle()
@@ -216,7 +269,7 @@ void AdminService::postArticle()
     std::ostringstream ostrFileName;
     std::string strPostToken;
     std::ostringstream ostrFilePath;
-    std::string strStatus;
+    std::string strId;
     struct article record;
 
     strTitle.clear();
@@ -227,7 +280,7 @@ void AdminService::postArticle()
     ostrFileName.clear();
     strPostToken.clear();
     ostrFilePath.clear();
-    strStatus.clear();
+    strId.clear();
     record.clear();
 
     strTitle = request().post("title");
@@ -235,7 +288,7 @@ void AdminService::postArticle()
     strDescribe = request().post("describe");
     strContent = request().post("content");
     strPostToken = request().post("posttoken");
-    strStatus = request().post("article_status");
+    strId = request().post("article_id");
     if (strPostToken == m_strPostToken)
     {
         message("danger", "发布错误", "请勿刷新页面！");
@@ -244,13 +297,6 @@ void AdminService::postArticle()
     else
     {
         m_strPostToken = strPostToken;
-    }
-
-    if (strStatus == "edit")
-    {
-        //edit
-        message("success", "更新成功", "博客已成功刷新！");
-        return;
     }
 
     vecFiles = request().files();
@@ -276,8 +322,34 @@ void AdminService::postArticle()
         std::chrono::system_clock::now().time_since_epoch()
     );
 
+    if (!strId.empty())
+    {
+        try
+        {
+            DatabaseUtils::queryArticleById(database(), std::stoi(strId, nullptr, 0), record);
+            record.strTitle = strTitle;
+            record.m_sort.nId = std::stoi(strSortId,nullptr,0);
+            record.strDescribe = cppcms::util::escape(strDescribe);
+            record.strContent = strContent;
+            record.nLastModified = ms.count();
+            if (ostrFilePath.rdbuf()->in_avail() != 0)
+            {
+                record.strImage = ostrFilePath.str();
+            }
+            DatabaseUtils::updateArticle(database(), record);
+        }
+        catch (cppdb::cppdb_error const& e)
+        {
+            message("warning", "更新失败", std::string("博文更新失败: ") + e.what());
+            return;
+        }
+
+        message("success", "更新成功", "博客已成功刷新！");
+        return;
+    }
+
     record.m_user.nId = 1;
-    record.m_sort.nId = std::stoi(strSortId,nullptr,0);
+    record.m_sort.nId = std::stoi(strSortId, nullptr, 0);
     record.strTitle = strTitle;
     record.strImage = ostrFilePath.str();
     record.strContent = cppcms::util::escape(strContent);

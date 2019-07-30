@@ -477,7 +477,8 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resA
                     article_date, \
                     article_like_count, \
                     article_last_modified, \
-                    article_describe \
+                    article_describe, \
+                    article_approval_status \
                 FROM yengsu_articles \
                 WHERE article_id = ?" << nId << cppdb::row;
 
@@ -498,6 +499,7 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, int nId, article& resA
         resArticle.nLikeCount = resRecord.get<unsigned int>("article_like_count");
         resArticle.nLastModified = resRecord.get<unsigned long long>("article_last_modified");
         resArticle.strDescribe = resRecord.get<std::string>("article_describe");
+        resArticle.bIsApproval = resRecord.get<unsigned short>("article_approval_status");
         DatabaseUtils::querySortByArticleId(sql, resArticle.nId, resArticle.m_sort);
         DatabaseUtils::queryUserById(sql, resArticle.m_user.nId, resArticle.m_user);
     }
@@ -546,11 +548,55 @@ bool DatabaseUtils::insertArticle(cppdb::session& sql, const article& record)
 
 bool DatabaseUtils::deleteArticle(cppdb::session& sql, const article& record)
 {
+    cppdb::statement stat;
+    stat.clear();
+
+    try
+    {
+        stat = sql << "DELETE FROM yengsu_articles WHERE article_id = ?" << record.nId;
+        stat.exec();
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+        return false;
+    }
+
     return true;
 }
 
 bool DatabaseUtils::updateArticle(cppdb::session& sql, const article& record)
 {
+    cppdb::statement stat;
+    stat.clear();
+
+    try
+    {
+        stat = sql << "UPDATE yengsu_articles SET \
+        article_title=?, article_image=?, article_content=?, \
+        article_last_modified=?, article_describe=?, article_approval_status=? \
+        WHERE article_id = ?";
+        stat.bind(record.strTitle); 
+        stat.bind(record.strImage);
+        stat.bind(record.strContent); 
+        stat.bind(record.nLastModified); 
+        stat.bind(record.strDescribe); 
+        stat.bind(record.bIsApproval); 
+        stat.bind(record.nId);
+        stat.exec();
+
+        stat.reset();
+        stat = sql << "UPDATE yengsu_set_article_sort SET sort_id=? WHERE article_id=?";
+        stat.bind(record.m_sort.nId);
+        stat.bind(record.nId);
+        stat.exec();
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+        return false;
+    }
+
     return true;
 }
 
