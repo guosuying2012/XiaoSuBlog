@@ -12,6 +12,16 @@ window.onload = function()
     nId = url.searchParams.get("single");
     getArticle(nId);
     setPreviousNextJson(json, nId);
+    new Valine({
+        el:'#comments',
+        appId: 'wqxMwj4aLtSLQEFVFUppwfqE-gzGzoHsz',
+        appKey: 'ra4Tmr8qsqbDNPTANTHBd1YF',
+        visitor: true,
+        recordIP: true,
+        avatar: "wavatar",
+        meta: ['nick','mail'],
+        placeholder: "长得帅的人都喜欢评论。"
+    })
 }
 
 function getArticle(articleId) 
@@ -25,9 +35,8 @@ function getArticle(articleId)
         {
             $("#header").append("<div class='media'><img src='"+ article.data.image +"' alt=''></div>");
         }
-        $("#header").append("<h3><a>"+article.data.title+"</a></h3><span>"+timetrans(article.data.time)+" / by "+article.data.user.displayname+" / in: "+article.data.sort.name+" / "+ article.data.comment_count +" Comments</a></span>");
+        $("#header").append("<h3><a>"+article.data.title+"</a></h3><span id='"+articleId+"' class='leancloud-visitors' data-flag-title='"+article.data.title+"'>"+timetrans(article.data.time)+" / by "+article.data.user.displayname+" / in: "+article.data.sort.name+" / <i class='leancloud-visitors-count'>0</i> Views</a></span>");
         showMarkdown(article.data.content);
-        $("#comment").html(article.data.comment_count + " Comments");
 
         $("#post-author").append("<h4><a href='category.html?author="+article.data.user.id+"'>"+article.data.user.displayname+"</a></h4>");
         $("#post-author").append("<p>"+ article.data.user.signature +"</p>");

@@ -12,6 +12,7 @@
               <th class="c-table__cell c-table__cell--head">用户名</th>
               <th class="c-table__cell c-table__cell--head">注册时间</th>
               <th class="c-table__cell c-table__cell--head">签名</th>
+              <th class="c-table__cell c-table__cell--head">账户状态</th>
               <th class="c-table__cell c-table__cell--head">管理</th>
             </tr>
           </thead>
@@ -37,12 +38,15 @@
               <td class="c-table__cell">{$user_regtime}</td>
               <th class="c-table__cell">{$user_signature}</th>
               <td class="c-table__cell">
+                <i style="color: {$color};" class="feather" data-feather="{$user_status}"></i>
+              </td>
+              <td class="c-table__cell">
                 <div class="c-dropdown dropdown">
-                  <a href="#{$user_id}" class="c-btn c-btn--small c-btn--info">
+                  <a href="#{$user_id}" class="c-btn c-btn--small c-btn--info" title="编辑">
                     <i class="feather" data-feather="edit-3"></i>
                   </a>
-                  <a href="#{$user_id}" class="c-btn c-btn--small c-btn--danger">
-                    <i class="feather" data-feather="trash"></i>
+                  <a onclick="dialog({$user_id})" class="c-btn c-btn--small c-btn--danger" title="禁用">
+                    <i class="feather" data-feather="slash"></i>
                   </a>
                 </div>
               </td>
@@ -55,5 +59,49 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <header class="modal-header">
+      <h4>确定要更改此账户的禁用状态？</h4>
+      <span class="close">×</span>
+    </header>
+    <div class="modal-body">
+      <p style="text-align: center;">禁用状态后此账户将不能正常使用博客功能，解除禁用将恢复账户的使用。</p>
+    </div>
+    <footer class="modal-footer">
+      <button class="c-btn c-btn--danger u-mb-xsmall" id="cancel">取消</button>
+      <button class="c-btn c-btn--info u-mb-xsmall" id="sure">确定</button>
+    </footer>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function dialog(id) 
+  {
+    var close = document.getElementsByClassName('close')[0];
+    var cancel = document.getElementById('cancel');
+    var sure = document.getElementById('sure');
+    var modal = document.getElementById('modal');
+    
+    modal.style.display = "block";
+    close.addEventListener('click', function()
+    {
+        modal.style.display = "none";
+    });
+
+    cancel.addEventListener('click', function()
+    {
+        modal.style.display = "none";
+    });
+
+    sure.addEventListener('click', function() 
+    {
+      modal.style.display = "none";
+      window.location.href = "/xiaosu/admin/user_disable/"+id+"";
+    });
+  }
+</script>
 
 {=./admin/public/footer.html}

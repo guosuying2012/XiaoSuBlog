@@ -39,7 +39,7 @@ void CategoryService::articleSortList(int nSortId, int nCount)
     ss.clear();
 
     ss << "yengsu_set_article_sort.sort_id IN ( SELECT sort_id FROM yengsu_sorts WHERE sort_parent_id = " 
-    << nSortId << " OR sort_id = " << nSortId << ")";
+    << nSortId << " OR sort_id = " << nSortId << ") AND article_approval_status != 0";
     strCondition = ss.str();
 
     try
@@ -79,7 +79,7 @@ void CategoryService::articleAuthorList(int nAuthorId, int nCount)
     strCondition.clear();
     ss.clear();
 
-    ss << "yengsu_users.user_id = " << nAuthorId;
+    ss << "yengsu_users.user_id = " << nAuthorId << " AND yengsu_articles.article_approval_status != 0";
     strCondition = ss.str();
 
     try

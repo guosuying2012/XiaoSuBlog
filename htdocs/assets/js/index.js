@@ -20,7 +20,6 @@ function article_callback(response)
         <span><span>"+timetrans(obj.time)+"</span> \
         / by <a href='category.html?author="+obj.user.id+"'><span>"+ obj.user.displayname +"</span></a> \
         / in: <span><a href='category.html?category="+obj.sort.id+"'>"+obj.sort.name+"</a></span> \
-        / <a href='single.html?single="+obj.id+"#comments'><span>"+obj.comment_count+"</span> Comments</a></span> \
         </header> <div class='editor-styles' style='text-indent:2em;word-wrap:break-word;'>"+obj.describe+"......</div> <footer> <div> \
         <a href='single.html?single="+obj.id+"''>Continue Reading...</a> \
         </div><hr> </footer> </article>";

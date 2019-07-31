@@ -611,10 +611,17 @@ void DatabaseUtils::queryUsers(cppdb::session& sql, users& vecRes)
 
     try
     {
-        resRecords = sql << "SELECT user_id, user_ip, user_name, user_profile_photo, user_registration_time, user_nikename, user_signature FROM yengsu_users";
+        resRecords = sql << "SELECT user_id, user_ip, user_name, user_profile_photo, user_registration_time, user_nikename, user_signature, user_disable FROM yengsu_users";
         while (resRecords.next())
         {
-            resRecords >> record.nId >> record.strIp >> record.strName >> record.strProfilePhoto >> record.nRegistrationTime >> record.strDisplayName >> record.strSignature;
+            record.nId = resRecords.get<unsigned int>("user_id");
+            record.strIp = resRecords.get<std::string>("user_ip");
+            record.strName = resRecords.get<std::string>("user_name");
+            record.strProfilePhoto = resRecords.get<std::string>("user_profile_photo");
+            record.nRegistrationTime = resRecords.get<long long>("user_registration_time");
+            record.strDisplayName = resRecords.get<std::string>("user_nikename");
+            //record.strSignature = resRecords.get<std::string>("user_signature");
+            record.bIsDisable = resRecords.get<unsigned short>("user_disable");
             vecRes.push_back(record);
         }
     }
@@ -632,13 +639,16 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
     try
     {
         resRecord = sql << "SELECT \
-                    user_id, \
+                    user_ip, \
                     user_name, \
                     user_email, \
                     user_level, \
+                    user_rights, \
                     user_profile_photo, \
                     user_nikename, \
-                    user_signature \
+                    user_signature, \
+                    user_registration_time, \
+                    user_disable \
                 FROM yengsu_users \
                 WHERE user_id = ?" << nId << cppdb::row;
     }
@@ -653,11 +663,15 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
         return;
     }
 
-    resUser.nId = resRecord.get<unsigned int>("user_id");
+    resUser.nId = nId;
+    resUser.strIp = resRecord.get<std::string>("user_ip");
     resUser.strName = resRecord.get<std::string>("user_name");
     resUser.strEmail = resRecord.get<std::string>("user_email");
     resUser.strProfilePhoto = resRecord.get<std::string>("user_profile_photo");
     resUser.strLevel = resRecord.get<std::string>("user_level");
+    resUser.nRights = resRecord.get<unsigned int>("user_rights");
+    resUser.nRegistrationTime = resRecord.get<long long>("user_registration_time");
+    resUser.bIsDisable = resRecord.get<unsigned short>("user_disable");
 
     if (resRecord.is_null("user_nikename"))
     {
@@ -690,6 +704,29 @@ bool DatabaseUtils::deleteUser(cppdb::session& sql, const user& record)
 
 bool DatabaseUtils::updateUser(cppdb::session& sql, const user& record)
 {
+    cppdb::statement stat;
+    stat.clear();
+
+    try
+    {
+        stat = sql << "UPDATE yengsu_users SET \
+        user_email=?, user_profile_photo=?, \
+        user_nikename=?, user_signature=?, user_disable=? \
+        WHERE user_id = ?";
+        stat.bind(record.strEmail); 
+        stat.bind(record.strProfilePhoto);
+        stat.bind(record.strDisplayName); 
+        stat.bind(record.strSignature);
+        stat.bind(record.bIsDisable);
+        stat.bind(record.nId);
+        stat.exec();
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        throw e;
+        return false;
+    }
+
     return true;
 }
 

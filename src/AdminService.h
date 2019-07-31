@@ -21,6 +21,9 @@ private:
     void article_delete(int nId);
     void article_verify(int nId);
 
+    void user_edit(int nId);
+    void user_disable(int nId);
+
     void message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText);
 
     void postArticle();

@@ -17,8 +17,9 @@ struct user : public cppcms::serializable
     std::string strLevel;           //等级
     int nRights;                    //权限
     long long nRegistrationTime;    //注册时间
-    std::string strDisplayName;        //昵称
+    std::string strDisplayName;     //昵称
     std::string strSignature;       //个性签名
+    bool bIsDisable;                //是否禁用
 
     void clear()
     {
@@ -32,6 +33,7 @@ struct user : public cppcms::serializable
         strDisplayName.clear();
         nRegistrationTime = 0;
         strSignature.clear();
+        bIsDisable = false;
     }
 
     void serialize(cppcms::archive &a)

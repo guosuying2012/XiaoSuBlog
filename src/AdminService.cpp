@@ -29,6 +29,8 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/article_edit/(\\d+)", &AdminService::article_edit, this, 1);
     dispatcher().map("GET", "/article_delete/(\\d+)", &AdminService::article_delete, this, 1);
     dispatcher().map("GET", "/article_verify/(\\d+)", &AdminService::article_verify, this, 1);
+    dispatcher().map("GET", "/user_edit/(\\d+)", &AdminService::user_edit, this, 1);
+    dispatcher().map("GET", "/user_disable/(\\d+)", &AdminService::user_disable, this, 1);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
     mapper().root("/admin");
@@ -130,6 +132,16 @@ void AdminService::admin_users()
             user_list.set("user_username", vecRes.at(i).strName);
             user_list.set("user_regtime", std::put_time(std::localtime(&t), "[%F %T]"));
             user_list.set("user_signature", vecRes.at(i).strSignature);
+            if (vecRes.at(i).bIsDisable)
+            {
+                user_list.set("user_status", "frown");
+                user_list.set("color", "red");
+            }
+            else
+            {
+                user_list.set("user_status", "smile");
+                user_list.set("color", "#2083fe");
+            }
             user_list = user_list.next();
         }
     }
@@ -220,17 +232,6 @@ void AdminService::article_delete(int nId)
     return;
 }
 
-void AdminService::message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText)
-{
-    Template tpl("./admin/message.html");
-    tpl.set("title", "XiaoSu");
-    tpl.set("function", strMsgTitle);
-    tpl.set("message_title", strMsgTitle);
-    tpl.set("message_type", strMsgType);
-    tpl.set("message_content", strMsgText);
-    tpl.render(response(200, "text/html").out(), true);
-}
-
 void AdminService::article_verify(int nId)
 {
     article record;
@@ -257,6 +258,50 @@ void AdminService::article_verify(int nId)
         message("success", "状态已更改", "博文状态已被更改，现在转到文章管理可预览博文！");
     }
     return;
+}
+
+void AdminService::user_edit(int nId)
+{
+
+}
+
+void AdminService::user_disable(int nId)
+{
+    user record;
+    record.clear();
+
+    try
+    {
+        DatabaseUtils::queryUserById(database(), nId, record);
+        record.bIsDisable = !record.bIsDisable;
+        DatabaseUtils::updateUser(database(), record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "状态修改失败", std::string("状态修改失败: ") + e.what());
+        return;
+    }
+
+    if (record.bIsDisable)
+    {
+        message("success", "该账户已被禁用", "该账户已被禁用！");
+    }
+    else
+    {
+        message("success", "该账户已解除禁用", "该账户已解除禁用！");
+    }
+    return;
+}
+
+void AdminService::message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText)
+{
+    Template tpl("./admin/message.html");
+    tpl.set("title", "XiaoSu");
+    tpl.set("function", strMsgTitle);
+    tpl.set("message_title", strMsgTitle);
+    tpl.set("message_type", strMsgType);
+    tpl.set("message_content", strMsgText);
+    tpl.render(response(200, "text/html").out(), true);
 }
 
 void AdminService::postArticle()
