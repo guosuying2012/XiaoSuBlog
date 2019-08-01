@@ -12,12 +12,13 @@ struct user : public cppcms::serializable
     unsigned int nId;               //用户ID
     std::string strIp;              //注册IP
     std::string strName;            //用户名
+    std::string strNikeName;        //昵称
     std::string strEmail;           //邮箱地址
     std::string strProfilePhoto;    //头像
     std::string strLevel;           //等级
     int nRights;                    //权限
     long long nRegistrationTime;    //注册时间
-    std::string strDisplayName;     //昵称
+    std::string strDisplayName;     //显示的名称
     std::string strSignature;       //个性签名
     bool bIsDisable;                //是否禁用
 
@@ -26,6 +27,7 @@ struct user : public cppcms::serializable
         nId = 0;
         strIp.clear();
         strName.clear();
+        strNikeName.clear();
         strEmail.clear();
         strProfilePhoto.clear();
         strLevel.clear();
@@ -38,7 +40,7 @@ struct user : public cppcms::serializable
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&strIp&strName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strDisplayName&strSignature;
+        a&nId&strIp&strName&strNikeName&strEmail&strProfilePhoto&strLevel&nRights&nRegistrationTime&strDisplayName&strSignature;
     }
 };
 using users = std::vector<user>;
@@ -62,6 +64,7 @@ namespace cppcms
                 out.nId = v.get<unsigned int>("id");
                 out.strIp = v.get<std::string>("ip");
                 out.strName = v.get<std::string>("name");
+                out.strNikeName = v.get<std::string>("nikename");
                 out.strEmail = v.get<std::string>("email");
                 out.strProfilePhoto = v.get<std::string>("profile_photo");
                 out.strLevel = v.get<std::string>("level");
@@ -78,6 +81,7 @@ namespace cppcms
                 v.set("id", in.nId);
                 v.set("ip", in.strIp);
                 v.set("name", in.strName);
+                v.set("nikename", in.strNikeName);
                 v.set("email", in.strEmail);
                 v.set("profile_photo", in.strProfilePhoto);
                 v.set("level", in.strLevel);

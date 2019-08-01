@@ -1,57 +1,41 @@
 {=./admin/public/header.html}
 <div class="container">
+  <div class="c-tabs__pane active show c-card" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+    <form enctype="multipart/form-data" action="/xiaosu/admin/postArticle" onsubmit="return check()" method="post">
+    <label class="c-field__label" for="input1">标题</label>
+    <div class="c-field">
+      <input class="c-input" type="text" id="title" name="title" value="{$article_title}">
+    </div><br>
 
-<form enctype="multipart/form-data" action="/xiaosu/admin/postArticle" onsubmit="return check()" method="post">
-<label class="c-field__label" for="input1">标题</label>
-<div class="c-field">
-  <input class="c-input" type="text" id="title" name="title" value="{$article_title}">
-</div><br>
+    <label class="c-field__label" for="input1">分类</label>
+    <div class="c-select">
+      <select class="c-select__input" id="sort" name="sort">
+        {#option}<option value="{$value_id}" {$selected}>{$value}</option>{/option}
+      </select>
+    </div><br>
 
-<label class="c-field__label" for="input1">分类</label>
-<div class="c-select">
-  <select class="c-select__input" id="sort" name="sort">
-    {#option}<option value="{$value_id}" {$selected}>{$value}</option>{/option}
-  </select>
-</div><br>
+    <label class="c-field__label" for="input1">简述</label>
+    <div class="c-field">
+      <textarea class="c-input" type="text" id="describe" name="describe">{$article_describe}</textarea>
+    </div><br>
 
-<label class="c-field__label" for="input1">简述</label>
-<div class="c-field">
-  <textarea class="c-input" type="text" id="describe" name="describe">{$article_describe}</textarea>
-</div><br>
-
-<label class="c-field__label" for="input1">封面</label>
-<div class="row">
-  <div class="col-6 col-lg-3 u-mb-xsmall">
-    <input type="file" style="display: none;" name="file" id="file-5" class="inputfile inputfile-4" data-multiple-caption="{count} files selected" multiple onchange="imgPreview(this)" />
-    <label for="file-5"><figure><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></figure></label>
-  </div>
-  <div class="col-6 col-lg-3 u-mb-xsmall">
-      <img class="c-avatar__img" src="{$article_preview}" id="preview" style="width: 100px;height: 100px;margin-top: 10px">
-  </div>
-</div>
-
-<label class="c-field__label" for="input1">正文</label>
-{=./admin/public/editor.html}
-<input style="display: none;" id="posttoken" name="posttoken" value="">
-<input style="display: none;" name="article_id" value="{$article_id}">
-<input class="c-btn c-btn--fullwidth" data-toggle="modal" data-target="#modal2" style="margin-top: 20px; margin-bottom: 120px; position: static;" type="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" />
-</form>
-</div>
-
-<!-- Modal -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <header class="modal-header">
-      <h4>需要自动生成简介吗？</h4>
-      <span class="close">×</span>
-    </header>
-    <div class="modal-body">
-      <p style="text-align: center;">您的简介不满足条件，系统将为您自动剪裁到符合条件的字符长度！</p>
+    <label class="c-field__label" for="input1">封面</label>
+    <div class="row">
+      <div class="col-6 col-lg-3 u-mb-xsmall">
+        <input type="file" style="display: none;" name="file" id="file-5" class="inputfile inputfile-4" data-multiple-caption="{count} files selected" multiple onchange="imgPreview(this)" />
+        <label for="file-5"><figure><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></figure></label>
+      </div>
+      <div class="col-6 col-lg-3 u-mb-xsmall">
+          <img class="c-avatar__img" src="{$article_preview}" id="preview" style="width: 100px;height: 100px;margin-top: 10px">
+      </div>
     </div>
-    <footer class="modal-footer">
-      <button class="c-btn c-btn--danger u-mb-xsmall" id="cancel">取消</button>
-      <button class="c-btn c-btn--info u-mb-xsmall" id="sure">确定</button>
-    </footer>
+
+    <label class="c-field__label" for="input1">正文</label>
+    {=./admin/public/editor.html}
+    <input style="display: none;" id="posttoken" name="posttoken" value="">
+    <input style="display: none;" name="article_id" value="{$article_id}">
+    <input class="c-btn c-btn--fullwidth" data-toggle="modal" data-target="#modal2" style="margin-top: 20px; margin-bottom: 120px; position: static;" type="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" />
+    </form>
   </div>
 </div>
 

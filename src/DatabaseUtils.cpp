@@ -620,7 +620,7 @@ void DatabaseUtils::queryUsers(cppdb::session& sql, users& vecRes)
             record.strProfilePhoto = resRecords.get<std::string>("user_profile_photo");
             record.nRegistrationTime = resRecords.get<long long>("user_registration_time");
             record.strDisplayName = resRecords.get<std::string>("user_nikename");
-            //record.strSignature = resRecords.get<std::string>("user_signature");
+            record.strSignature = resRecords.get<std::string>("user_signature");
             record.bIsDisable = resRecords.get<unsigned short>("user_disable");
             vecRes.push_back(record);
         }
@@ -666,6 +666,7 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
     resUser.nId = nId;
     resUser.strIp = resRecord.get<std::string>("user_ip");
     resUser.strName = resRecord.get<std::string>("user_name");
+    resUser.strNikeName = resRecord.get<std::string>("user_nikename");
     resUser.strEmail = resRecord.get<std::string>("user_email");
     resUser.strProfilePhoto = resRecord.get<std::string>("user_profile_photo");
     resUser.strLevel = resRecord.get<std::string>("user_level");
@@ -715,7 +716,7 @@ bool DatabaseUtils::updateUser(cppdb::session& sql, const user& record)
         WHERE user_id = ?";
         stat.bind(record.strEmail); 
         stat.bind(record.strProfilePhoto);
-        stat.bind(record.strDisplayName); 
+        stat.bind(record.strNikeName); 
         stat.bind(record.strSignature);
         stat.bind(record.bIsDisable);
         stat.bind(record.nId);

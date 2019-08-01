@@ -67,6 +67,8 @@ void AdminService::admin_publish()
         sorts_block = sorts_block.next();
     }
     tpl.set("article_preview", "http://via.placeholder.com/100");
+    tpl.set("model_title", "需要自动生成简介吗？");
+    tpl.set("model_conent", "您的简介不满足条件，系统将为您自动剪裁到符合条件的字符长度！");
 
     tpl.render(response(200, "text/html").out(), true);
 }
@@ -107,6 +109,9 @@ void AdminService::admin_articles()
         article_list = article_list.next();
     }
 
+    tpl.set("model_title", "确定要删除这条博文吗？");
+    tpl.set("model_conent", "此操作将不可撤销，确定要删除此博文吗？");
+    tpl.set("model_link", "article_delete");
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -151,6 +156,9 @@ void AdminService::admin_users()
         return;
     }
 
+    tpl.set("model_title", "确定要更改此账户的禁用状态？");
+    tpl.set("model_conent", "禁用状态后此账户将不能正常使用博客功能，解除禁用将恢复账户的使用。");
+    tpl.set("model_link", "user_disable");
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -262,7 +270,18 @@ void AdminService::article_verify(int nId)
 
 void AdminService::user_edit(int nId)
 {
+    Template tpl("./admin/userinfo_edit.html");
+    tpl.set("title", "XiaoSu");
+    tpl.set("function", "用户信息编辑");
 
+    tpl.set("user_preview", "http://via.placeholder.com/100");
+    tpl.set("user_name", "yengsu");
+    tpl.set("user_email", "yengsu@yengsu.com");
+    tpl.set("user_nikename", "小蘇");
+    tpl.set("user_ip", "58.87.88.54");
+    tpl.set("user_time", "2019-08-01：22:34");
+    tpl.set("user_signature", "http://via.placeholder.com/100");
+    tpl.render(response(200, "text/html").out(), true);
 }
 
 void AdminService::user_disable(int nId)
