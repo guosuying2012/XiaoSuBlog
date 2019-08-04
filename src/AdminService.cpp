@@ -31,6 +31,7 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/article_verify/(\\d+)", &AdminService::article_verify, this, 1);
     dispatcher().map("GET", "/user_edit/(\\d+)", &AdminService::user_edit, this, 1);
     dispatcher().map("GET", "/user_disable/(\\d+)", &AdminService::user_disable, this, 1);
+    dispatcher().map("POST", "/post_user", &AdminService::postUser, this);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
     mapper().root("/admin");
@@ -106,6 +107,14 @@ void AdminService::admin_articles()
             article_list.set("article_status", "frown");
             article_list.set("color", "red");
         }
+        if (vecRes.at(i).strImage.empty())
+        {
+            article_list.set("article_image", "http://via.placeholder.com/72");
+        }
+        else
+        {
+            article_list.set("article_image", vecRes.at(i).strImage);
+        }
         article_list = article_list.next();
     }
 
@@ -137,6 +146,15 @@ void AdminService::admin_users()
             user_list.set("user_username", vecRes.at(i).strName);
             user_list.set("user_regtime", std::put_time(std::localtime(&t), "[%F %T]"));
             user_list.set("user_signature", vecRes.at(i).strSignature);
+            if (vecRes.at(i).strProfilePhoto.empty())
+            {
+                user_list.set("user_profile", "http://via.placeholder.com/72");
+            }
+            else
+            {
+                user_list.set("user_profile", vecRes.at(i).strProfilePhoto);
+            }
+            
             if (vecRes.at(i).bIsDisable)
             {
                 user_list.set("user_status", "frown");
@@ -270,17 +288,39 @@ void AdminService::article_verify(int nId)
 
 void AdminService::user_edit(int nId)
 {
+    user record;
     Template tpl("./admin/userinfo_edit.html");
     tpl.set("title", "XiaoSu");
     tpl.set("function", "用户信息编辑");
+    record.clear();
 
-    tpl.set("user_preview", "http://via.placeholder.com/100");
-    tpl.set("user_name", "yengsu");
-    tpl.set("user_email", "yengsu@yengsu.com");
-    tpl.set("user_nikename", "小蘇");
-    tpl.set("user_ip", "58.87.88.54");
-    tpl.set("user_time", "2019-08-01：22:34");
-    tpl.set("user_signature", "http://via.placeholder.com/100");
+    try
+    {
+        DatabaseUtils::queryUserById(database(), nId, record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "发生内部错误", e.what());
+        return;
+    }
+
+    std::time_t t(record.nRegistrationTime / 1000);
+    if (record.strProfilePhoto.empty())
+    {
+        tpl.set("user_preview", "http://via.placeholder.com/100");
+    }
+    else
+    {
+        tpl.set("user_preview", record.strProfilePhoto);
+    }
+    
+    tpl.set("user_id", record.nId);
+    tpl.set("user_name", record.strName);
+    tpl.set("user_email", record.strEmail);
+    tpl.set("user_nikename", record.strNikeName);
+    tpl.set("user_ip", record.strIp);
+    tpl.set("user_time", std::put_time(std::localtime(&t), "[%F %T]"));
+    tpl.set("user_signature", record.strSignature);
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -323,6 +363,75 @@ void AdminService::message(std::string strMsgType, std::string strMsgTitle, std:
     tpl.render(response(200, "text/html").out(), true);
 }
 
+void AdminService::postUser()
+{
+    int nId;
+    std::string strEmail;
+    std::string strNikeName;
+    std::string strSignature;
+    std::string strProfilePhoto;
+    cppcms::http::request::files_type vecFiles;
+    std::ostringstream ostrFileName;
+    std::ostringstream ostrFilePath;
+    struct user record;
+
+    nId = 0;
+    strEmail.clear();
+    strNikeName.clear();
+    strSignature.clear();
+    strProfilePhoto.clear();
+    vecFiles.clear();
+    ostrFileName.clear();
+    ostrFilePath.clear();
+    record.clear();
+
+    nId = std::stoi(request().post("user_id"));
+    strEmail = request().post("email");
+    strNikeName = request().post("nikename");
+    strSignature = request().post("signature");
+
+    vecFiles = request().files();
+    for (std::size_t i = 0; i < vecFiles.size(); ++i)
+    {
+        const std::string& strFileName = vecFiles.at(i)->filename();
+        if (strFileName.empty())
+        {
+            continue;
+        }
+
+        const std::string& strSuffix = strFileName.substr(strFileName.find_last_of('.'));
+        std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds >(
+            std::chrono::system_clock::now().time_since_epoch()
+        );
+        ostrFileName << setting("htdocs") << "/assets/upload/cover/" << ms.count() << strSuffix;
+        vecFiles.at(i)->save_to(ostrFileName.str());
+        ostrFilePath << setting("host") << "/assets/upload/cover/" << ms.count() << strSuffix;
+        ostrFileName.clear();
+    }
+
+    if (ostrFilePath.rdbuf()->in_avail())
+    {
+        strProfilePhoto = ostrFilePath.str();
+    }
+
+    try
+    {
+        DatabaseUtils::queryUserById(database(), nId, record);
+        record.strEmail = strEmail;
+        record.strNikeName = strNikeName;
+        record.strSignature = cppcms::util::escape(strSignature);
+        record.strProfilePhoto = strProfilePhoto;
+        DatabaseUtils::updateUser(database(), record);
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("warning", "发生内部错误", e.what());
+        return;
+    }
+    message("success", "更新成功", "用户信息已被更新！");
+    return;
+}
+
 void AdminService::postArticle()
 {
     std::string strTitle;
@@ -331,7 +440,6 @@ void AdminService::postArticle()
     std::string strContent;
     cppcms::http::request::files_type vecFiles;
     std::ostringstream ostrFileName;
-    std::string strPostToken;
     std::ostringstream ostrFilePath;
     std::string strId;
     struct article record;
@@ -342,7 +450,6 @@ void AdminService::postArticle()
     strContent.clear();
     vecFiles.clear();
     ostrFileName.clear();
-    strPostToken.clear();
     ostrFilePath.clear();
     strId.clear();
     record.clear();
@@ -351,17 +458,7 @@ void AdminService::postArticle()
     strSortId = request().post("sort");
     strDescribe = request().post("describe");
     strContent = request().post("content");
-    strPostToken = request().post("posttoken");
     strId = request().post("article_id");
-    if (strPostToken == m_strPostToken)
-    {
-        message("danger", "发布错误", "请勿刷新页面！");
-        return;
-    }
-    else
-    {
-        m_strPostToken = strPostToken;
-    }
 
     vecFiles = request().files();
     for (std::size_t i = 0; i < vecFiles.size(); ++i)

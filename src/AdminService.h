@@ -26,11 +26,12 @@ private:
 
     void message(std::string strMsgType, std::string strMsgTitle, std::string strMsgText);
 
+    void postUser();
     void postArticle();
     void uploadImages();
 
 private:
-    std::string m_strPostToken;
+    
 };
 
 #endif

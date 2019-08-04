@@ -1,13 +1,13 @@
 {=./admin/public/header.html}
 <div class="container">
-
+<form enctype="multipart/form-data" action="/xiaosu/admin/post_user" onsubmit="return check()" method="post">
 <div class="c-tabs__content tab-content" id="nav-tabContent">
   <div class="c-tabs__pane active show u-text-center" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
     <div class="row c-card u-text-center">
 
       <div class="col-xl-12 u-text-center">
-
+        
         <div class="c-card u-text-center">
 
           <div class="c-avatar u-inline-flex">
@@ -23,12 +23,12 @@
 
         <div class="c-field u-mb-medium">
           <label class="c-field__label" for="user-email">邮箱地址</label>
-          <input class="c-input" type="text" id="user-email" value="{$user_email}">
+          <input class="c-input" type="text" id="email" name="email" value="{$user_email}">
         </div>
 
         <div class="c-field u-mb-medium">
           <label class="c-field__label" for="user-phone">昵称</label>
-          <input class="c-input" type="tel" id="user-phone" value="{$user_nikename}">
+          <input class="c-input" type="tel" id="nikename" name="nikename" value="{$user_nikename}">
         </div>
 
         <div class="c-field u-mb-medium">
@@ -43,9 +43,10 @@
 
         <div class="c-field u-mb-medium">
           <label class="c-field__label" for="user-phone">个性签名</label>
-          <textarea class="c-input" type="tel" id="user-phone">{$user_signature}</textarea>
+          <textarea class="c-input" type="tel" name="signature" id="signature">{$user_signature}</textarea>
         </div>
-
+        <input style="display: none;" name="user_id" value="{$user_id}">
+      
       </div>
 
     </div>
@@ -54,7 +55,7 @@
 
     <div class="row">
       <div class="col-12 col-sm-7 col-xl-2 u-mr-auto u-mb-xsmall">
-        <button class="c-btn c-btn--info c-btn--fullwidth">Save Settings</button>
+        <input type="submit" class="c-btn c-btn--info c-btn--fullwidth" value="Save Settings">
       </div>
 
       <div class="col-12 col-sm-5 col-xl-3 u-text-right">
@@ -62,62 +63,55 @@
       </div>
     </div>
   </div>
-
+</form>
 </div>
 
 <script type="text/javascript">
   function check() 
   {
-    var title = document.getElementById("title");
-    var describe = document.getElementById("describe");
-    var sort = document.getElementById("sort");
-    document.getElementById("posttoken").value = Math.round(new Date() / 1000);
-    var sort_index =sort.selectedIndex;
-    var sort_value =sort.options[sort_index].value;
-    var content_value = editor.getMarkdown();
+    var email = document.getElementById("email");
+    var nikename = document.getElementById("nikename");
+    var signature = document.getElementById("signature");
 
-    var title_rules = 
+    var email_rules = 
     {
-      range: 
-      {
-        min: 1,
-        max: 24
-      }
+      required: true,
+      email: true
     };
-    var result = approve.value(title.value, title_rules);
+    var result = approve.value(email.value, email_rules);
     if (!result.approved) 
     {
-      showpop("标题：最少1个字符或者最多24字符")
+      showpop("您的邮箱地址不合法，请检查！")
       return false;
     }
 
-    var content_rules = 
+    var nikename_rules = 
     {
       range: 
       {
-        min: 200,
-        max: 10000
+        min: 0,
+        max: 16
       }
     };
-    result = approve.value(content_value, content_rules);
+    result = approve.value(nikename.value, nikename_rules);
     if (!result.approved) 
     {
-      showpop("正文：最少200个字符或者最多5000字符");
+      showpop("昵称不能超过16个字符");
       return false;
     }
 
-    var describe_rules = 
+    var signature_rules = 
     {
       range: 
       {
-        min: parseInt(251),
-        max: 500
+        min: 0,
+        max: 120
       }
     };
-    result = approve.value(describe.value, describe_rules);
+    result = approve.value(signature.value, signature_rules);
     if (!result.approved) 
     {
-      describe_check();
+      showpop("签名不能超过120字符");
       return false;
     }
   }

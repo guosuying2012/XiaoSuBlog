@@ -392,19 +392,17 @@ struct SliderImage : public cppcms::serializable
     unsigned int nId;           //图片ID
     std::string strPath;        //图片地址
     std::string strDescription; //图片描述
-    int nIsShow;                //是否显示图片
 
     void clear()
     {
         nId = 0;
         strPath.clear();
         strDescription.clear();
-        nIsShow = 0;
     }
 
     void serialize(cppcms::archive& a)
     {
-        a&nId&strPath&strDescription&nIsShow;
+        a&nId&strPath&strDescription;
     }
 };
 using SliderImages = std::vector<SliderImage>;
@@ -428,7 +426,6 @@ namespace cppcms
                 out.nId = v.get<unsigned int>("id");
                 out.strPath = v.get<unsigned int>("path");
                 out.strDescription = v.get<std::string>("description");
-                out.nIsShow = v.get<int>("is_show");
 
                 return out;
             }
@@ -438,7 +435,6 @@ namespace cppcms
                 v.set("id", in.nId);
                 v.set("path", in.strPath);
                 v.set("description", in.strDescription);
-                v.set("is_show", in.nIsShow);
             }
         };
     } // json

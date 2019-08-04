@@ -24,7 +24,7 @@ void DatabaseUtils::queryAllSliderImages(cppdb::session& sql, SliderImages& vecR
 
     try
     {
-        resRecords = sql << "SELECT id, image_path, image_description FROM yengsu_slider_images WHERE image_isshow != 0";
+        resRecords = sql << "SELECT article_id, article_image, article_title FROM yengsu_articles WHERE article_image != '' and article_approval_status = 1";
         while(resRecords.next())
         {
             resRecords >> record.nId >> record.strPath >> record.strDescription;
@@ -45,11 +45,10 @@ bool DatabaseUtils::insertSliderImage(cppdb::session& sql, const SliderImage& re
 
     try
     {
-        stat = sql << "INSERT INTO yengsu_slider_images(image_path, image_description, image_isshow) VALUES(?, ?, ?)";
+        stat = sql << "INSERT INTO yengsu_slider_images(image_path, image_description) VALUES(?, ?)";
 
         stat.bind(record.strPath);
         stat.bind(record.strDescription);
-        stat.bind(record.nIsShow);
         stat.exec();
     }
     catch(cppdb::cppdb_error const& e)
@@ -98,11 +97,9 @@ bool DatabaseUtils::updateSliderImage(cppdb::session& sql, const SliderImage& re
 
     try
     {
-        stat = sql << "UPDATE yengsu_slider_images SET image_path=?, image_description=?, image_isshow=? WHERE id = ?";
+        stat = sql << "UPDATE yengsu_slider_images SET image_path=?, image_description=?, WHERE id = ?";
         stat.bind(record.strPath);
         stat.bind(record.strDescription);
-        stat.bind(record.nIsShow);
-        stat.bind(record.nId);
         stat.exec();
     }
     catch(cppdb::cppdb_error const& e)

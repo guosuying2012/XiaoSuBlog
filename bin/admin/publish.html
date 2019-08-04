@@ -32,7 +32,6 @@
 
     <label class="c-field__label" for="input1">正文</label>
     {=./admin/public/editor.html}
-    <input style="display: none;" id="posttoken" name="posttoken" value="">
     <input style="display: none;" name="article_id" value="{$article_id}">
     <input class="c-btn c-btn--fullwidth" data-toggle="modal" data-target="#modal2" style="margin-top: 20px; margin-bottom: 120px; position: static;" type="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" />
     </form>
@@ -45,7 +44,7 @@
     var title = document.getElementById("title");
     var describe = document.getElementById("describe");
     var sort = document.getElementById("sort");
-    document.getElementById("posttoken").value = Math.round(new Date() / 1000);
+    
     var sort_index =sort.selectedIndex;
     var sort_value =sort.options[sort_index].value;
     var content_value = editor.getMarkdown();
