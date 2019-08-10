@@ -26,7 +26,6 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/publish", &AdminService::admin_publish, this);
     dispatcher().map("GET", "/article", &AdminService::admin_articles, this);
     dispatcher().map("GET", "/users", &AdminService::admin_users, this);
-    dispatcher().map("GET", "/system", &AdminService::admin_system, this);
     dispatcher().map("GET", "/article_edit/(.*)", &AdminService::article_edit, this, 1);
     dispatcher().map("GET", "/article_delete/(.*)", &AdminService::article_delete, this, 1);
     dispatcher().map("GET", "/article_verify/(.*)", &AdminService::article_verify, this, 1);
@@ -38,6 +37,8 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("POST", "/signin", &AdminService::signin, this);
     dispatcher().map("GET", "/signin", &AdminService::signin, this);
     dispatcher().map("GET", "/signout", &AdminService::signout, this);
+    dispatcher().map("GET", "/resetPassword", &AdminService::resetPassword, this);
+    dispatcher().map("POST", "/resetPassword", &AdminService::resetPassword, this);
     mapper().root("/admin");
 }
 
@@ -92,7 +93,7 @@ void AdminService::signin()
 
     try
     {
-        //加密密码
+        user_password = DatabaseUtils::passwordEncryption(user_password, setting("session.client.hmac_key"));
         bFlag = DatabaseUtils::signin(database(), user_name, user_password, nId);
     }
     catch(cppdb::cppdb_error const& e)
@@ -121,6 +122,77 @@ void AdminService::signout()
 {
     session().clear();
     index();
+}
+
+void AdminService::resetPassword()
+{
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
+    if (request().request_method () == "GET")
+    {
+        Template tpl("./admin/system.html");
+        tpl.set("function", "重置密码");
+        tpl.render(response(200, "text/html").out(), true);
+        return;
+    }
+
+    bool bFlag = false;
+    unsigned int nId;
+    std::string strPassword;
+    std::string strConfirmPassword;
+
+    nId = 0;
+    strPassword.clear();
+    strConfirmPassword.clear();
+
+    nId = session().get<unsigned int>("user_id");
+    strPassword = request().post("password");
+    strConfirmPassword = request().post("confirm_password");
+
+    if (strPassword.empty() || strConfirmPassword.empty())
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"密码不能输入空";
+        response().out() << json();
+        return;
+    }
+
+    if (strPassword != strConfirmPassword)
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"两次密码不相同！";
+        response().out() << json();
+        return;
+    }
+
+    try
+    {
+        strPassword = DatabaseUtils::passwordEncryption(strConfirmPassword, setting("session.client.hmac_key"));
+        bFlag = DatabaseUtils::resetPassword(database(), nId, strPassword);
+    }
+    catch(cppdb::cppdb_error const& e)
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"修改失败，系统内部发生错误！";
+        response().out() << json();
+        return;
+    }
+
+    if (bFlag)
+    {
+        json()["data"] = "密码修改成功！";
+        json()["error"] = "null";
+        response().out() << json();
+        return;
+    }
+
+    json()["data"] = "null";
+    json()["error"] = u8"修改失败！";
+    response().out() << json();
 }
 
 void AdminService::admin_publish()
@@ -288,20 +360,6 @@ void AdminService::admin_users()
     tpl.set("model_title", "确定要更改此账户的禁用状态？");
     tpl.set("model_conent", "禁用状态后此账户将不能正常使用博客功能，解除禁用将恢复账户的使用。");
     tpl.set("model_link", "user_disable");
-    tpl.render(response(200, "text/html").out(), true);
-}
-
-void AdminService::admin_system()
-{
-    if (!session().is_set("user_id"))
-    {
-        signin();
-        return;
-    }
-
-    Template tpl("./admin/system.html");
-    tpl.set("function", "系统设置");
-
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -679,6 +737,7 @@ void AdminService::postArticle()
         return;
     }
 
+    record.strId = DatabaseUtils::generate_hex(16);
     record.m_user.nId = session().get<unsigned int>("user_id");
     record.m_sort.nId = std::stoi(strSortId, nullptr, 0);
     record.strTitle = strTitle;

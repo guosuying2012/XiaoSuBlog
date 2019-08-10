@@ -2,7 +2,10 @@
 #define DATABASE_UTLIS_H
 
 #include "support.h"
+
 #include <cppdb/frontend.h>
+#include <cppcms/util.h>
+
 #include <vector>
 #include <string>
 #include <sstream>
@@ -57,6 +60,7 @@ public:
     static bool updateComment(cppdb::session&, comment& record);
 
     static bool signin(cppdb::session&, std::string strUserName, std::string strPassword, unsigned long& nId);
+    static bool resetPassword(cppdb::session&, unsigned int unId, std::string const& strPassword);
 
     static unsigned int random_char() 
     {
@@ -78,6 +82,15 @@ public:
             ss << (hex.length() < 2 ? '0' + hex : hex);
         }
         return ss.str();
+    }
+
+    static std::string passwordEncryption(std::string const& strPassword, std::string const& strSalt)
+    {
+        std::stringstream ssEncryption;
+        ssEncryption.clear();
+
+        ssEncryption << strPassword << strSalt;
+        return cppcms::util::md5hex(ssEncryption.str());
     }
 };
 

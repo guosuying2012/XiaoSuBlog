@@ -14,11 +14,11 @@ private:
 
     void signin();
     void signout();
+    void resetPassword();
 
     void admin_publish();
     void admin_articles();
     void admin_users();
-    void admin_system();
 
     void article_edit(std::string strId);
     void article_delete(std::string strId);

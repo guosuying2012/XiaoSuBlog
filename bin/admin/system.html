@@ -1,7 +1,84 @@
 {=./admin/public/header.html}
 <div class="container">
     
-  <p><h1>正在开发中......</h1></p>
+  <div class="o-page o-page--center">
+    <div class="o-page__card">
+        <div class="c-card c-card--center">
+          <span class="c-icon c-icon--large u-mb-small">
+            <img src="img/logo-small.svg" alt="Neat">
+          </span>
+
+          <h4 class="u-mb-medium">Reset Password</h4>
+          <form onsubmit="return send_data()">
+            <div class="c-field">
+              <label class="c-field__label">Enter New Password</label>
+              <input class="c-input u-mb-small" id="password" name="password" type="password" placeholder="Numbers, Pharagraphs Only">
+            </div>
+
+            <div class="c-field">
+              <label class="c-field__label">Confirm Password</label>
+              <input class="c-input u-mb-small" id="confirm_password" name="confirm_password" type="password" placeholder="Numbers, Pharagraphs Only">
+            </div>
+
+            <button class="c-btn c-btn--fullwidth c-btn--info">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
 </div>
+
+<script type="text/javascript" src="/assets/js/spop.min.js"></script>
+<script type="text/javascript" src="/admin/editor/js/jquery.min.js"></script>
+<script type="text/javascript">
+  function send_data() 
+  {
+    var password = $("#password").val();
+    var confirm_password = $("#confirm_password").val();
+    if (password === "" || confirm_password === "") 
+    {
+        spop({
+            template: "新密码或确认密码不能为空！",
+            position  : 'bottom-center',
+            style: 'error',
+            autoclose: 5000
+          });
+      return false;
+    }
+
+    $.post(
+      "/xiaosu/admin/resetPassword",
+      {
+        "password": password, 
+        "confirm_password": confirm_password
+      },
+      function(data) 
+      {
+        if (data.error !== "null") 
+        {
+          spop({
+            template: data.error,
+            position  : 'bottom-center',
+            style: 'error',
+            autoclose: 5000
+          });
+        }
+        else
+        {
+          spop({
+            template: data.data,
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5000,
+            onClose: function() {
+                window.location.replace("/xiaosu/admin/signout");
+            }
+          });
+        }
+      }
+    );
+    return false;
+  }
+</script>
+
 {=./admin/public/footer.html}

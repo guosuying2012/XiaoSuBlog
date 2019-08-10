@@ -1,5 +1,4 @@
 #include "DatabaseUtils.h"
-#include <cppcms/util.h>
 #include <iostream>
 
 DatabaseUtils::DatabaseUtils()
@@ -515,7 +514,7 @@ bool DatabaseUtils::insertArticle(cppdb::session& sql, const article& record)
         stat = sql << 
                 "INSERT INTO yengsu_articles(article_id,user_id,article_title,article_image,article_content,article_date,article_last_modified,article_describe,article_approval_status) "
                 "VALUES(?,?,?,?,?,?,?,?,?)";
-        stat.bind(generate_hex(10));
+        stat.bind(record.strId);
         stat.bind(record.m_user.nId);
         stat.bind(record.strTitle);
         stat.bind(record.strImage);
@@ -894,4 +893,24 @@ bool DatabaseUtils::signin(cppdb::session& sql, std::string strUserName, std::st
         throw e;
         return false;
     }
+}
+
+bool DatabaseUtils::resetPassword(cppdb::session& sql, unsigned int unId, std::string const& strPassword)
+{
+    cppdb::statement stat;
+    stat.clear();
+
+    try
+    {
+        stat = sql << "UPDATE yengsu_users SET user_password=? WHERE user_id = ?";
+        stat.bind(strPassword);
+        stat.bind(unId);
+        stat.exec();
+    }
+    catch(cppdb::cppdb_error const& e)
+    {
+        throw e;
+    }
+
+    return stat.affected() <= 0 ? false : true;
 }
