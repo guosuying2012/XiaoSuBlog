@@ -8,6 +8,7 @@
 #include <cppcms/url_dispatcher.h>  
 #include <cppcms/url_mapper.h>
 #include <cppcms/util.h>
+#include <cppcms/session_interface.h>
 #include <StringTemplate/StringTemplate.hpp>
 
 #include <sstream>
@@ -26,14 +27,17 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/article", &AdminService::admin_articles, this);
     dispatcher().map("GET", "/users", &AdminService::admin_users, this);
     dispatcher().map("GET", "/system", &AdminService::admin_system, this);
-    dispatcher().map("GET", "/article_edit/(\\d+)", &AdminService::article_edit, this, 1);
-    dispatcher().map("GET", "/article_delete/(\\d+)", &AdminService::article_delete, this, 1);
-    dispatcher().map("GET", "/article_verify/(\\d+)", &AdminService::article_verify, this, 1);
+    dispatcher().map("GET", "/article_edit/(.*)", &AdminService::article_edit, this, 1);
+    dispatcher().map("GET", "/article_delete/(.*)", &AdminService::article_delete, this, 1);
+    dispatcher().map("GET", "/article_verify/(.*)", &AdminService::article_verify, this, 1);
     dispatcher().map("GET", "/user_edit/(\\d+)", &AdminService::user_edit, this, 1);
     dispatcher().map("GET", "/user_disable/(\\d+)", &AdminService::user_disable, this, 1);
     dispatcher().map("POST", "/post_user", &AdminService::postUser, this);
     dispatcher().map("POST", "/postArticle", &AdminService::postArticle, this);
     dispatcher().map("POST", "/uploadImages", &AdminService::uploadImages, this);
+    dispatcher().map("POST", "/signin", &AdminService::signin, this);
+    dispatcher().map("GET", "/signin", &AdminService::signin, this);
+    dispatcher().map("GET", "/signout", &AdminService::signout, this);
     mapper().root("/admin");
 }
 
@@ -44,14 +48,89 @@ AdminService::~AdminService()
 
 void AdminService::index()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     Template tpl("./admin/index.html");
     tpl.set("title", "XiaoSu");
     tpl.set("function", "控制台");
     tpl.render(response(200, "text/html").out(), true);
 }
 
+void AdminService::signin()
+{
+    if (request().request_method () == "GET")
+    {
+        Template tpl("./admin/signin.html");
+        tpl.set("title", "XiaoSu");
+        tpl.render(response(200, "text/html").out(), true);
+        return;
+    }
+
+    unsigned long nId;
+    std::string user_name;
+    std::string user_password;
+    bool bFlag = false;
+
+    nId = 0;
+    user_name.clear();
+    user_password.clear();
+    
+    user_name = request().post("user_name");
+    user_password = request().post("user_password");
+
+    if (user_name.empty() || user_password.empty())
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"账户不能输入空";
+        response().out() << json();
+        return;
+    }
+
+    try
+    {
+        //加密密码
+        bFlag = DatabaseUtils::signin(database(), user_name, user_password, nId);
+    }
+    catch(cppdb::cppdb_error const& e)
+    {
+        json()["data"] = "null";
+        json()["error"] = u8"登陆失败，系统内部发生错误！";
+        response().out() << json();
+        return;
+    }
+
+    if (bFlag)
+    {
+        session().set("user_id", nId);
+        json()["data"] = "success";
+        json()["error"] = "null";
+        response().out() << json();
+        return;
+    }
+
+    json()["data"] = "null";
+    json()["error"] = u8"登陆失败！检查账户";
+    response().out() << json();
+}
+
+void AdminService::signout()
+{
+    session().clear();
+    index();
+}
+
 void AdminService::admin_publish()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     sorts vecRes;
     Template tpl("./admin/publish.html");
 
@@ -76,20 +155,36 @@ void AdminService::admin_publish()
 
 void AdminService::admin_articles()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     Template tpl("./admin/article.html");
     articles vecRes;
-    
+    unsigned int nId;
+    std::stringstream ssCondition;
+
     vecRes.clear();
     tpl.set("title", "XiaoSu");
     tpl.set("function", "文章管理");
+    nId = 0;
+    ssCondition.clear();
 
-    DatabaseUtils::queryArticles(database(), "", 1, 20, vecRes);
+    nId = session().get<unsigned long>("user_id");
+    if (nId != 1)
+    {
+        ssCondition << "yengsu_users.user_id="<<nId;
+    }
+
+    DatabaseUtils::queryArticles(database(), ssCondition.str(), 1, 20, vecRes);
     auto article_list = tpl.block("article_list").repeat(vecRes.size());
     for (int i = 0; i < vecRes.size(); ++i)
     {
         std::time_t t(vecRes.at(i).nTime / 1000);
         std::time_t lt(vecRes.at(i).nLastModified / 1000);
-        article_list.set("article_id", vecRes.at(i).nId);
+        article_list.set("article_id", vecRes.at(i).strId);
         article_list.set("article_title", vecRes.at(i).strTitle);
         article_list.set("article_author", vecRes.at(i).m_user.strDisplayName);
         //article_list.set("article_views", vecRes.at(i).nViews);
@@ -126,16 +221,32 @@ void AdminService::admin_articles()
 
 void AdminService::admin_users()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     Template tpl("./admin/users.html");
     users vecRes;
+    std::stringstream ssCondition;
+    unsigned long nId;
     
     vecRes.clear();
+    ssCondition.clear();
+    nId = 0;
+
     tpl.set("title", "XiaoSu");
     tpl.set("function", "用户管理");
+    nId = session().get<unsigned long>("user_id");
 
     try
     {
-        DatabaseUtils::queryUsers(database(), vecRes);
+        if (nId != 1)
+        {
+            ssCondition << "user_id=" << nId;
+        }
+        DatabaseUtils::queryUsers(database(), ssCondition.str(), vecRes);
         auto user_list = tpl.block("user_list").repeat(vecRes.size());
         for (int i = 0; i < vecRes.size(); ++i)
         {
@@ -182,14 +293,26 @@ void AdminService::admin_users()
 
 void AdminService::admin_system()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     Template tpl("./admin/system.html");
     tpl.set("function", "系统设置");
 
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::article_edit(int nId)
+void AdminService::article_edit(std::string strId)
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     sorts vecRes;
     article record;
     Template tpl("./admin/publish.html");
@@ -202,7 +325,7 @@ void AdminService::article_edit(int nId)
     try
     {
         DatabaseUtils::queryAllSorts(database(), vecRes);
-        DatabaseUtils::queryArticleById(database(), nId, record);
+        DatabaseUtils::queryArticleById(database(), strId, record);
     }
     catch (cppdb::cppdb_error const& e)
     {
@@ -224,7 +347,7 @@ void AdminService::article_edit(int nId)
     tpl.set("article_title", record.strTitle);
     tpl.set("article_describe", record.strDescribe);
     tpl.set("article_ontent", record.strContent);
-    tpl.set("article_id", record.nId);
+    tpl.set("article_id", record.strId);
     if (record.strImage.empty())
     {
         tpl.set("article_preview", "http://via.placeholder.com/100");
@@ -237,12 +360,18 @@ void AdminService::article_edit(int nId)
     tpl.render(response(200, "text/html").out(), true);
 }
 
-void AdminService::article_delete(int nId)
+void AdminService::article_delete(std::string strId)
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     article record;
     record.clear();
 
-    record.nId = nId;
+    record.strId = strId;
 
     try
     {
@@ -258,14 +387,20 @@ void AdminService::article_delete(int nId)
     return;
 }
 
-void AdminService::article_verify(int nId)
+void AdminService::article_verify(std::string strId)
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     article record;
     record.clear();
 
     try
     {
-        DatabaseUtils::queryArticleById(database(), nId, record);
+        DatabaseUtils::queryArticleById(database(), strId, record);
         record.bIsApproval = !record.bIsApproval;
         DatabaseUtils::updateArticle(database(), record);
     }
@@ -288,6 +423,12 @@ void AdminService::article_verify(int nId)
 
 void AdminService::user_edit(int nId)
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     user record;
     Template tpl("./admin/userinfo_edit.html");
     tpl.set("title", "XiaoSu");
@@ -326,8 +467,25 @@ void AdminService::user_edit(int nId)
 
 void AdminService::user_disable(int nId)
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
+    unsigned long nUserId;
     user record;
+
+    nUserId = 0;
     record.clear();
+
+    nUserId = session().get<unsigned long>("user_id");
+
+    if (nUserId != 1)
+    {
+        message("warning", "状态修改失败", std::string("状态修改失败: 你没有这个权限！"));
+        return;
+    }
 
     try
     {
@@ -365,6 +523,12 @@ void AdminService::message(std::string strMsgType, std::string strMsgTitle, std:
 
 void AdminService::postUser()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     int nId;
     std::string strEmail;
     std::string strNikeName;
@@ -434,6 +598,12 @@ void AdminService::postUser()
 
 void AdminService::postArticle()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     std::string strTitle;
     std::string strSortId;
     std::string strDescribe;
@@ -487,7 +657,7 @@ void AdminService::postArticle()
     {
         try
         {
-            DatabaseUtils::queryArticleById(database(), std::stoi(strId, nullptr, 0), record);
+            DatabaseUtils::queryArticleById(database(), strId, record);
             record.strTitle = strTitle;
             record.m_sort.nId = std::stoi(strSortId,nullptr,0);
             record.strDescribe = cppcms::util::escape(strDescribe);
@@ -509,7 +679,7 @@ void AdminService::postArticle()
         return;
     }
 
-    record.m_user.nId = 1;
+    record.m_user.nId = session().get<unsigned int>("user_id");
     record.m_sort.nId = std::stoi(strSortId, nullptr, 0);
     record.strTitle = strTitle;
     record.strImage = ostrFilePath.str();
@@ -532,6 +702,12 @@ void AdminService::postArticle()
 
 void AdminService::uploadImages()
 {
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
     std::string strFileName;
     cppcms::http::request::files_type vecFiles;
     std::ostringstream ostrFileName;

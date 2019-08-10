@@ -18,12 +18,12 @@
 	"session" :
 	{
 	    "expire": "renew",
-	    "timeout": 604800,
+	    "timeout": 1800,
 	    "location": "client",
 	    "client":
     	{
         	"hmac": "sha1",
-        	"hmac_key": "3891bbf7f845fd4277008a63d72640fc13bb9a31"
+        	"hmac_key": "3d8a4e56ed7a46b597309b7d190cc2c3e699d956"
     	},
     	"server": 
     	{

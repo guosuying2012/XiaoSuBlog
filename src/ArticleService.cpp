@@ -10,7 +10,7 @@ ArticleService::ArticleService(cppcms::service& srv)
     :BaseService(srv)
 {
     dispatcher().map("GET", "", &ArticleService::index, this);
-    dispatcher().map("GET", "/getArticleById/(\\d+)", &ArticleService::articleById, this, 1);
+    dispatcher().map("GET", "/getArticleById/(.*)", &ArticleService::articleById, this, 1);
     mapper().root("/article");
 }
 
@@ -23,22 +23,14 @@ void ArticleService::index()
     response().out() << "ArticleService";
 }
 
-void ArticleService::articleById(int nArticleId)
+void ArticleService::articleById(std::string strId)
 {
     article recoder;
     recoder.clear();
 
-    if (nArticleId <= 0)
-    {
-        json()["data"] = "null";
-        json()["error"] = "未找到相关的文章!";
-        response(500).out() << json();
-        return;
-    }
-
     try
     {
-        DatabaseUtils::queryArticleById(database(), nArticleId, recoder);
+        DatabaseUtils::queryArticleById(database(), strId, recoder);
     }
     catch (cppdb::cppdb_error const& e)
     {

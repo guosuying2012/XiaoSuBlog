@@ -1,21 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-cmn-Hans">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Sign In | Neat</title>
+    <title>Sign In | {$title}</title>
     <meta name="description" content="Neat">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="/admin/css/googlefont.css?family=Lato" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/neat.min.css?v=1.0">
+    <link rel="stylesheet" type="text/css" href="/admin/css/neat.min.css?v=1.0">
+    <link rel="stylesheet" type="text/css" href="/assets/css/spop.min.css">
   </head>
   <body>
 
@@ -23,19 +24,19 @@
       <div class="o-page__card">
         <div class="c-card c-card--center">
           <span class="c-icon c-icon--large u-mb-small">
-            <img src="img/logo-small.svg" alt="Neat">
+            <img src="/assets/img/avatar.png" alt="Neat">
           </span>
 
           <h4 class="u-mb-medium">Welcome Back :)</h4>
-          <form>
+          <form  onsubmit="return signin()">
             <div class="c-field">
               <label class="c-field__label">Email Address</label>
-              <input class="c-input u-mb-small" type="email" placeholder="e.g. adam@sandler.com" required>
+              <input class="c-input u-mb-small" id="user_name" name="user_name" type="text" required>
             </div>
             
             <div class="c-field">
               <label class="c-field__label">Password</label>
-              <input class="c-input u-mb-small" type="password" placeholder="Numbers, Pharagraphs Only" required>
+              <input class="c-input u-mb-small" id="user_password" name="user_password" type="password" required>
             </div>
 
             <button class="c-btn c-btn--fullwidth c-btn--info">Login</button>
@@ -45,6 +46,44 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="js/neat.min.js?v=1.0"></script>
+    <script type="text/javascript" src="/assets/js/spop.min.js"></script>
+    <script type="text/javascript" src="/admin/js/neat.min.js?v=1.0"></script>
+    <script type="text/javascript" src="/admin/editor/js/jquery.min.js"></script>
+    <script type="text/javascript">
+      function signin() 
+      {
+        var user_name = $("#user_name").val();
+        var user_password = $("#user_password").val();
+        if (user_name === "" || user_password === "") 
+        {
+          return;
+        }
+
+        $.post(
+          "/xiaosu/admin/signin",
+          {
+            "user_name": user_name, 
+            "user_password": user_password
+          },
+          function(data) 
+          {
+            if (data.error !== "null") 
+            {
+              spop({
+                template: data.error,
+                position  : 'top-center',
+                style: 'error',
+                autoclose: 5000
+              });
+            }
+            else
+            {
+              window.location.replace("/xiaosu/admin")
+            }
+          }
+        );
+        return false;
+      }
+    </script>
   </body>
 </html>

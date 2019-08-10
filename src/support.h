@@ -9,7 +9,7 @@
 //用户信息结构体
 struct user : public cppcms::serializable
 {
-    unsigned int nId;               //用户ID
+    unsigned long long nId;         //用户ID
     std::string strIp;              //注册IP
     std::string strName;            //用户名
     std::string strNikeName;        //昵称
@@ -61,7 +61,7 @@ namespace cppcms
                     throw bad_value_cast();
                 }
 
-                out.nId = v.get<unsigned int>("id");
+                out.nId = v.get<unsigned long>("id");
                 out.strIp = v.get<std::string>("ip");
                 out.strName = v.get<std::string>("name");
                 out.strNikeName = v.get<std::string>("nikename");
@@ -155,7 +155,7 @@ namespace cppcms
 //博客信息结构体
 struct article : public cppcms::serializable
 {
-    unsigned int nId;                   //博客ID
+    std::string strId;                    //博客ID
     user m_user;                        //用户
     sort m_sort;                        //分类
     std::string strTitle;               //标题
@@ -171,7 +171,7 @@ struct article : public cppcms::serializable
 
     void clear()
     {
-        nId = 0;
+        strId.clear();
         m_user.clear();
         m_sort.clear();
         strTitle.clear();
@@ -188,7 +188,7 @@ struct article : public cppcms::serializable
 
     void serialize(cppcms::archive &a)
     {
-        a&nId&m_user&m_sort&strTitle&strImage&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
+        a&strId&m_user&m_sort&strTitle&strImage&strContent&nViews&nCommentCount&nTime&nLikeCount&nLastModified&strDescribe;
     }
 };
 using articles = std::vector<article>;
@@ -209,7 +209,7 @@ namespace cppcms
                     throw bad_value_cast();
                 }
 
-                out.nId = v.get<unsigned int>("id");
+                out.strId = v.get<std::string>("id");
                 out.m_user = v.get<user>("user");
                 out.m_sort = v.get<sort>("sort");
                 out.strTitle = v.get<std::string>("title");
@@ -227,7 +227,7 @@ namespace cppcms
 
             static void set(value &v,article const &in)
             {
-                v.set("id", in.nId);
+                v.set("id", in.strId);
                 v.set("user", in.m_user);
                 v.set("sort", in.m_sort);
                 v.set("title", in.strTitle);
@@ -371,7 +371,7 @@ namespace cppcms
 //博客分类结构体
 struct SetArticleSort : public cppcms::serializable
 {
-    unsigned int nArticleId;        //博客ID
+    unsigned long long nArticleId;        //博客ID
     unsigned int nSortId;           //分类ID
     
     void clear()
