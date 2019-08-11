@@ -26,6 +26,8 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/publish", &AdminService::admin_publish, this);
     dispatcher().map("GET", "/article", &AdminService::admin_articles, this);
     dispatcher().map("GET", "/users", &AdminService::admin_users, this);
+    dispatcher().map("GET", "/menu", &AdminService::admin_menu, this);
+    dispatcher().map("POST", "/menu", &AdminService::admin_menu, this);
     dispatcher().map("GET", "/article_edit/(.*)", &AdminService::article_edit, this, 1);
     dispatcher().map("GET", "/article_delete/(.*)", &AdminService::article_delete, this, 1);
     dispatcher().map("GET", "/article_verify/(.*)", &AdminService::article_verify, this, 1);
@@ -39,6 +41,9 @@ AdminService::AdminService(cppcms::service& srv)
     dispatcher().map("GET", "/signout", &AdminService::signout, this);
     dispatcher().map("GET", "/resetPassword", &AdminService::resetPassword, this);
     dispatcher().map("POST", "/resetPassword", &AdminService::resetPassword, this);
+
+    dispatcher().map("POST", "/testPassword", &AdminService::testPassword, this);
+
     mapper().root("/admin");
 }
 
@@ -135,6 +140,7 @@ void AdminService::resetPassword()
     if (request().request_method () == "GET")
     {
         Template tpl("./admin/system.html");
+        tpl.set("title", "XiaoSu");
         tpl.set("function", "重置密码");
         tpl.render(response(200, "text/html").out(), true);
         return;
@@ -360,6 +366,114 @@ void AdminService::admin_users()
     tpl.set("model_title", "确定要更改此账户的禁用状态？");
     tpl.set("model_conent", "禁用状态后此账户将不能正常使用博客功能，解除禁用将恢复账户的使用。");
     tpl.set("model_link", "user_disable");
+    tpl.render(response(200, "text/html").out(), true);
+}
+
+void AdminService::admin_menu()
+{
+    if (!session().is_set("user_id"))
+    {
+        signin();
+        return;
+    }
+
+    if (request().request_method () == "POST")
+    {
+        sort record;
+        std::string strId;
+        std::string strParentId;
+        std::string strSortName;
+        std::string strSortLevel;
+
+        record.clear();
+        strId.clear();
+        strParentId.clear();
+        strSortName.clear();
+        strSortLevel.clear();
+
+        strId = request().post("id");
+        strParentId = request().post("parent_id");
+        strSortName = request().post("sort_name");
+        strSortLevel = request().post("sort_level");
+
+        if (strParentId.empty() || strSortName.empty() || strSortLevel.empty())
+        {
+            json()["data"] = "null";
+            json()["error"] = u8"您输入的信息有误，请检查输入！";
+            response().out() << json();
+            return;
+        }
+        if (std::stoi(strSortLevel) <= 0)
+        {
+            json()["data"] = "null";
+            json()["error"] = u8"层级不能小于或等于0！";
+            response().out() << json();
+            return;
+        }
+
+        record.nId = std::stoi(strId);
+        record.nParentId = std::stoi(strParentId);
+        record.strName = strSortName;
+        record.nRank = std::stoi(strSortLevel);
+
+        try
+        {
+            if (strId == "0")
+            {
+                DatabaseUtils::insertSort(database(), record);
+            }
+            else
+            {
+                DatabaseUtils::updateSort(database(), record);
+            }
+        }
+        catch (cppdb::cppdb_error const& e)
+        {
+            json()["data"] = "null";
+            json()["error"] = u8"内部故障！";
+            response().out() << json();
+            return;
+        }
+
+        json()["data"] = "success";
+        json()["error"] = "null";
+        response().out() << json();
+        return;
+    }
+
+    Template tpl("./admin/menu.html");
+    sorts vecRes;
+    unsigned long nId;
+    
+    vecRes.clear();
+    nId = 0;
+    tpl.set("title", "XiaoSu");
+    tpl.set("function", "菜单管理");
+    nId = session().get<unsigned long>("user_id");
+
+    try
+    {
+        DatabaseUtils::queryAllSorts(database(), vecRes);
+        auto menu_list = tpl.block("menu_list").repeat(vecRes.size());
+        auto sort_list = tpl.block("sort_list").repeat(vecRes.size());
+        for (int i = 0; i < vecRes.size(); ++i)
+        {
+            const sort& record = vecRes.at(i);
+            menu_list.set("menu_id", record.nId);
+            menu_list.set("menu_name", record.strName);
+            menu_list.set("menu_level", record.nRank);
+            menu_list.set("parent_id", record.nParentId);
+            sort_list.set("sort_id", record.nId);
+            sort_list = sort_list.next();
+            menu_list = menu_list.next();
+        }
+    }
+    catch (cppdb::cppdb_error const& e)
+    {
+        message("danger", "发生错误", std::string("发生内部错误: ") + e.what());
+        return;
+    }
+
     tpl.render(response(200, "text/html").out(), true);
 }
 
@@ -798,3 +912,16 @@ void AdminService::uploadImages()
     }
 }
 
+void AdminService::testPassword()
+{
+    std::string strPassword;
+    strPassword.clear();
+
+    strPassword = request().post("text");
+
+    strPassword = DatabaseUtils::passwordEncryption(strPassword, setting("session.client.hmac_key"));
+
+    json()["data"] = strPassword;
+    json()["error"] = "null";
+    response().out() << json();
+}

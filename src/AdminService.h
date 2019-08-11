@@ -19,6 +19,7 @@ private:
     void admin_publish();
     void admin_articles();
     void admin_users();
+    void admin_menu();
 
     void article_edit(std::string strId);
     void article_delete(std::string strId);
@@ -34,7 +35,7 @@ private:
     void uploadImages();
 
 private:
-    
+    void testPassword();
 };
 
 #endif

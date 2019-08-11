@@ -1,0 +1,162 @@
+{=./admin/public/header.html}
+<div class="container">
+  
+  <div class="row">
+    <div class="col-12">
+      <div class="row u-mb-medium">
+        <div class="col-12">
+          <div class="c-card">
+            <div class="row u-mb-medium">
+              
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input2">父类ID</label>
+                  <select class="c-select__input" id="parent_id_0">
+                    <option value="0" selected>0</option>
+                    {#sort_list}<option value="{$sort_id}">{$sort_id}</option>{/sort_list}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input3">分类名称</label>
+                  <input class="c-input" type="text" id="sort_name_0">
+                </div>
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input4">层级</label>
+                  <input class="c-input" type="number" id="sort_level_0">
+                </div>  
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input1">操作</label>
+                  <button class="c-btn c-btn--fullwidth c-btn--outline" onclick="update(0)">新增</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="row u-mb-medium">
+        <div class="col-12">
+          <div class="c-card">
+
+            {#menu_list}
+            <div class="row u-mb-medium">
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input2">ID: <font color="red">{$menu_id}</font>，&nbsp;&nbsp;&nbsp;&nbsp;父类ID</label>
+                  <input class="c-input" type="number" id="parent_id_{$menu_id}" value="{$parent_id}">
+                </div>
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input3">分类名称</label>
+                  <input class="c-input" type="text" id="sort_name_{$menu_id}" value="{$menu_name}">
+                </div>
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input4">层级</label>
+                  <input class="c-input" type="number" id="sort_level_{$menu_id}" value="{$menu_level}">
+                </div>  
+              </div>
+
+              <div class="col-lg-3 u-mb-xsmall">
+                <div class="c-field">
+                  <label class="c-field__label" for="input1">操作</label>
+                  <button class="c-btn c-btn--fullwidth c-btn--outline" onclick="update({$menu_id})">保存</button>
+                </div>
+              </div>
+            </div>
+            {/menu_list}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript" src="/assets/js/spop.min.js"></script>
+<script type="text/javascript" src="/admin/editor/js/jquery.min.js"></script>
+<script type="text/javascript">
+  function update(id) 
+  {
+    var parentId = $("#parent_id_" + id).val();
+    var sort_name = $("#sort_name_" + id).val();
+    var sort_level = $("#sort_level_" + id).val();
+
+    if (sort_name === "" || sort_level === "") 
+    {
+      spop({
+        template: "分类名称或者层级不能为空！",
+        position  : 'bottom-center',
+        style: 'error',
+        autoclose: 5000
+      });
+      return;
+    }
+
+    var level = new Number(sort_level);
+    if (level <= 0) 
+    {
+      spop({
+        template: "层级不能小于或者等于零！",
+        position  : 'bottom-center',
+        style: 'error',
+        autoclose: 5000
+      });
+      return;
+    }
+
+    $.post(
+      "/xiaosu/admin/menu",
+      {
+        "id": id,
+        "parent_id": parentId, 
+        "sort_name": sort_name, 
+        "sort_level": sort_level
+      },
+      function(data) 
+      {
+        if (data.error === "null") 
+        {
+          spop({
+            template: data.data,
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5000
+          });
+        }
+        else
+        {
+          spop({
+            template: data.error,
+            position  : 'bottom-center',
+            style: 'error',
+            autoclose: 5000
+          });
+        }
+        return;
+      }
+    );
+
+  }
+</script>
+
+{=./admin/public/footer.html}

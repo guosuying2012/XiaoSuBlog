@@ -189,11 +189,6 @@ bool DatabaseUtils::insertSort(cppdb::session& sql, const sort& record)
     cppdb::statement stat;
     stat.clear();
 
-    if (record.nId <= 0)
-    {
-        return false;
-    }
-
     try
     {
         stat = sql << "INSERT INTO yengsu_sorts(sort_parent_id, sort_name, sort_rank) VALUES(?, ?, ?)";
