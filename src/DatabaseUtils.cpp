@@ -26,7 +26,7 @@ void DatabaseUtils::queryAllSliderImages(cppdb::session& sql, SliderImages& vecR
         resRecords = sql << "SELECT article_id, article_image, article_title FROM yengsu_articles WHERE article_image != '' and article_approval_status = 1";
         while(resRecords.next())
         {
-            resRecords >> record.nId >> record.strPath >> record.strDescription;
+            resRecords >> record.strId >> record.strPath >> record.strDescription;
             vecRes.push_back(record);
         }
     }
@@ -64,7 +64,7 @@ bool DatabaseUtils::deleteSliderImage(cppdb::session& sql, const SliderImage& re
     cppdb::statement stat;
     stat.clear();
 
-    if (record.nId < 0)
+    if (record.strId.empty())
     {
         return false;
     }
@@ -72,7 +72,7 @@ bool DatabaseUtils::deleteSliderImage(cppdb::session& sql, const SliderImage& re
     try
     {
         stat = sql << "DELETE FROM yengsu_slider_images WHERE id = ?";
-        stat.bind(record.nId);
+        stat.bind(record.strId);
         stat.exec();
     }
     catch(cppdb::cppdb_error const& e)
@@ -89,7 +89,7 @@ bool DatabaseUtils::updateSliderImage(cppdb::session& sql, const SliderImage& re
     cppdb::statement stat;
     stat.clear();
 
-    if (record.nId <= 0)
+    if (record.strId.empty())
     {
         return false;
     }

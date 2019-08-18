@@ -389,20 +389,20 @@ struct SetArticleSort : public cppcms::serializable
 //导航栏图片结构体
 struct SliderImage : public cppcms::serializable
 {
-    unsigned int nId;           //图片ID
+    std::string strId;           //图片ID
     std::string strPath;        //图片地址
     std::string strDescription; //图片描述
 
     void clear()
     {
-        nId = 0;
+        strId.clear();
         strPath.clear();
         strDescription.clear();
     }
 
     void serialize(cppcms::archive& a)
     {
-        a&nId&strPath&strDescription;
+        a&strId&strPath&strDescription;
     }
 };
 using SliderImages = std::vector<SliderImage>;
@@ -423,7 +423,7 @@ namespace cppcms
                     throw bad_value_cast();
                 }
 
-                out.nId = v.get<unsigned int>("id");
+                out.strId = v.get<unsigned int>("id");
                 out.strPath = v.get<unsigned int>("path");
                 out.strDescription = v.get<std::string>("description");
 
@@ -432,7 +432,7 @@ namespace cppcms
 
             static void set(value &v,SliderImage const &in)
             {
-                v.set("id", in.nId);
+                v.set("id", in.strId);
                 v.set("path", in.strPath);
                 v.set("description", in.strDescription);
             }
