@@ -489,7 +489,7 @@ void DatabaseUtils::queryArticleById(cppdb::session& sql, std::string strId, art
         resArticle.nTime = resRecord.get<unsigned long long>("article_date");
         resArticle.nLikeCount = resRecord.get<unsigned int>("article_like_count");
         resArticle.nLastModified = resRecord.get<unsigned long long>("article_last_modified");
-        resArticle.strDescribe = resRecord.get<std::string>("article_describe");
+        resArticle.strDescribe = cppcms::util::escape(resRecord.get<std::string>("article_describe"));
         resArticle.bIsApproval = resRecord.get<unsigned short>("article_approval_status");
         DatabaseUtils::querySortByArticleId(sql, resArticle.strId, resArticle.m_sort);
         DatabaseUtils::queryUserById(sql, resArticle.m_user.nId, resArticle.m_user);
@@ -618,7 +618,7 @@ void DatabaseUtils::queryUsers(cppdb::session& sql, std::string strCondition, us
             record.strProfilePhoto = resRecords.get<std::string>("user_profile_photo");
             record.nRegistrationTime = resRecords.get<long long>("user_registration_time");
             record.strDisplayName = resRecords.get<std::string>("user_nikename");
-            record.strSignature = resRecords.get<std::string>("user_signature");
+            record.strSignature = cppcms::util::escape(resRecords.get<std::string>("user_signature"));
             record.bIsDisable = resRecords.get<unsigned short>("user_disable");
             vecRes.push_back(record);
         }
@@ -687,7 +687,7 @@ void DatabaseUtils::queryUserById(cppdb::session& sql, int nId,user& resUser)
     }
     else
     {
-        resUser.strSignature = resRecord.get<std::string>("user_signature");
+        resUser.strSignature = cppcms::util::escape(resRecord.get<std::string>("user_signature"));
     }
 }
 

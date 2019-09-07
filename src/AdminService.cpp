@@ -755,7 +755,7 @@ void AdminService::postUser()
         DatabaseUtils::queryUserById(database(), nId, record);
         record.strEmail = strEmail;
         record.strNikeName = strNikeName;
-        record.strSignature = cppcms::util::escape(strSignature);
+        record.strSignature = strSignature;
         record.strProfilePhoto = strProfilePhoto;
         DatabaseUtils::updateUser(database(), record);
     }
@@ -832,7 +832,7 @@ void AdminService::postArticle()
             DatabaseUtils::queryArticleById(database(), strId, record);
             record.strTitle = strTitle;
             record.m_sort.nId = std::stoi(strSortId,nullptr,0);
-            record.strDescribe = cppcms::util::escape(strDescribe);
+            record.strDescribe = strDescribe;
             record.strContent = strContent;
             record.nLastModified = ms.count();
             if (ostrFilePath.rdbuf()->in_avail() != 0)
@@ -856,7 +856,7 @@ void AdminService::postArticle()
     record.m_sort.nId = std::stoi(strSortId, nullptr, 0);
     record.strTitle = strTitle;
     record.strImage = ostrFilePath.str();
-    record.strContent = cppcms::util::escape(strContent);
+    record.strContent = strContent;
     record.nTime = ms.count();
     record.nLastModified = ms.count();
     record.strDescribe = strDescribe;
