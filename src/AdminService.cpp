@@ -224,7 +224,7 @@ void AdminService::admin_publish()
         sorts_block.set("value_id", vecRes.at(i).nId);
         sorts_block = sorts_block.next();
     }
-    tpl.set("article_preview", "http://via.placeholder.com/100");
+    tpl.set("article_preview", "https://via.placeholder.com/100");
     tpl.set("model_title", "需要自动生成简介吗？");
     tpl.set("model_conent", "您的简介不满足条件，系统将为您自动剪裁到符合条件的字符长度！");
 
@@ -282,7 +282,7 @@ void AdminService::admin_articles()
         }
         if (vecRes.at(i).strImage.empty())
         {
-            article_list.set("article_image", "http://via.placeholder.com/72");
+            article_list.set("article_image", "https://via.placeholder.com/72");
         }
         else
         {
@@ -337,7 +337,7 @@ void AdminService::admin_users()
             user_list.set("user_signature", vecRes.at(i).strSignature);
             if (vecRes.at(i).strProfilePhoto.empty())
             {
-                user_list.set("user_profile", "http://via.placeholder.com/72");
+                user_list.set("user_profile", "https://via.placeholder.com/72");
             }
             else
             {
@@ -522,7 +522,7 @@ void AdminService::article_edit(std::string strId)
     tpl.set("article_id", record.strId);
     if (record.strImage.empty())
     {
-        tpl.set("article_preview", "http://via.placeholder.com/100");
+        tpl.set("article_preview", "https://via.placeholder.com/100");
     }
     else
     {
@@ -620,7 +620,7 @@ void AdminService::user_edit(int nId)
     std::time_t t(record.nRegistrationTime / 1000);
     if (record.strProfilePhoto.empty())
     {
-        tpl.set("user_preview", "http://via.placeholder.com/100");
+        tpl.set("user_preview", "https://via.placeholder.com/100");
     }
     else
     {
